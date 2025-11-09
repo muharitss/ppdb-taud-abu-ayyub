@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-[var(--color-gray)] py-12 border-t border-[var(--color-blue)]">
+    <footer className="bg-gradient-to-br from-[var(--color-dark)] to-[var(--color-darker)] py-12">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-3 mb-6">
@@ -11,12 +11,12 @@ const Footer: React.FC = () => {
               alt="TAUD SaQu Abu Ayyub" 
               className="h-12 w-12"
             />
-            <span className="text-[var(--color-orange)] font-bold text-xl">
+            <span className="text-[var(--color-secondary)] font-bold text-xl">
               TAUD SaQu Abu Ayyub
             </span>
           </div>
           
-          <p className="text-white mb-4 max-w-md mx-auto leading-relaxed">
+          <p className="text-white/80 mb-4 max-w-md mx-auto leading-relaxed">
             Jl. Sakura Gg. Mufakat 3 RT 002/RW 013<br />
             Kel. Duri Barat, Kec. Mandau, Kab. Bengkalis
           </p>
@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
             href="https://bit.ly/PPDB-TAUDSaqu-A4"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[var(--color-blue)] hover:opacity-90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center"
+            className="bg-[var(--color-accent)] hover:opacity-90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center shadow-md"
           >
             Daftar Sekarang
           </a>
@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
             href="https://bit.ly/PPDB-TAUDSaqu-A4"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[var(--color-orange)] hover:opacity-90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center"
+            className="bg-[var(--color-primary)] hover:opacity-90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center shadow-md"
           >
             📝 Formulir Online
           </a>
@@ -43,15 +43,27 @@ const Footer: React.FC = () => {
             href="https://wa.me/6282169599979"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center"
+            className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center shadow-md"
           >
             WhatsApp Admin
           </a>
         </div>
         
         <div className="text-center border-t border-white/20 pt-6">
-          <p className="text-white/75">
+          <p className="text-white/60 text-sm">
             © {new Date().getFullYear()} TAUD SaQu Abu Ayyub. All rights reserved.
+          </p>
+          {/* Credit Developer */}
+          <p className="text-white/40 text-xs mt-2">
+            Developed with ❤️ by{' '}
+            <a 
+              href="https://github.com/muharits" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-white/60 transition-colors duration-300"
+            >
+              Muhammad Harits
+            </a>
           </p>
         </div>
       </div>

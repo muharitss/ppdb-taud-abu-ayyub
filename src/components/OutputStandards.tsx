@@ -1,6 +1,6 @@
 import React from 'react';
 
-const OutputStandards: React.FC = () => {
+const GraduateStandards: React.FC = () => {
   const standards = [
     "Belajar Al Qur'an dengan Kitab At-Tibyan dengan Metode Tahaji & Kitab Aisar.",
     "Mampu membaca Al-Qur'an dengan Tartil (sesuai tajwid, sifat & makharijul hurufnya)",
@@ -13,9 +13,9 @@ const OutputStandards: React.FC = () => {
   ];
 
   return (
-    <section className="bg-color-brown py-16">
+    <section className="bg-gradient-to-br from-[var(--color-light)] to-gray-100 py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-color-orange text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] text-center mb-12">
           Standar Output Kelulusan
         </h2>
         
@@ -23,12 +23,12 @@ const OutputStandards: React.FC = () => {
           {standards.map((standard, index) => (
             <div 
               key={index}
-              className="flex-none w-80 bg-color-white rounded-2xl shadow-lg p-6"
+              className="flex-none w-80 bg-white rounded-2xl shadow-lg p-6 border border-[var(--color-light)] hover-lift"
             >
-              <div className="w-12 h-12 bg-color-blue rounded-full flex items-center justify-center text-white font-bold text-lg mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-accent)] to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mb-4">
                 {index + 1}
               </div>
-              <p className="text-color-gray leading-relaxed">
+              <p className="text-[var(--color-dark)] leading-relaxed">
                 {standard}
               </p>
             </div>
@@ -40,7 +40,7 @@ const OutputStandards: React.FC = () => {
             href="https://bit.ly/PPDB-TAUDSaqu-A4"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-color-blue hover:bg-blue-600 text-white px-8 py-3 rounded-full font-semibold transition-colors duration-300"
+            className="inline-block bg-[var(--color-primary)] hover:opacity-90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-md hover-lift"
           >
             Daftar Sekarang
           </a>
@@ -50,4 +50,4 @@ const OutputStandards: React.FC = () => {
   );
 };
 
-export default OutputStandards;
+export default GraduateStandards;

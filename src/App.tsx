@@ -9,15 +9,15 @@ import ContactInfo from './components/ContactInfo';
 import Location from './components/Location';
 import Footer from './components/Footer';
 import VisionMission from './components/VissionMission';
-import OutputStandards from './components/OutputStandards';
+import GraduateStandards from './components/OutputStandards';
 
 function App() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[var(--color-light)]">
       <Navbar />
       <Hero />
       <Documentation />
-      <OutputStandards />
+      <GraduateStandards />
       <About />
       <VisionMission />
       <Programs />

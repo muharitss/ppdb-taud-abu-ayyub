@@ -1,42 +1,95 @@
-/* Import Tailwind CSS v4 */
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
 
 /* Define your custom color palette as CSS variables */
 @theme {
-  --color-white: #FDFDFD;
-  --color-orange: #D86E38;
-  --color-brown: #9D7341;
-  --color-gray: #5D5E57;
-  --color-blue: #01A0DD;
+  --color-primary: #EF7722;    /* Orange utama */
+  --color-secondary: #FAA533;  /* Orange muda */
+  --color-light: #EBEBEB;      /* Light gray */
+  --color-accent: #0BA6DF;     /* Blue */
+  --color-dark: #1a202c;       /* Dark untuk text */
+  --color-darker: #0f1419;     /* Darker untuk background */
 }
 
-/* Ganti semua @tailwind directives lama dengan @import di atas */
-/* Hapus baris-baris seperti @tailwind base; */
-
-/* Optional: Define any custom utility classes */
+/* Custom Styles untuk PPDB TAUD */
 @layer utilities {
-  .bg-color-blue {
-    background-color: var(--color-blue);
+  .islamic-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a202c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
-  .bg-color-orange {
-    background-color: var(--color-orange);
+
+  .font-arabic {
+    font-family: 'Amiri', serif;
   }
-  .bg-color-brown {
-    background-color: var(--color-brown);
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-  .bg-color-gray {
-    background-color: var(--color-gray);
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
-  .text-color-blue {
-    color: var(--color-blue);
+
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 6px;
   }
-  .text-color-orange {
-    color: var(--color-orange);
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
   }
-  .text-color-brown {
-    color: var(--color-brown);
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: 10px;
   }
-  .text-color-gray {
-    color: var(--color-gray);
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #0284c7;
+  }
+
+  .hover-lift {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .card-islamic {
+    @apply bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden;
+  }
+}
+
+@layer base {
+  * {
+    border-color: #e2e8f0;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+    background-color: var(--color-light);
+    color: var(--color-dark);
   }
 }
