@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
           </p>
           {/* Credit Developer */}
           <p className="text-white/40 text-xs mt-2">
-            Developed with ❤️ by{' '}
+            Developed by{' '}
             <a 
               href="https://github.com/muharits" 
               target="_blank" 
