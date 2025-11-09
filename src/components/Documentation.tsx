@@ -1,45 +1,52 @@
 import React from 'react';
-import { content } from '../data/content';
-import { Carousel } from './ui/carousel';
-import { Card } from './ui/card';
 
-export const Documentation: React.FC = () => {
+const Documentation: React.FC = () => {
+  const mediaItems = Array.from({ length: 15 }, (_, i) => ({
+    id: i + 1,
+    type: i < 10 ? 'foto' : 'video',
+    title: i < 10 ? `Foto Kegiatan ${i + 1}` : `Video Kegiatan ${i - 9}`
+  }));
+
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="bg-color-gray py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center text-yellow-600 mb-12">
-          Dokumentasi
+        <h2 className="text-3xl md:text-4xl font-bold text-color-orange text-center mb-12">
+          Dokumentasi Foto & Video
         </h2>
         
-        <Carousel>
-          {/* Photos */}
-          {content.documentation.photos.map((photo, index) => (
-            <Card key={`photo-${index}`} className="overflow-hidden">
-              <img 
-                src={photo} 
-                alt={`Dokumentasi kegiatan TAUD SaQu Abu Ayyub ${index + 1}`}
-                className="w-full h-64 object-cover"
-              />
-            </Card>
-          ))}
-          
-          {/* Videos - using thumbnail approach */}
-          {content.documentation.videos.map((_, index) => (
-            <Card key={`video-${index}`} className="overflow-hidden">
-              <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
-                  </div>
-                  <p className="text-gray-600">Video {index + 1}</p>
+        <div className="relative">
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+            {mediaItems.map((item) => (
+              <div 
+                key={item.id}
+                className="flex-none w-64 md:w-80 bg-color-white rounded-xl shadow-lg"
+              >
+                <div className="h-48 bg-gray-300 rounded-t-xl flex items-center justify-center">
+                  <span className="text-color-gray">
+                    {item.type === 'foto' ? '📷' : '🎥'} {item.title}
+                  </span>
+                </div>
+                <div className="p-4">
+                  <h3 className="text-color-gray font-semibold">
+                    {item.title}
+                  </h3>
                 </div>
               </div>
-            </Card>
-          ))}
-        </Carousel>
+            ))}
+          </div>
+          
+          <div className="flex justify-center mt-6 space-x-4">
+            <button className="bg-color-blue text-white p-3 rounded-full hover:bg-blue-600 transition-colors">
+              ←
+            </button>
+            <button className="bg-color-blue text-white p-3 rounded-full hover:bg-blue-600 transition-colors">
+              →
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );
 };
+
+export default Documentation;

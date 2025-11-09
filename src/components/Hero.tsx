@@ -1,43 +1,48 @@
 import React from 'react';
-import { content } from '../data/content';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
 
-export const Hero: React.FC = () => {
+const Hero: React.FC = () => {
   return (
-    <section className="min-h-screen bg-white py-12">
+    <section className="bg-[var(--color-brown)] islamic-pattern py-16 md:py-24">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Text Content */}
-          <div className="space-y-8">
-            <div className="space-y-6">
-              <pre className="text-lg md:text-xl text-gray-700 whitespace-pre-wrap font-sans">
-                {content.hero.openingText}
-              </pre>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="default" >
-                <a href="https://bit.ly/PPDB-TAUDSaqu-A4">Daftar Sekarang</a>
-              </Button>
-              <Button variant="secondary">
-                <a href="https://wa.me/6282169599979">Whatsapp Ummu Rumi</a>
-              </Button>
-            </div>
+        <div className="text-center mb-8">
+          <div className="text-2xl md:text-3xl font-arabic mb-4 opacity-90 text-white">
+            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
           </div>
+          <h1 className="text-3xl md:text-5xl font-bold text-[var(--color-orange)] mb-6">
+            Telah dibuka PPDB TAUD SaQu Abu Ayyub TP.2026-2027
+          </h1>
+          <p className="text-xl md:text-2xl font-light mb-8 max-w-3xl mx-auto text-white">
+            Mencetak generasi beriman, beradab, dan mandiri sejak usia dini!
+          </p>
+        </div>
 
-          {/* Image Card */}
-          <div className="flex justify-center">
-            <Card className="max-w-md w-full overflow-hidden">
-              <img 
-                src={content.hero.image} 
-                alt="Anak-anak TAUD SaQu Abu Ayyub"
-                className="w-full h-64 md:h-80 object-cover"
-              />
-            </Card>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <a 
+            href="https://bit.ly/PPDB-TAUDSaqu-A4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[var(--color-blue)] hover:opacity-90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center"
+          >
+            Daftar Sekarang
+          </a>
+          <a 
+            href="https://wa.me/6282169599979"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[var(--color-orange)] hover:opacity-90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center"
+          >
+            Hubungi via WhatsApp
+          </a>
+        </div>
+
+        <div className="bg-white rounded-2xl p-4 max-w-4xl mx-auto">
+          <div className="bg-gray-200 h-64 md:h-80 rounded-xl flex items-center justify-center">
+            <span className="text-[var(--color-gray)]">Foto Anak-anak TAUD SaQu</span>
           </div>
         </div>
       </div>
     </section>
   );
 };
+
+export default Hero;
