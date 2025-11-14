@@ -16,6 +16,7 @@ const Documentation: React.FC = () => {
     { id: 8, type: 'foto', title: ' ', image: '/kegiatan-8.jpg' },
     { id: 9, type: 'foto', title: ' ', image: '/kegiatan-9.jpg' },
     { id: 10, type: 'foto', title: ' ', image: '/kegiatan-10.jpg' },
+    { id: 10, type: 'foto', title: 'Ruangan Belajar', image: '/kelas.jpg' },
     { id: 10, type: 'foto', title: 'kitab belajar membaca', image: '/kegiatan-11.jpg' },
     { id: 10, type: 'foto', title: 'Kitab Aisar ', image: '/kegiatan-12.jpg' },
     { id: 10, type: 'foto', title: 'Kitab ilmu Quran', image: '/kegiatan-13.jpg' },
