@@ -1,141 +1,109 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
+import {
+  BookOpen,
+  Volume2,
+  Award,
+  Scroll,
+  Calculator,
+  CheckCircle2,
+  HeartHandshake,
+  UserCheck,
+  type LucideIcon,
+} from 'lucide-react';
+
+interface StandardItem {
+  title: string;
+  desc: string;
+  icon: LucideIcon;
+}
+
+const standards: StandardItem[] = [
+  {
+    title: "Tahsin & Tahaji",
+    desc: "Belajar Al-Qur'an dengan Kitab At-Tibyan melalui Metode Tahaji & Kitab Aisar.",
+    icon: BookOpen,
+  },
+  {
+    title: "Tartil Tajwid",
+    desc: "Mampu membaca Al-Qur'an dengan tartil sesuai kaidah tajwid, sifat, & makharijul huruf.",
+    icon: Volume2,
+  },
+  {
+    title: "Tahfidz Juz 30",
+    desc: "Hafalan Al-Qur'an Juz 30 (Juz 'Amma) tuntas dan mutqin sebelum kelulusan.",
+    icon: Award,
+  },
+  {
+    title: "Hadits & Doa Sunnah",
+    desc: "Hafal hadits-hadits pilihan, do'a harian, dan dzikir sunnah sesuai tuntunan Rasulullah ﷺ.",
+    icon: Scroll,
+  },
+  {
+    title: "Calistung Dasar",
+    desc: "Tuntas dasar membaca, menulis, dan berhitung sebagai kesiapan masuk jenjang SD.",
+    icon: Calculator,
+  },
+  {
+    title: "Praktik Ibadah",
+    desc: "Menguasai praktik tata cara wudhu, sholat, dan terbiasa mengamalkannya mandiri.",
+    icon: CheckCircle2,
+  },
+  {
+    title: "Adab & Akhlak Islami",
+    desc: "Memiliki adab dan akhlak mulia dalam bersosialisasi dengan orang tua, guru, dan sesama.",
+    icon: HeartHandshake,
+  },
+  {
+    title: "Kemandirian Santri",
+    desc: "Mandiri, disiplin, dan bertanggung jawab dalam menjalankan aktivitas harian.",
+    icon: UserCheck,
+  },
+];
 
 const GraduateStandards: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  
-  const standards = [
-    "Belajar Al Qur'an dengan Kitab At-Tibyan dengan Metode Tahaji & Kitab Aisar.",
-    "Mampu membaca Al-Qur'an dengan Tartil (sesuai tajwid, sifat & makharijul hurufnya)",
-    "Hafal Al Qur'an Juz 30",
-    "Hafal hadits-hadits, do'a dan dzikir pilihan sesuai Al Qur'an & Sunnah",
-    "Mampu membaca, menulis dan berhitung (Calistung)",
-    "Menguasai praktek ibadah & terbiasa mengamalkannya",
-    "Memiliki akhlak & adab Islami terhadap sesama",
-    "Mandiri & bertanggung jawab dalam beraktivitas sehari-hari"
-  ];
-
-  const scrollLeft = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: -320, // card width + gap
-        behavior: 'smooth'
-      });
-      setCurrentIndex(prev => Math.max(0, prev - 1));
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({
-        left: 320, // card width + gap
-        behavior: 'smooth'
-      });
-      setCurrentIndex(prev => Math.min(standards.length - 1, prev + 1));
-    }
-  };
-
-  const goToSlide = (index: number) => {
-    if (scrollContainerRef.current) {
-      const cardWidth = 320; // w-80 = 320px
-      scrollContainerRef.current.scrollTo({
-        left: index * cardWidth,
-        behavior: 'smooth'
-      });
-      setCurrentIndex(index);
-    }
-  };
-
   return (
-    <section className="bg-gradient-to-br from-[var(--color-light)] to-gray-100 py-16">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] text-center mb-12">
-          Standar Output Kelulusan
-        </h2>
-        
-        <div className="relative">
-          {/* Navigation Buttons - Desktop */}
-          <button 
-            onClick={scrollLeft}
-            disabled={currentIndex === 0}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-[var(--color-accent)] text-white p-3 rounded-full hover:opacity-90 transition-all duration-300 shadow-lg z-10 disabled:opacity-50 disabled:cursor-not-allowed hover-lift hidden md:block"
-          >
-            ←
-          </button>
-          
-          <button 
-            onClick={scrollRight}
-            disabled={currentIndex === standards.length - 1}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-[var(--color-accent)] text-white p-3 rounded-full hover:opacity-90 transition-all duration-300 shadow-lg z-10 disabled:opacity-50 disabled:cursor-not-allowed hover-lift hidden md:block"
-          >
-            →
-          </button>
-
-          {/* Scroll Container */}
-          <div 
-            ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide snap-x snap-mandatory"
-          >
-            {standards.map((standard, index) => (
-              <div 
-                key={index}
-                className="flex-none w-80 bg-white rounded-2xl shadow-lg p-6 border border-[var(--color-light)] hover-lift snap-start cursor-pointer"
-                onClick={() => goToSlide(index)}
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-accent)] to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg mb-4">
-                  {index + 1}
-                </div>
-                <p className="text-[var(--color-dark)] leading-relaxed">
-                  {standard}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Dot Indicators */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {standards.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  currentIndex === index 
-                    ? 'bg-[var(--color-accent)] w-4' 
-                    : 'bg-gray-300 hover:bg-gray-400'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-
-          {/* Mobile Navigation Buttons */}
-          <div className="flex justify-center mt-6 space-x-4 md:hidden">
-            <button 
-              onClick={scrollLeft}
-              disabled={currentIndex === 0}
-              className="bg-[var(--color-accent)] text-white p-3 rounded-full hover:opacity-90 transition-all duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ←
-            </button>
-            <button 
-              onClick={scrollRight}
-              disabled={currentIndex === standards.length - 1}
-              className="bg-[var(--color-accent)] text-white p-3 rounded-full hover:opacity-90 transition-all duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              →
-            </button>
-          </div>
+    <section className="bg-gradient-to-b from-slate-50 to-white py-14 sm:py-18 md:py-20 border-y border-slate-100">
+      <div className="container mx-auto px-4 max-w-7xl">
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--color-primary)] tracking-tight">
+            Standar Output Kelulusan
+          </h2>
         </div>
-        
-        <div className="text-center mt-8">
-          <a 
-            href="https://bit.ly/PPDB-TAUDSaqu-A4"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-[var(--color-primary)] hover:opacity-90 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 shadow-md hover-lift"
-          >
-            Daftar Sekarang
-          </a>
+
+        {/* Responsive Grid: 1 col on mobile, 2 col on tablet, 4 col on desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5 md:gap-6">
+          {standards.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={index}
+                className="group relative bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm hover:shadow-md hover:border-[var(--color-primary)]/40 transition-all duration-300 flex sm:flex-col items-start gap-3.5 sm:gap-4"
+              >
+                {/* Icon & Index Badge */}
+                <div className="sm:w-full flex sm:items-center sm:justify-between shrink-0">
+                  <span className="hidden sm:inline-block text-xs font-bold text-slate-300 font-mono">
+                    0{index + 1}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-1 sm:mb-1.5">
+                    <h3 className="font-bold text-[var(--color-dark)] text-sm sm:text-base group-hover:text-[var(--color-primary)] transition-colors">
+                      {item.title}
+                    </h3>
+                    <span className="sm:hidden text-xs font-bold text-slate-300 font-mono">
+                      0{index + 1}
+                    </span>
+                  </div>
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
