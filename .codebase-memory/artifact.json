@@ -1,11 +1,11 @@
 {
     "schema_version": 2,
-    "commit": "21f0ff27a9900610d46e36a6618af40296656294",
-    "indexed_at": "2026-10-20T06:48:24Z",
+    "commit": "9c8ed0d7eb6cdd525faf27b313008b0277d4a43c",
+    "indexed_at": "2026-10-20T09:38:50Z",
     "project": "home-muharits-Programmer-ppdb-taud-abu-ayyub",
-    "nodes": 205,
-    "edges": 336,
-    "original_size": 3211264,
-    "compressed_size": 196737,
+    "nodes": 1148,
+    "edges": 1682,
+    "original_size": 5439488,
+    "compressed_size": 542079,
     "compression_level": 3
 }
