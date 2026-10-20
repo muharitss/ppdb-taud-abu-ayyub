@@ -68,9 +68,9 @@ const Documentation: React.FC = () => {
   return (
     <section className="bg-white py-16">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] text-center mb-12">
+        {/* <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-primary)] text-center mb-12">
           Dokumentasi Foto & Video
-        </h2>
+        </h2> */}
 
         <div className="relative px-2 sm:px-12">
           <Carousel
