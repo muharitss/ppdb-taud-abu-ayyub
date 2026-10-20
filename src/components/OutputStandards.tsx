@@ -74,7 +74,7 @@ const GraduateStandards: React.FC = () => {
         {/* Responsive Grid: 1 col on mobile, 2 col on tablet, 4 col on desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5 md:gap-6">
           {standards.map((item, index) => {
-            const Icon = item.icon;
+            // const Icon = item.icon;
             return (
               <div
                 key={index}
