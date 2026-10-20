@@ -138,8 +138,9 @@ supabase/
 │   │   └── index.ts
 │   ├── submit-payment-proof/
 │   │   └── index.ts
-│   └── admin-review-payment/
-│       └── index.ts
+│   ├── admin-review-payment/
+│   │   └── index.ts
+│   └── document-upload/           # Phase D (deferred until Task 020 requirements confirmed)
 └── migrations/
     ├── 0001_initial_schema.sql
     └── 0002_rls_policies.sql
@@ -157,23 +158,24 @@ React Router v6 is used with `createBrowserRouter`. The app is a client-side SPA
 /                          → Landing page (Phase A)
 /daftar                    → Initial registration form (Phase B)
 /daftar/berhasil           → Access code reveal + next steps (Phase B confirmation)
-/daftar/pembayaran/:id     → Payment instructions + upload (Phase C)
-/daftar/formulir/:id       → Full registration form (Phase D) — protected by access code
-/daftar/selesai/:id        → Success + WhatsApp link (Phase E)
+/daftar/pembayaran/:id     → Payment instructions + upload (Phase C) [:id = registration UUID]
+/daftar/formulir/:id       → Full registration form (Phase D) — protected by access code [:id = registration UUID]
+/daftar/selesai/:id        → Success + WhatsApp link (Phase E) [:id = registration UUID]
 /status                    → Status lookup form (Phase F)
-/status/:registrationNumber → Status display (Phase F) — protected by access code
+/status/:registrationNumber → Status display (Phase F) — protected by access code [:registrationNumber = PPDB-YYYY-XXXXX]
 
 /admin                     → Redirects to /admin/login if not authenticated
 /admin/login               → Admin login page
 /admin/dashboard           → Admin dashboard summary (Phase G)
-/admin/pendaftaran          → Registration list (Phase G)
-/admin/pendaftaran/:id     → Registration detail (Phase G)
+/admin/pendaftaran         → Registration list (Phase G)
+/admin/pendaftaran/:id     → Registration detail (Phase G) [:id = registration UUID]
 ```
 
 ### Route Protection
 
 - **Parent routes** (payment, full form): Gated by a valid access code stored in `sessionStorage` after `verify-registration-access` succeeds. Access code is never re-verified from sessionStorage alone — it is always server-verified on page load.
 - **Admin routes**: Gated by an active Supabase Auth session with a record in `admin_profiles`. Session is checked via `supabase.auth.getSession()` on mount. Unauthenticated requests redirect to `/admin/login`.
+- **Parameter semantics**: `:id` consistently represents the internal `registrations.id` (UUID), returned to the frontend upon initial creation or access verification. `:registrationNumber` is the public code formatted as `PPDB-YYYY-XXXXX`.
 
 ### Vercel SPA Fallback (`vercel.json`)
 
@@ -307,3 +309,17 @@ VITE_SUPABASE_ANON_KEY=<anon-key>
 | DB migrations | `supabase db push` (local) / CI migration runner (prod) |
 
 > CI pipeline spec is out of scope for now; add when repository is set up on GitHub.
+
+---
+
+## 10. Architecture Review & Approval Record
+
+- **Reviewed Date:** 2026-10-20 (Task 004)
+- **Status:** APPROVED
+- **Review Summary:**
+  1. **Tech Stack:** Confirmed React 19 + TypeScript (Strict) + Vite 7 + Tailwind CSS v4 + shadcn/ui. Backend confirmed as Supabase (PostgreSQL 15+, Auth, RLS, Storage) + Edge Functions (Deno/TS). SPA deployed to Vercel.
+  2. **Zero-Backend-Server Model:** Confirmed no Express/NestJS server. All sensitive operations (access codes, uploads, reviews) execute inside Supabase Edge Functions with `service_role`.
+  3. **Security Architecture:** Confirmed CSPRNG 8-char uppercase alphanumeric access codes, bcrypt/argon2 hashing, zero plaintext retention, and deny-all RLS as foundational security boundaries.
+  4. **Directory Structure:** Confirmed feature-based layout (`src/features/{landing,registration,payment,documents,status,admin}`).
+  5. **Routing & Parameter Standards:** Confirmed unified client route definitions with explicit `:id` (UUID) parameters for scoped operations and `:registrationNumber` for public status checks.
+  6. **Deferred Items:** Confirmed Phase D (`documents/` and `document-upload` Edge Function) remain explicitly blocked awaiting official school requirements under Task 020.

@@ -1,7 +1,7 @@
 # Task 004 — Architecture Review
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P0
@@ -50,13 +50,13 @@ Key architectural decisions have been made during planning (React + Supabase + E
 None — review task. Confirm stakeholder understands the security model (access codes, RLS, no service role key on frontend).
 
 ## Acceptance Criteria
-- [ ] Stakeholder has reviewed specs/02-architecture.md
-- [ ] Tech stack confirmed (or alternatives documented)
-- [ ] Directory structure approved
-- [ ] Edge Functions scope confirmed
-- [ ] Routing plan approved
-- [ ] Any changes reflected in specs/02-architecture.md
-- [ ] Explicit approval recorded in Completion Notes
+- [x] Stakeholder has reviewed specs/02-architecture.md
+- [x] Tech stack confirmed (or alternatives documented)
+- [x] Directory structure approved
+- [x] Edge Functions scope confirmed
+- [x] Routing plan approved
+- [x] Any changes reflected in specs/02-architecture.md
+- [x] Explicit approval recorded in Completion Notes
 
 ## Verification
 ```bash
@@ -74,4 +74,13 @@ grep -i "TBD\|TODO\|CONFIRM" specs/02-architecture.md
 - Completion Notes with approval record and any decisions made
 
 ## Completion Notes
-_Not started_
+- **Review Date:** 2026-10-20
+- **Status:** APPROVED & SIGNED OFF
+- **Confirmed Decisions:**
+  1. **Tech Stack:** React 19 + TypeScript (Strict) + Vite 7 + Tailwind CSS v4 + shadcn/ui. Backend: Supabase (PostgreSQL 15+, Auth, RLS, Storage) + Edge Functions (Deno). Hosting: Vercel SPA.
+  2. **Zero Express/NestJS Server:** All sensitive writes and access checks run inside Supabase Edge Functions. Frontend never receives `SUPABASE_SERVICE_ROLE_KEY`.
+  3. **Security & Access Model:** Registrants do not have Supabase Auth accounts. Access is granted via 8-character CSPRNG access codes returned once, hashed in DB with bcrypt/argon2. Admin auth is managed through Supabase Auth + `admin_profiles` table.
+  4. **Directory Structure:** Feature-driven layout (`src/features/{landing,registration,payment,documents,status,admin}`) approved.
+  5. **Routing Standards:** Standardized route parameters: `:id` denotes internal registration UUID (`/daftar/pembayaran/:id`, `/daftar/formulir/:id`, `/daftar/selesai/:id`, `/admin/pendaftaran/:id`), while `/status/:registrationNumber` uses the public code (`PPDB-YYYY-XXXXX`).
+  6. **Deferred Scope:** Phase D (`documents/` and `document-upload` Edge Function) remains explicitly blocked awaiting official school data requirements (Task 020).
+- **Updates to Specification:** `specs/02-architecture.md` updated with Edge Function structure alignment, route parameter semantics, and approval record section.

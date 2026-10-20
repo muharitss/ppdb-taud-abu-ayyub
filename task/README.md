@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 0 Selesai (Audit, Spesifikasi, dan Task Breakdown Lengkap)  
-> **Progres Akurat:** 3 / 36 Task Selesai (**8.33%**)
+> **Status:** Phase 1 In Progress (Architecture Review Diselesaikan)  
+> **Progres Akurat:** 4 / 36 Task Selesai (**11.11%**)
 
 ---
 
@@ -74,7 +74,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **001** | [Project Audit](task-001-project-audit.md) | Phase 0 | P0 | **DONE** | — |
 | **002** | [Specifications Writing](task-002-specifications.md) | Phase 0 | P0 | **DONE** | Task 001 |
 | **003** | [Task Planning & Dashboard](task-003-task-planning.md) | Phase 0 | P0 | **DONE** | Task 001, 002 |
-| **004** | [Architecture Review & Approval](task-004-architecture-review.md) | Phase 1 | P0 | `NOT_STARTED` | Task 001–003 |
+| **004** | [Architecture Review & Approval](task-004-architecture-review.md) | Phase 1 | P0 | **DONE** | Task 001–003 |
 | **005** | [Database Schema Review & Approval](task-005-database-schema-review.md) | Phase 1 | P0 | `NOT_STARTED` | Task 002 |
 | **006** | [Dependency Cleanup & Import Bug Fix](task-006-dependency-cleanup.md) | Phase 2 | P1 | `NOT_STARTED` | Task 001 |
 | **007** | [Dead Code Removal & TS Fix](task-007-dead-code-removal.md) | Phase 2 | P1 | `NOT_STARTED` | Task 006 |
@@ -114,18 +114,17 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 3 (Task 001, 002, 003)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 004, 005 (Review), Task 006 (Cleanup)
+- **Selesai (`DONE`):** 4 (Task 001, 002, 003, 004)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 005 (Review), Task 006 (Cleanup)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 1 (Task 020)
 - **Terblokir (`BLOCKED`):** 3 (Task 021, 022, 023)
-- **Persentase Selesai Nyata:** **8.33%**
+- **Persentase Selesai Nyata:** **11.11%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 004:** Konfirmasi & persetujuan stakeholder atas keputusan arsitektur.
-2. **Task 005:** Konfirmasi & persetujuan skema database awal.
-3. **Task 006:** Pembersihan dependensi mati (`keen-slider`, `radix-ui`, `cn`) dan perbaikan impor `cn` pada `button.tsx` & `card.tsx`.
-4. **Task 007:** Penghapusan dead code (`App.css`, boilerplate svg, komponen tak terpakai) dan perbaikan deklarasi `Icon` di `OutputStandards.tsx`.
-5. **Task 008:** Restrukturisasi direktori ke pola modular `src/features/` dan instalasi `react-router-dom`.
+1. **Task 005:** Konfirmasi & persetujuan skema database awal (`task-005-database-schema-review.md`).
+2. **Task 006:** Pembersihan dependensi mati (`keen-slider`, `radix-ui`, `cn`) dan perbaikan impor `cn` pada `button.tsx` & `card.tsx`.
+3. **Task 007:** Penghapusan dead code (`App.css`, boilerplate svg, komponen tak terpakai) dan perbaikan deklarasi `Icon` di `OutputStandards.tsx`.
+4. **Task 008:** Restrukturisasi direktori ke pola modular `src/features/` dan instalasi `react-router-dom`.
 
 ### C. Task yang Terblokir & Penyebabnya
 - **Task 020 (`WAITING_FOR_REQUIREMENTS`):** Membutuhkan penetapan resmi dari pihak sekolah mengenai daftar field lengkap formulir dan daftar dokumen santri.
@@ -196,6 +195,9 @@ npm run preview
 
 ## 9. Log Riwayat Perubahan
 
+- **2026-10-20 (Phase 1):**
+  - Task 004 resmi diselesaikan (`DONE`): Architecture Review & Approval tercatat di `specs/02-architecture.md` dan `task/task-004-architecture-review.md`.
+  - Progres: 4 / 36 Task (**11.11%**).
 - **2026-10-20 (Phase 0):**
   - Pelaksanaan audit menyeluruh atas 100% kode existing, dependensi, dan aset.
   - Penulisan 9 dokumen spesifikasi lengkap (`specs/00` s.d. `specs/08`).
