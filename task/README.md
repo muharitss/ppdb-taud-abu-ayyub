@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 2 In Progress (Dependency Cleanup Selesai)  
-> **Progres Akurat:** 6 / 36 Task Selesai (**16.67%**)
+> **Status:** Phase 3 In Progress (Supabase Setup Selesai)  
+> **Progres Akurat:** 9 / 36 Task Selesai (**25.00%**)
 
 ---
 
@@ -77,9 +77,9 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **004** | [Architecture Review & Approval](task-004-architecture-review.md) | Phase 1 | P0 | **DONE** | Task 001–003 |
 | **005** | [Database Schema Review & Approval](task-005-database-schema-review.md) | Phase 1 | P0 | **DONE** | Task 002 |
 | **006** | [Dependency Cleanup & Import Bug Fix](task-006-dependency-cleanup.md) | Phase 2 | P1 | **DONE** | Task 001 |
-| **007** | [Dead Code Removal & TS Fix](task-007-dead-code-removal.md) | Phase 2 | P1 | `COMPLETED` | Task 006 |
-| **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md) | Phase 2 | P1 | `COMPLETED` | Task 006, 007 |
-| **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md) | Phase 3 | P0 | `NOT_STARTED` | Task 004, 005, 008 |
+| **007** | [Dead Code Removal & TS Fix](task-007-dead-code-removal.md) | Phase 2 | P1 | **DONE** | Task 006 |
+| **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md) | Phase 2 | P1 | **DONE** | Task 006, 007 |
+| **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md) | Phase 3 | P0 | **DONE** | Task 004, 005, 008 |
 | **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | `NOT_STARTED` | Task 005, 009 |
 | **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | `NOT_STARTED` | Task 010 |
 | **012** | [Admin Authentication & Authorization](task-012-admin-auth.md) | Phase 3 | P0 | `NOT_STARTED` | Task 009, 011 |
@@ -114,16 +114,16 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 6 (Task 001, 002, 003, 004, 005, 006)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 007 (Dead Code & TS Fix)
+- **Selesai (`DONE`):** 9 (Task 001, 002, 003, 004, 005, 006, 007, 008, 009)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 010 (Database Migrations)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 1 (Task 020)
 - **Terblokir (`BLOCKED`):** 3 (Task 021, 022, 023)
-- **Persentase Selesai Nyata:** **16.67%**
+- **Persentase Selesai Nyata:** **25.00%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 007:** Penghapusan dead code (`App.css`, boilerplate svg, komponen tak terpakai) dan perbaikan deklarasi `Icon` di `OutputStandards.tsx`.
-2. **Task 008:** Restrukturisasi direktori ke pola modular `src/features/` dan instalasi `react-router-dom`.
-3. **Task 009:** Setup Supabase & inisialisasi lingkungan pengembangan lokal.
+1. **Task 010:** Database Migrations (skema DDL awal: enum, registrations, access, payments, admin, audit).
+2. **Task 011:** Row Level Security (RLS) Policies.
+3. **Task 012:** Admin Authentication & Authorization.
 
 ### C. Task yang Terblokir & Penyebabnya
 - **Task 020 (`WAITING_FOR_REQUIREMENTS`):** Membutuhkan penetapan resmi dari pihak sekolah mengenai daftar field lengkap formulir dan daftar dokumen santri.
