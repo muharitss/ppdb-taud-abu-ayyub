@@ -74,7 +74,7 @@ const GraduateStandards: React.FC = () => {
         {/* Responsive Grid: 1 col on mobile, 2 col on tablet, 4 col on desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5 md:gap-6">
           {standards.map((item, index) => {
-            // const Icon = item.icon;
+            const Icon = item.icon;
             return (
               <div
                 key={index}
@@ -82,6 +82,7 @@ const GraduateStandards: React.FC = () => {
               >
                 {/* Icon & Index Badge */}
                 <div className="sm:w-full flex sm:items-center sm:justify-between shrink-0">
+                  <Icon className="w-8 h-8 text-[var(--color-primary)]" />
                   <span className="hidden sm:inline-block text-xs font-bold text-slate-300 font-mono">
                     0{index + 1}
                   </span>

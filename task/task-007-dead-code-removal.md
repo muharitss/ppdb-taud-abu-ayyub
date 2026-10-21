@@ -1,7 +1,7 @@
 # Task 007 — Dead Code Removal
 
 ## Status
-NOT_STARTED
+COMPLETED
 
 ## Priority
 P1
@@ -74,18 +74,18 @@ The audit identified several files that are never imported or used: App.css (Vit
 None.
 
 ## Acceptance Criteria
-- [ ] src/App.css deleted
-- [ ] src/assets/react.svg deleted
-- [ ] public/vite.svg deleted
-- [ ] src/components/Contact.tsx deleted (confirmed no active imports)
-- [ ] src/components/Header.tsx deleted (confirmed no active imports)
-- [ ] src/components/ProgramMaterials.tsx deleted (confirmed no active imports)
-- [ ] src/components/Requirements.tsx deleted (confirmed no active imports)
-- [ ] src/components/examples/ deleted
-- [ ] OutputStandards.tsx TypeScript error fixed
-- [ ] `npx tsc --noEmit` passes with 0 errors
-- [ ] `npm run build` succeeds
-- [ ] Landing page visual appearance unchanged (manual check)
+- [x] src/App.css deleted
+- [x] src/assets/react.svg deleted
+- [x] public/vite.svg deleted
+- [x] src/components/Contact.tsx deleted (confirmed no active imports)
+- [x] src/components/Header.tsx deleted (confirmed no active imports)
+- [x] src/components/ProgramMaterials.tsx deleted (confirmed no active imports)
+- [x] src/components/Requirements.tsx deleted (confirmed no active imports)
+- [x] src/components/examples/ deleted
+- [x] OutputStandards.tsx TypeScript error fixed
+- [x] `npx tsc --noEmit` passes with 0 errors
+- [x] `npm run build` succeeds
+- [x] Landing page visual appearance unchanged (manual check)
 
 ## Verification
 ```bash
@@ -113,4 +113,4 @@ npx tsc --noEmit && npm run build
 - Clean `tsc --noEmit` output (0 errors)
 
 ## Completion Notes
-_Not started_
+All dead files (`src/App.css`, `src/assets/react.svg`, `public/vite.svg`, `src/components/examples/`) and unused components (`Contact.tsx`, `Header.tsx`, `ProgramMaterials.tsx`, `Requirements.tsx`) were verified to have 0 references and deleted. `src/components/OutputStandards.tsx` was updated to render `<Icon className="w-8 h-8 text-[var(--color-primary)]" />`, resolving the commented-out variable. `npx tsc --noEmit` and `npm run build` succeed with 0 errors.
