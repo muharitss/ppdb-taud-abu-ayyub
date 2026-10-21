@@ -1,7 +1,7 @@
 # Task 006 — Dependency Cleanup
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1
@@ -58,16 +58,16 @@ The audit (Task 001) identified three unused packages and a critical import bug.
 None — this is dependency cleanup. No secrets involved. Removing unused packages reduces attack surface.
 
 ## Acceptance Criteria
-- [ ] `keen-slider` removed from package.json
-- [ ] `cn` npm package removed from package.json
-- [ ] `radix-ui` barrel package removed from package.json
-- [ ] `@radix-ui/react-slot` still present in package.json
-- [ ] src/components/ui/button.tsx imports `cn` from `"@/lib/utils"`
-- [ ] src/components/ui/card.tsx imports `cn` from `"@/lib/utils"`
-- [ ] `npm install` completes without errors
-- [ ] `npx tsc --noEmit` passes (only pre-existing OutputStandards error allowed)
-- [ ] `npm run build` succeeds
-- [ ] Landing page renders correctly in browser (visual regression check)
+- [x] `keen-slider` removed from package.json
+- [x] `cn` npm package removed from package.json
+- [x] `radix-ui` barrel package removed from package.json
+- [x] `@radix-ui/react-slot` still present in package.json
+- [x] src/components/ui/button.tsx imports `cn` from `"@/lib/utils"`
+- [x] src/components/ui/card.tsx imports `cn` from `"@/lib/utils"`
+- [x] `npm install` completes without errors
+- [x] `npx tsc --noEmit` passes (only pre-existing OutputStandards error allowed)
+- [x] `npm run build` succeeds
+- [x] Landing page renders correctly in browser (visual regression check)
 
 ## Verification
 ```bash
@@ -93,4 +93,11 @@ npm run build && npx tsc --noEmit
 - Passing build
 
 ## Completion Notes
-_Not started_
+- **Completed Date:** 2026-10-21
+- **Changes Applied:**
+  1. Removed `keen-slider`, `cn`, and `radix-ui` from `package.json`. Preserved `@radix-ui/react-slot`.
+  2. Fixed `cn` imports in `src/components/ui/button.tsx`, `src/components/ui/card.tsx`, `src/components/ui/carousel.tsx`, `src/components/Documentation.tsx`, and `src/components/examples/c-carousel-11.tsx` to point to `@/lib/utils`.
+  3. Fixed `Slot` import in `src/components/ui/button.tsx` to import directly from `@radix-ui/react-slot`.
+  4. Executed `npm install` (pruned 73 unused transitive packages).
+  5. Verified `npx tsc --noEmit` (0 errors) and `npm run build` (build succeeds, client bundle size reduced).
+

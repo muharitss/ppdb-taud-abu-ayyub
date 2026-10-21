@@ -1,7 +1,7 @@
 # Task 005 — Database Schema Review
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P0
@@ -54,14 +54,14 @@ Confirm stakeholder understands:
 - audit_events is append-only (no UPDATE/DELETE policy)
 
 ## Acceptance Criteria
-- [ ] Stakeholder has reviewed specs/04-data-model.md
-- [ ] All table schemas confirmed or updated
-- [ ] Enum values confirmed
-- [ ] registration_status enum: draft, awaiting_payment, awaiting_form, submitted, under_review, accepted, rejected
-- [ ] payment_status enum: payment_pending, payment_submitted, payment_verified, payment_rejected
-- [ ] RLS strategy confirmed per table
-- [ ] TBD sections flagged clearly for Phase 6
-- [ ] Explicit approval recorded in Completion Notes
+- [x] Stakeholder has reviewed specs/04-data-model.md
+- [x] All table schemas confirmed or updated
+- [x] Enum values confirmed
+- [x] registration_status enum: draft, awaiting_payment, awaiting_form, submitted, under_review, accepted, rejected
+- [x] payment_status enum: payment_pending, payment_submitted, payment_verified, payment_rejected
+- [x] RLS strategy confirmed per table
+- [x] TBD sections flagged clearly for Phase 6
+- [x] Explicit approval recorded in Completion Notes
 
 ## Verification
 ```bash
@@ -80,4 +80,14 @@ grep -i "TBD\|TODO" specs/04-data-model.md
 - Completion Notes with approval record, confirmed enum values, and flagged TBDs
 
 ## Completion Notes
-_Not started_
+- **Review Date:** 2026-10-21
+- **Status:** APPROVED & SIGNED OFF
+- **Confirmed Decisions:**
+  1. **Core Schemas:** `registrations`, `registration_access`, `payments`, `admin_profiles`, `audit_events`, `ppdb_config` approved without alterations.
+  2. **Enums Confirmed:**
+     - `registration_status`: `draft`, `awaiting_payment`, `awaiting_form`, `submitted`, `under_review`, `accepted`, `rejected`.
+     - `payment_status`: `payment_pending`, `payment_submitted`, `payment_verified`, `payment_rejected`.
+  3. **Security & RLS:** No anon table-level access to sensitive applicant data. `registration_access` hash-only table is locked down to service role. `audit_events` is append-only.
+  4. **Deferred to Phase 6:** `registration_form_data` and `registration_documents` remain placeholders until school specifies exact form and file requirements in Task 020.
+- **Specification Updated:** Approval record appended to `specs/04-data-model.md` Section 11.
+

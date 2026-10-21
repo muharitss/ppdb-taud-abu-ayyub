@@ -413,3 +413,18 @@ The following parts of this data model are explicitly deferred:
 | `registration_documents` columns | Doc upload list not finalized | Confirm which documents require digital upload vs. physical submission |
 | Data retention policy | School has not defined one | School admin to decide; codify in `ppdb_config` and migration notes |
 | Argon2id vs bcrypt decision | Either works; argon2id preferred if Deno runtime supports it natively | Confirm Deno/Edge Function compatibility before implementation |
+
+---
+
+## 11. Database Schema Review & Approval Record
+
+- **Reviewed Date:** 2026-10-21 (Task 005)
+- **Status:** APPROVED & SIGNED OFF
+- **Review Summary:**
+  1. **Core Tables Approved:** `registrations`, `registration_access`, `payments`, `admin_profiles`, `audit_events`, `ppdb_config` confirmed for initial migration (Task 010).
+  2. **Enums Confirmed:**
+     - `registration_status`: `'draft'`, `'awaiting_payment'`, `'awaiting_form'`, `'submitted'`, `'under_review'`, `'accepted'`, `'rejected'`.
+     - `payment_status`: `'payment_pending'`, `'payment_submitted'`, `'payment_verified'`, `'payment_rejected'`.
+  3. **Security & RLS Strategy Confirmed:** Deny-all by default. `registration_access` accessible strictly via `service_role`. Append-only integrity enforced on `audit_events`.
+  4. **Deferred Tables (Flagged for Phase 6):** `registration_documents` and `registration_form_data` remain placeholder stubs pending official field requirements under Task 020.
+
