@@ -18,11 +18,12 @@ After completing the full registration form, registrants are directed to a succe
 ## Scope
 1. Page `/daftar/berhasil` — shows `registration_number`, `access_code`, link to status page
 2. Build `wa.me` link: `https://wa.me/{whatsapp_number}?text={encodeURIComponent(message)}`
-3. Message template fills: `child_name`, `registration_number`, `access_code`, status URL
+3. Message template fills: `child_name`, `registration_number`, PPDB period `TP.2027/2028`, status URL
 4. "Kirim via WhatsApp" button opens `wa.me` link in new tab
 5. "Salin Informasi" button copies `registration_number` + `access_code` to clipboard
 6. Clear disclaimer: _"Pastikan pesan sudah terkirim — sistem tidak dapat memastikan pengiriman"_
-7. Link to status page
+7. **WA Group join button:** "Gabung Grup WhatsApp PPDB" → `https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh` (opens in new tab); sourced from `ppdb_config.wa_group_link` constant
+8. Link to status page
 8. WhatsApp number sourced from initial registration form (`whatsapp_number` field)
 
 ## Out of Scope
@@ -55,9 +56,9 @@ After completing the full registration form, registrants are directed to a succe
 - No API calls to WhatsApp
 
 ## Acceptance Criteria
-- [ ] `wa.me` link opens WhatsApp with correct pre-filled message
-- [ ] Message contains correct `child_name`, `registration_number`, `access_code`, and status URL
-- [ ] Status page URL in message resolves correctly
+- [ ] `wa.me` link opens WhatsApp with correct pre-filled message mentioning TP.2027/2028
+- [ ] Message contains correct `child_name`, `registration_number`, and status URL
+- [ ] "Gabung Grup WhatsApp PPDB" button links to `https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh` (new tab)
 - [ ] "Salin Informasi" button copies correct text to clipboard
 - [ ] Disclaimer about manual send is clearly visible
 - [ ] Link to `/status` page works

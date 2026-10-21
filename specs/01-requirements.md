@@ -45,20 +45,24 @@
 
 ### Phase D — Full Registration Form
 
-> **⚠️ TBD — Awaiting official school requirements.**
-> Field list below is a starting placeholder. Final field list must be confirmed with the school administration before implementation.
+> **✅ CONFIRMED — Requirements confirmed by school administration (2026-10-21). See task-020 for full field list.**
 
 | ID | Requirement |
 |---|---|
-| D-01 | Full form is only accessible after payment proof is uploaded (status = `awaiting_form`) |
+| D-01 | Full form is only accessible after payment proof is uploaded (`payment_status = payment_submitted` or `payment_verified`) |
 | D-02 | Form is accessed by entering registration number + access code (same as status page) |
-| D-03 | Form collects detailed child data (fields TBD — see note above) |
-| D-04 | Form collects parent/guardian data (fields TBD) |
-| D-05 | Form allows upload of required documents (fields TBD — see Section 3 for known doc requirements) |
-| D-06 | All uploads go to private `registration-documents` bucket via Edge Function |
-| D-07 | On final submission, status advances to `submitted` |
-| D-08 | Form data is saved incrementally (auto-save or step-by-step) to avoid data loss |
-| D-09 | Once `submitted`, form fields become read-only |
+| D-03 | **Gating page:** if `payment_status = payment_pending`, show payment instruction page (bank BSI 7327913322 a.n. TAUD Abu Ayyub, Rp 300.000) with upload field — form cannot be opened until proof is uploaded |
+| D-04 | Form is a 4-section wizard: (1) Data Calon Peserta Didik, (2) Data Ayah, (3) Data Ibu, (4) Data Kesehatan Anak |
+| D-05 | **Section 1 — Data Calon Peserta Didik:** nama lengkap, nama panggilan, NIK (16 digit), tempat lahir, tanggal lahir, jenis kelamin (enum), anak ke-, jumlah saudara kandung, alamat lengkap, program pembelajaran (1 tahun / 2 tahun) |
+| D-06 | **Section 2 — Data Ayah:** nama lengkap, NIK (16 digit), tempat/tanggal lahir, pendidikan terakhir, pekerjaan, penghasilan per bulan (opsional), nomor HP/WA, alamat |
+| D-07 | **Section 3 — Data Ibu:** sama dengan Data Ayah |
+| D-08 | **Section 4 — Data Kesehatan:** berat badan (kg), tinggi badan (cm), golongan darah (opsional), riwayat alergi (opsional), riwayat penyakit (opsional) |
+| D-09 | **Section 5 — Upload Dokumen:** KK (JPEG/PNG/PDF ≤ 5 MB), akta kelahiran (JPEG/PNG/PDF ≤ 5 MB), pas foto 3×4 (JPEG/PNG ≤ 5 MB) — semua wajib |
+| D-10 | All uploads go to private `registration-documents` bucket via Edge Function |
+| D-11 | On final submission, status advances to `submitted` |
+| D-12 | Form data is saved per-section (wizard step saves to DB before proceeding to next step) |
+| D-13 | Once `submitted`, form fields become read-only |
+| D-14 | After all documents uploaded, show button/link to join WA group: `https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh` |
 
 ### Phase E — Success + WhatsApp Notification
 
@@ -66,7 +70,7 @@
 |---|---|
 | E-01 | Show a confirmation screen after full form submission |
 | E-02 | Display registration number and remind parent to save it |
-| E-03 | Show a pre-filled **wa.me** link with a message like: *"Assalamu'alaikum, saya [nama] telah menyelesaikan pendaftaran PPDB TP.2026-2027. Nomor pendaftaran saya: PPDB-YYYY-XXXXX."* |
+| E-03 | Show a pre-filled **wa.me** link with a message like: *"Assalamu'alaikum, saya [nama] telah menyelesaikan pendaftaran PPDB TP.2027-2028. Nomor pendaftaran saya: PPDB-YYYY-XXXXX."* |
 | E-04 | Clearly state that the parent must press Send manually — delivery is not automatic |
 | E-05 | Provide a link to the status page (Phase F) |
 

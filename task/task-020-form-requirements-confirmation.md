@@ -1,7 +1,7 @@
 # Task 020 — Form Requirements Confirmation
 
 ## Status
-WAITING_FOR_REQUIREMENTS
+DONE
 
 ## Priority
 P0
@@ -13,7 +13,83 @@ P0
 Confirm official full registration form fields and required documents with the school before implementation begins.
 
 ## Context
-The full registration form fields (child data, parent data, medical info, required documents, etc.) must follow the official school requirements for TAUD SaQu Abu Ayyub TP.2026-2027. Implementation of tasks 021–023 is blocked until these requirements are confirmed and documented.
+The full registration form fields (child data, parent data, medical info, required documents, etc.) must follow the official school requirements for TAUD SaQu Abu Ayyub TP.2026-2027. Requirements were confirmed by the school (TP.2027/2028 form, received 2026-10-21). Tasks 021–024 are now unblocked.
+
+## Confirmed Fields
+
+### Biaya Pendaftaran
+- **Rp 300.000** via Bank BSI
+- No. Rek: **7327913322** a.n. TAUD Abu Ayyub
+- Konfirmasi WA: **0813 6707 4138**
+
+### Section 1 — Data Calon Peserta Didik
+| Field | Type | Required |
+|---|---|---|
+| Nama lengkap | text | ✅ |
+| Nama panggilan | text | ✅ |
+| NIK | text (16 digit) | ✅ |
+| Tempat lahir | text | ✅ |
+| Tanggal lahir | date | ✅ |
+| Jenis kelamin | enum: `laki_laki` / `perempuan` | ✅ |
+| Anak ke- | integer ≥ 1 | ✅ |
+| Jumlah saudara kandung | integer ≥ 0 | ✅ |
+| Alamat lengkap | text (multiline) | ✅ |
+| Program pembelajaran | enum: `1_tahun` / `2_tahun` | ✅ |
+
+### Section 2 — Data Ayah
+| Field | Type | Required |
+|---|---|---|
+| Nama lengkap | text | ✅ |
+| NIK | text (16 digit) | ✅ |
+| Tempat/tanggal lahir | text + date | ✅ |
+| Pendidikan terakhir | text | ✅ |
+| Pekerjaan | text | ✅ |
+| Penghasilan per bulan | text | ❌ opsional |
+| Nomor HP/WhatsApp | text (international format) | ✅ |
+| Alamat | text (multiline) | ✅ |
+
+### Section 3 — Data Ibu
+| Field | Type | Required |
+|---|---|---|
+| Nama lengkap | text | ✅ |
+| NIK | text (16 digit) | ✅ |
+| Tempat/tanggal lahir | text + date | ✅ |
+| Pendidikan terakhir | text | ✅ |
+| Pekerjaan | text | ✅ |
+| Penghasilan per bulan | text | ❌ opsional |
+| Nomor HP/WhatsApp | text (international format) | ✅ |
+| Alamat | text (multiline) | ✅ |
+
+### Section 4 — Data Kesehatan Anak
+| Field | Type | Required |
+|---|---|---|
+| Berat badan (kg) | decimal | ✅ |
+| Tinggi badan (cm) | decimal | ✅ |
+| Golongan darah | enum: `A`/`B`/`AB`/`O`/`tidak_diketahui` | ❌ opsional |
+| Riwayat alergi | text | ❌ opsional |
+| Riwayat penyakit tertentu | text | ❌ opsional |
+
+### Section 5 — Upload Dokumen
+| Dokumen | Format | Required |
+|---|---|---|
+| Kartu Keluarga (KK) | JPEG, PNG, PDF ≤ 5 MB | ✅ |
+| Akta kelahiran anak | JPEG, PNG, PDF ≤ 5 MB | ✅ |
+| Pas foto 3×4 | JPEG, PNG ≤ 5 MB | ✅ |
+
+### Section 6 — Grup WhatsApp
+Setelah semua data ter-upload, wali murid diarahkan untuk bergabung ke grup WA via link:
+`https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh`
+
+## PPDB Period
+- **TP. 2027/2028** (periode ini; update `ppdb_config` sebelum go-live)
+
+## Draft / Save Feature
+- **Ya** — simpan per-section (step-by-step wizard); data tidak hilang jika halaman di-refresh.
+
+## Gating: Bukti Transfer
+- Wajib upload bukti TF **sebelum** mengakses formulir lengkap (Phase D).
+- Formulir tidak bisa dibuka jika `payment_status ≠ payment_submitted` atau `payment_verified`.
+- UX: tampilkan halaman perantara yang meminta upload bukti TF jika belum dilakukan.
 
 ## Scope
 - Gather official list of form fields for registration (child data, parent data, guardian info, medical info, etc.)
@@ -77,4 +153,4 @@ cat specs/04-data-model.md
 - Stakeholder sign-off (documented or screenshot of approval)
 
 ## Completion Notes
-_Not started — awaiting school requirements_
+Requirements confirmed by school (TP.2027/2028 official form, 2026-10-21). All fields, documents, WA group link, and gating rule documented above. Tasks 021–024 unblocked.

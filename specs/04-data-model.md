@@ -69,7 +69,7 @@ Primary table tracking each applicant's registration lifecycle.
 | `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | When initial registration was submitted |
 | `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Last update timestamp (trigger-maintained) |
 | `submitted_at` | `timestamptz` | NULLABLE | When full form was submitted (Phase D complete) |
-| `ppdb_period` | `text` | NOT NULL, DEFAULT current period | PPDB period identifier (e.g., `2026-2027`) for multi-year deduplication |
+| `ppdb_period` | `text` | NOT NULL, DEFAULT current period | PPDB period identifier (e.g., `2027-2028`) for multi-year deduplication |
 
 ```sql
 CREATE TABLE registrations (
@@ -84,7 +84,7 @@ CREATE TABLE registrations (
   created_at          timestamptz NOT NULL DEFAULT now(),
   updated_at          timestamptz NOT NULL DEFAULT now(),
   submitted_at        timestamptz,
-  ppdb_period         text NOT NULL DEFAULT '2026-2027'
+  ppdb_period         text NOT NULL DEFAULT '2027-2028'
 );
 ```
 
@@ -150,41 +150,118 @@ CREATE TABLE payments (
 
 ### 3.4 `registration_documents`
 
-> **⚠️ TBD — Pending school requirements confirmation.**
->
-> This table will hold paths to uploaded document files (Akte Kelahiran, KK, pas foto, etc.). The exact columns depend on which documents the school requires and whether digital uploads are accepted for each.
+> **✅ CONFIRMED — Requirements confirmed 2026-10-21. See task-020.**
 
-**Placeholder columns (subject to change):**
+Three document types are required: `kartu_keluarga`, `akte_kelahiran`, `pas_foto`.
 
 | Column | Type | Constraints | Description |
 |---|---|---|---|
-| `id` | `uuid` | PK | Internal identifier |
-| `registration_id` | `uuid` | FK → `registrations.id` | Associated registration |
-| `document_type` | `text` | NOT NULL | e.g., `akte_kelahiran`, `kartu_keluarga`, `pas_foto` |
-| `file_path` | `text` | NOT NULL | Path in `registration-documents` bucket |
-| `uploaded_at` | `timestamptz` | NOT NULL | Upload timestamp |
+| `id` | `uuid` | PK, `gen_random_uuid()` | Internal identifier |
+| `registration_id` | `uuid` | FK → `registrations.id`, NOT NULL | Associated registration |
+| `document_type` | `document_type` | NOT NULL | Enum: `kartu_keluarga` / `akte_kelahiran` / `pas_foto` |
+| `file_path` | `text` | NOT NULL | Path in `registration-documents` bucket, e.g. `{registration_id}/kk.pdf` |
+| `uploaded_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Upload timestamp |
 
-**RLS summary:** Service role for insert. Admin can SELECT.
+```sql
+CREATE TYPE document_type AS ENUM (
+  'kartu_keluarga',
+  'akte_kelahiran',
+  'pas_foto'
+);
+
+CREATE TABLE registration_documents (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  registration_id  uuid NOT NULL REFERENCES registrations(id) ON DELETE CASCADE,
+  document_type    document_type NOT NULL,
+  file_path        text NOT NULL,
+  uploaded_at      timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (registration_id, document_type) -- one file per doc type per registration
+);
+```
+
+**Accepted formats:** JPEG, PNG, PDF. Max 5 MB per file. `pas_foto` accepts only JPEG/PNG.
+
+**RLS summary:** Service role only for insert/update. Admin can SELECT.
 
 ---
 
 ### 3.5 `registration_form_data`
 
-> **⚠️ TBD — Pending school requirements confirmation.**
->
-> Stores the detailed form data from Phase D. A JSONB column is used for flexibility since the final field list is not yet confirmed. Once requirements are stable, strongly typed columns may replace or supplement the JSONB field.
+> **✅ CONFIRMED — Requirements confirmed 2026-10-21. See task-020.**
 
-**Placeholder columns:**
+Stores detailed form data from Phase D wizard. JSONB is used for flexibility; the schema below is the validated contract enforced by the Edge Function via Zod.
 
 | Column | Type | Constraints | Description |
 |---|---|---|---|
-| `id` | `uuid` | PK | Internal identifier |
-| `registration_id` | `uuid` | FK → `registrations.id`, UNIQUE | One form per registration |
-| `form_data` | `jsonb` | NOT NULL, DEFAULT `'{}'` | All form fields as a JSON object |
-| `created_at` | `timestamptz` | NOT NULL | When first saved |
-| `updated_at` | `timestamptz` | NOT NULL | Last save timestamp |
+| `id` | `uuid` | PK, `gen_random_uuid()` | Internal identifier |
+| `registration_id` | `uuid` | FK → `registrations.id`, UNIQUE, NOT NULL | One form per registration |
+| `form_data` | `jsonb` | NOT NULL, DEFAULT `'{}'` | Validated JSON — see schema below |
+| `created_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | When first draft-saved |
+| `updated_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Last save (trigger-maintained) |
 
-**RLS summary:** Service role for insert/update. Admin can SELECT.
+```sql
+CREATE TABLE registration_form_data (
+  id               uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  registration_id  uuid UNIQUE NOT NULL REFERENCES registrations(id) ON DELETE CASCADE,
+  form_data        jsonb NOT NULL DEFAULT '{}',
+  created_at       timestamptz NOT NULL DEFAULT now(),
+  updated_at       timestamptz NOT NULL DEFAULT now()
+);
+```
+
+**JSON schema for `form_data`** (enforced by Zod in the Edge Function):
+
+```jsonc
+{
+  // Section 1 — Calon Peserta Didik
+  "child": {
+    "full_name": "string, required",
+    "nickname": "string, required",
+    "nik": "string, 16 digits, required",
+    "birth_place": "string, required",
+    "birth_date": "date string ISO-8601, required",
+    "gender": "'laki_laki' | 'perempuan', required",
+    "child_order": "integer >= 1, required",
+    "sibling_count": "integer >= 0, required",
+    "address": "string, required",
+    "program": "'1_tahun' | '2_tahun', required"
+  },
+  // Section 2 — Ayah
+  "father": {
+    "full_name": "string, required",
+    "nik": "string, 16 digits, required",
+    "birth_place": "string, required",
+    "birth_date": "date string ISO-8601, required",
+    "last_education": "string, required",
+    "occupation": "string, required",
+    "monthly_income": "string, optional",
+    "whatsapp_number": "string, required",
+    "address": "string, required"
+  },
+  // Section 3 — Ibu (same shape as father)
+  "mother": {
+    "full_name": "string, required",
+    "nik": "string, 16 digits, required",
+    "birth_place": "string, required",
+    "birth_date": "date string ISO-8601, required",
+    "last_education": "string, required",
+    "occupation": "string, required",
+    "monthly_income": "string, optional",
+    "whatsapp_number": "string, required",
+    "address": "string, required"
+  },
+  // Section 4 — Kesehatan
+  "health": {
+    "weight_kg": "decimal, required",
+    "height_cm": "decimal, required",
+    "blood_type": "'A' | 'B' | 'AB' | 'O' | 'tidak_diketahui', optional",
+    "allergy_history": "string, optional",
+    "disease_history": "string, optional"
+  }
+}
+```
+
+**RLS summary:** Service role only for insert/update. Admin can SELECT.
 
 ---
 
