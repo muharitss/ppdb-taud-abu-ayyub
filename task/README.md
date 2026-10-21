@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 3 In Progress (Supabase Setup Selesai)  
-> **Progres Akurat:** 9 / 36 Task Selesai (**25.00%**)
+> **Status:** Phase 3 In Progress (Database Migrations Selesai)  
+> **Progres Akurat:** 11 / 36 Task Selesai (**30.56%**)
 
 ---
 
@@ -80,7 +80,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **007** | [Dead Code Removal & TS Fix](task-007-dead-code-removal.md) | Phase 2 | P1 | **DONE** | Task 006 |
 | **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md) | Phase 2 | P1 | **DONE** | Task 006, 007 |
 | **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md) | Phase 3 | P0 | **DONE** | Task 004, 005, 008 |
-| **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | `NOT_STARTED` | Task 005, 009 |
+| **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | **DONE** | Task 005, 009 |
 | **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | `NOT_STARTED` | Task 010 |
 | **012** | [Admin Authentication & Authorization](task-012-admin-auth.md) | Phase 3 | P0 | `NOT_STARTED` | Task 009, 011 |
 | **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md) | Phase 4 | P0 | `NOT_STARTED` | Task 010, 011 |
@@ -90,8 +90,8 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **017** | [Edge Fn: submit-payment-proof](task-017-payment-upload-edge-function.md) | Phase 5 | P0 | `NOT_STARTED` | Task 010, 013 |
 | **018** | [Admin Payment Dashboard](task-018-admin-payment-dashboard.md) | Phase 5 | P1 | `NOT_STARTED` | Task 012, 017 |
 | **019** | [Edge Fn: admin-review-payment](task-019-admin-review-edge-function.md) | Phase 5 | P0 | `NOT_STARTED` | Task 010, 011, 012 |
-| **020** | [Form Requirements Confirmation](task-020-form-requirements-confirmation.md) | Phase 6 | P0 | `WAITING_FOR_REQUIREMENTS` | Task 005 |
-| **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md) | Phase 6 | P1 | `BLOCKED` | Task 020, 010 |
+| **020** | [Form Requirements Confirmation](task-020-form-requirements-confirmation.md) | Phase 6 | P0 | **DONE** | Task 005 |
+| **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md) | Phase 6 | P1 | `NOT_STARTED` | Task 020, 010 |
 | **022** | [Full Form UI & File Upload](task-022-full-form-ui.md) | Phase 6 | P1 | `BLOCKED` | Task 021, 015 |
 | **023** | [Edge Fn: document-upload](task-023-document-upload-edge-function.md) | Phase 6 | P0 | `BLOCKED` | Task 021, 010 |
 | **024** | [Success Page & WhatsApp Action](task-024-success-page-and-whatsapp.md) | Phase 7 | P1 | `NOT_STARTED` | Task 022 |
@@ -114,20 +114,19 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 9 (Task 001, 002, 003, 004, 005, 006, 007, 008, 009)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 010 (Database Migrations)
-- **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 1 (Task 020)
-- **Terblokir (`BLOCKED`):** 3 (Task 021, 022, 023)
-- **Persentase Selesai Nyata:** **25.00%**
+- **Selesai (`DONE`):** 11 (Task 001–010, Task 020)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 011 (RLS Policies), Task 021 (Form Schema & Migration)
+- **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
+- **Terblokir (`BLOCKED`):** 2 (Task 022, 023 — menunggu Task 021)
+- **Persentase Selesai Nyata:** **30.56%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 010:** Database Migrations (skema DDL awal: enum, registrations, access, payments, admin, audit).
-2. **Task 011:** Row Level Security (RLS) Policies.
+1. **Task 011:** Row Level Security (RLS) Policies (deny-all by default, service_role & admin policies).
+2. **Task 021:** Form Schema & DB Migration (Zod validation + migration for `registration_documents` & `registration_form_data`).
 3. **Task 012:** Admin Authentication & Authorization.
 
 ### C. Task yang Terblokir & Penyebabnya
-- **Task 020 (`WAITING_FOR_REQUIREMENTS`):** Membutuhkan penetapan resmi dari pihak sekolah mengenai daftar field lengkap formulir dan daftar dokumen santri.
-- **Task 021, 022, 023 (`BLOCKED`):** Bergantung secara langsung pada Task 020. Tidak boleh mengarang skema atau formulir sebelum ada dokumen resmi.
+- **Task 022, 023 (`BLOCKED`):** Bergantung pada Task 021 (Zod schema dan struktur tabel formulir/dokumen).
 
 ---
 
