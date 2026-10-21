@@ -1,7 +1,7 @@
 # Task 008 — Project Restructure
 
 ## Status
-NOT_STARTED
+COMPLETED
 
 ## Priority
 P1
@@ -115,20 +115,20 @@ The current flat structure (all components in src/components/) will not scale fo
 - Placeholder pages must not expose sensitive UI or data
 
 ## Acceptance Criteria
-- [ ] react-router-dom installed
-- [ ] Feature directory structure created as specified
-- [ ] All landing components moved to src/features/landing/components/
-- [ ] src/features/landing/pages/LandingPage.tsx created
-- [ ] src/app/router.tsx created with all routes
-- [ ] src/app/providers.tsx created
-- [ ] Route `/` renders landing page — visually identical to before restructure
-- [ ] Route `/daftar` renders placeholder (no 404 in browser)
-- [ ] Route `/status` renders placeholder
-- [ ] Route `/admin/login` renders placeholder
-- [ ] src/lib/env.ts created
-- [ ] vercel.json created with SPA rewrite
-- [ ] `npx tsc --noEmit` passes with 0 errors
-- [ ] `npm run build` succeeds
+- [x] react-router-dom installed
+- [x] Feature directory structure created as specified
+- [x] All landing components moved to src/features/landing/components/
+- [x] src/features/landing/pages/LandingPage.tsx created
+- [x] src/app/router.tsx created with all routes
+- [x] src/app/providers.tsx created
+- [x] Route `/` renders landing page — visually identical to before restructure
+- [x] Route `/daftar` renders placeholder (no 404 in browser)
+- [x] Route `/status` renders placeholder
+- [x] Route `/admin/login` renders placeholder
+- [x] src/lib/env.ts created
+- [x] vercel.json created with SPA rewrite
+- [x] `npx tsc --noEmit` passes with 0 errors
+- [x] `npm run build` succeeds
 
 ## Verification
 ```bash
@@ -155,4 +155,38 @@ ls src/components/
 - Passing build and TypeScript check
 
 ## Completion Notes
-_Not started_
+1. **Installed Dependency**:
+   - `react-router-dom` (^7.18.4)
+2. **Components Moved (`src/components/` -> `src/features/landing/components/`)**:
+   - `About.tsx`
+   - `ContactInfo.tsx`
+   - `Documentation.tsx`
+   - `Footer.tsx`
+   - `Hero.tsx`
+   - `Location.tsx`
+   - `Navbar.tsx`
+   - `OutputStandards.tsx`
+   - `Programs.tsx`
+   - `RegistrationRequirements.tsx`
+   - `VissionMission.tsx`
+   *(Kept `src/components/ui/` untouched for shadcn primitives)*
+3. **App Architecture & Router**:
+   - Created `src/features/landing/pages/LandingPage.tsx` composing all landing sections.
+   - Created `src/app/router.tsx` configuring routes (`/`, `/daftar`, `/bayar/:registrationNumber`, `/status`, `/admin/login`, `/admin/*`, `*`).
+   - Created `src/app/providers.tsx` wrapping `BrowserRouter`.
+   - Updated `src/App.tsx` to render `<Providers><AppRouter /></Providers>`.
+4. **Scaffolded Directories & Placeholders**:
+   - `src/features/registration/pages/RegistrationStartPage.tsx`
+   - `src/features/payments/pages/PaymentPage.tsx`
+   - `src/features/status/pages/StatusPage.tsx`
+   - `src/features/documents/pages/DocumentUploadPage.tsx`
+   - `src/features/admin/pages/AdminLoginPage.tsx`
+   - `src/features/admin/pages/AdminDashboardPage.tsx`
+   - `src/features/admin/layouts/AdminLayout.tsx`
+   - `src/app/NotFoundPage.tsx`
+   - Scaffolded empty subdirectories with `.gitkeep` for future tasks.
+5. **Environment & Deployment Config**:
+   - Created `src/lib/env.ts` exporting typed accessors for Supabase env variables.
+   - Created `vercel.json` with SPA rewrite rule.
+6. **Validation**:
+   - `npx tsc --noEmit` and `npm run build` pass with 0 errors.

@@ -78,7 +78,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **005** | [Database Schema Review & Approval](task-005-database-schema-review.md) | Phase 1 | P0 | **DONE** | Task 002 |
 | **006** | [Dependency Cleanup & Import Bug Fix](task-006-dependency-cleanup.md) | Phase 2 | P1 | **DONE** | Task 001 |
 | **007** | [Dead Code Removal & TS Fix](task-007-dead-code-removal.md) | Phase 2 | P1 | `COMPLETED` | Task 006 |
-| **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md) | Phase 2 | P1 | `NOT_STARTED` | Task 006, 007 |
+| **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md) | Phase 2 | P1 | `COMPLETED` | Task 006, 007 |
 | **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md) | Phase 3 | P0 | `NOT_STARTED` | Task 004, 005, 008 |
 | **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | `NOT_STARTED` | Task 005, 009 |
 | **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | `NOT_STARTED` | Task 010 |
