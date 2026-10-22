@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 3 In Progress (Database Migrations Selesai)  
-> **Progres Akurat:** 11 / 36 Task Selesai (**30.56%**)
+> **Status:** Phase 3 In Progress (RLS Policies Selesai)  
+> **Progres Akurat:** 12 / 36 Task Selesai (**33.33%**)
 
 ---
 
@@ -81,7 +81,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md) | Phase 2 | P1 | **DONE** | Task 006, 007 |
 | **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md) | Phase 3 | P0 | **DONE** | Task 004, 005, 008 |
 | **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | **DONE** | Task 005, 009 |
-| **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | `NOT_STARTED` | Task 010 |
+| **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | **DONE** | Task 010 |
 | **012** | [Admin Authentication & Authorization](task-012-admin-auth.md) | Phase 3 | P0 | `NOT_STARTED` | Task 009, 011 |
 | **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md) | Phase 4 | P0 | `NOT_STARTED` | Task 010, 011 |
 | **014** | [Edge Fn: verify-registration-access](task-014-verify-access-edge-function.md) | Phase 4 | P0 | `NOT_STARTED` | Task 013 |
@@ -114,16 +114,16 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 11 (Task 001–010, Task 020)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 011 (RLS Policies), Task 021 (Form Schema & Migration)
+- **Selesai (`DONE`):** 12 (Task 001–011, Task 020)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 012 (Admin Auth), Task 013 (create-registration Edge Fn), Task 021 (Form Schema & Migration)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 2 (Task 022, 023 — menunggu Task 021)
-- **Persentase Selesai Nyata:** **30.56%**
+- **Persentase Selesai Nyata:** **33.33%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 011:** Row Level Security (RLS) Policies (deny-all by default, service_role & admin policies).
-2. **Task 021:** Form Schema & DB Migration (Zod validation + migration for `registration_documents` & `registration_form_data`).
-3. **Task 012:** Admin Authentication & Authorization.
+1. **Task 012:** Admin Authentication & Authorization (Supabase Auth, admin roles, protected route).
+2. **Task 013:** Edge Function: `create-registration` (CSPRNG access code, bcrypt hash, initial registrant record).
+3. **Task 021:** Form Schema & DB Migration (Zod validation + migration for `registration_documents` & `registration_form_data`).
 
 ### C. Task yang Terblokir & Penyebabnya
 - **Task 022, 023 (`BLOCKED`):** Bergantung pada Task 021 (Zod schema dan struktur tabel formulir/dokumen).

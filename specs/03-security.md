@@ -60,6 +60,23 @@
 
 RLS is **enabled on every table.** The default is deny-all.
 
+Policy evaluation for admin users uses the security definer function `public.is_admin()` which queries `admin_profiles` safely without recursion:
+
+```sql
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.admin_profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+$$;
+```
+
 ### `registrations`
 
 | Role | SELECT | INSERT | UPDATE | DELETE |
@@ -67,7 +84,9 @@ RLS is **enabled on every table.** The default is deny-all.
 | `anon` | ❌ | ❌ | ❌ | ❌ |
 | `authenticated` (parent) | ❌ (via Edge Fn only) | ❌ (via Edge Fn only) | ❌ (via Edge Fn only) | ❌ |
 | `service_role` (Edge Fn) | ✅ | ✅ | ✅ | ❌ |
-| `admin` (via custom claim) | ✅ (all rows) | ❌ | ✅ | ❌ |
+| `admin` (via `is_admin()`) | ✅ (all rows) | ❌ | ✅ | ❌ |
+
+- Policy: `"admins_all_registrations"` FOR ALL TO `authenticated` USING `public.is_admin()`.
 
 > Parents never have a Supabase Auth session. All parent operations go through Edge Functions using the service role key (which is never exposed to the frontend).
 
@@ -79,6 +98,8 @@ RLS is **enabled on every table.** The default is deny-all.
 | `service_role` (Edge Fn) | ✅ | ✅ | ❌ | ❌ |
 | `admin` | ❌ | ❌ | ❌ | ❌ |
 
+- Policies: None (Default deny for all client roles; only `service_role` bypasses).
+
 > Even admins cannot read access code hashes. The hash is exclusively used by Edge Functions for verification.
 
 ### `payments`
@@ -87,7 +108,9 @@ RLS is **enabled on every table.** The default is deny-all.
 |---|---|---|---|---|
 | `anon` | ❌ | ❌ | ❌ | ❌ |
 | `service_role` (Edge Fn) | ✅ | ✅ | ✅ | ❌ |
-| `admin` | ✅ (own rows of managed registrations) | ❌ | ✅ (review fields only) | ❌ |
+| `admin` (via `is_admin()`) | ✅ (all rows) | ❌ | ✅ (review status & notes) | ❌ |
+
+- Policies: `"admins_select_payments"` (SELECT), `"admins_update_payments"` (UPDATE) USING `public.is_admin()`.
 
 ### `registration_form_data` / `registration_documents`
 
@@ -97,13 +120,18 @@ RLS is **enabled on every table.** The default is deny-all.
 | `service_role` | ✅ | ✅ | ✅ | ❌ |
 | `admin` | ✅ | ❌ | ❌ | ❌ |
 
+> Tables and policies scheduled in Task 021.
+
 ### `admin_profiles`
 
 | Role | SELECT | INSERT | UPDATE | DELETE |
 |---|---|---|---|---|
 | `anon` | ❌ | ❌ | ❌ | ❌ |
-| `authenticated` (admin) | ✅ (own row only) | ❌ | ❌ | ❌ |
+| `authenticated` (own) | ✅ (own row: `id = auth.uid()`) | ❌ | ❌ | ❌ |
+| `admin` (via `is_admin()`) | ✅ (all rows) | ❌ | ❌ | ❌ |
 | `service_role` | ✅ | ✅ | ✅ | ✅ |
+
+- Policies: `"authenticated_select_own_admin_profile"`, `"admins_select_all_admin_profiles"`.
 
 ### `audit_events`
 
@@ -113,15 +141,19 @@ RLS is **enabled on every table.** The default is deny-all.
 | `authenticated` (admin) | ✅ (all) | ❌ | ❌ | ❌ |
 | `service_role` | ✅ | ✅ | ❌ | ❌ |
 
+- Policy: `"admins_select_audit_events"` FOR SELECT TO `authenticated` USING `public.is_admin()`.
+
 > Nobody can UPDATE or DELETE audit events — the log is append-only.
 
 ### `ppdb_config`
 
 | Role | SELECT | INSERT | UPDATE | DELETE |
 |---|---|---|---|---|
-| `anon` | ✅ (non-sensitive keys only, via policy filter) | ❌ | ❌ | ❌ |
-| `authenticated` (admin) | ✅ | ❌ | ✅ | ❌ |
+| `anon` / `authenticated` | ✅ (non-sensitive keys: `registration_open`, `ppdb_period`, `registration_fee`, `admin_whatsapp`) | ❌ | ❌ | ❌ |
+| `authenticated` (admin) | ✅ | ✅ | ✅ | ✅ |
 | `service_role` | ✅ | ✅ | ✅ | ✅ |
+
+- Policies: `"public_select_ppdb_config"` FOR SELECT TO `anon`, `authenticated` filtering by non-sensitive keys; `"admins_all_ppdb_config"` FOR ALL TO `authenticated` USING `public.is_admin()`.
 
 ---
 
