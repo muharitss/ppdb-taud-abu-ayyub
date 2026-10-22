@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-The database runs on **PostgreSQL** managed by Supabase. Row-Level Security (RLS) is enabled on every table. All schema migrations live in `supabase/migrations/`.
+The database runs on **PostgreSQL** managed by Supabase. Row-Level Security (RLS) is enabled on every table. The schema is modeled in `prisma/schema.prisma` and all schema/RLS migrations live in `prisma/migrations/` (managed via Prisma Migrate).
 
 ---
 
@@ -476,7 +476,7 @@ CREATE TRIGGER trg_ppdb_config_updated_at
 | `audit_events` | ❌ | SELECT (no write) | INSERT only |
 | `ppdb_config` | SELECT (non-sensitive) | SELECT+UPDATE | ✅ full |
 
-> Detailed policy SQL will be written in `supabase/migrations/0002_rls_policies.sql`.
+> Detailed policy SQL lives in `prisma/migrations/20261023000100_rls_policies/migration.sql` (including locking down `_prisma_migrations` from `anon`/`authenticated`).
 
 ---
 

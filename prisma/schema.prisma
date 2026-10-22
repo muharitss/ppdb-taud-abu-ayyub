@@ -1,0 +1,118 @@
+// PPDB TAUD Abu Ayyub — database schema (source of truth).
+// Specs: specs/04-data-model.md, specs/03-security.md
+// Things Prisma cannot model (triggers, functions, sequence, RLS, seed)
+// live as raw SQL inside prisma/migrations/*/migration.sql.
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RegistrationStatus {
+  draft
+  awaiting_payment
+  awaiting_form
+  submitted
+  under_review
+  accepted
+  rejected
+
+  @@map("registration_status")
+}
+
+enum PaymentStatus {
+  payment_pending
+  payment_submitted
+  payment_verified
+  payment_rejected
+
+  @@map("payment_status")
+}
+
+model Registration {
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registrationNumber String             @unique @map("registration_number")
+  childName          String             @map("child_name")
+  parentName         String             @map("parent_name")
+  whatsappNumber     String             @map("whatsapp_number")
+  status             RegistrationStatus @default(awaiting_payment)
+  paymentStatus      PaymentStatus      @default(payment_pending) @map("payment_status")
+  reviewNotes        String?            @map("review_notes")
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime           @default(now()) @map("updated_at") @db.Timestamptz
+  submittedAt        DateTime?          @map("submitted_at") @db.Timestamptz
+  ppdbPeriod         String             @default("2027-2028") @map("ppdb_period")
+
+  access   RegistrationAccess?
+  payments Payment[]
+
+  @@index([status], map: "idx_registrations_status")
+  @@index([paymentStatus], map: "idx_registrations_payment_status")
+  @@index([whatsappNumber, ppdbPeriod], map: "idx_registrations_whatsapp")
+  @@index([createdAt(sort: Desc)], map: "idx_registrations_created_at")
+  @@map("registrations")
+}
+
+model RegistrationAccess {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registrationId String       @unique @map("registration_id") @db.Uuid
+  accessCodeHash String       @map("access_code_hash")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@map("registration_access")
+}
+
+model Payment {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registrationId String        @map("registration_id") @db.Uuid
+  proofFilePath  String        @map("proof_file_path")
+  uploadedAt     DateTime      @default(now()) @map("uploaded_at") @db.Timestamptz
+  reviewedAt     DateTime?     @map("reviewed_at") @db.Timestamptz
+  reviewedBy     String?       @map("reviewed_by") @db.Uuid // auth.users.id (no FK, see specs/04-data-model.md)
+  reviewNotes    String?       @map("review_notes")
+  status         PaymentStatus @default(payment_submitted)
+  registration   Registration  @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId], map: "idx_payments_registration_id")
+  @@index([status], map: "idx_payments_status")
+  @@map("payments")
+}
+
+model AdminProfile {
+  id        String   @id @db.Uuid // = auth.users.id (no FK, see specs/04-data-model.md)
+  fullName  String   @map("full_name")
+  role      String   @default("admin")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("admin_profiles")
+}
+
+model AuditEvent {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  actorType  String   @map("actor_type")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String?  @map("entity_id") @db.Uuid
+  metadata   Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([entityType, entityId], map: "idx_audit_entity")
+  @@index([actorId], map: "idx_audit_actor")
+  @@index([createdAt(sort: Desc)], map: "idx_audit_created_at")
+  @@map("audit_events")
+}
+
+model PpdbConfig {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz
+  updatedBy String?  @map("updated_by") @db.Uuid // auth.users.id (no FK, see specs/04-data-model.md)
+
+  @@map("ppdb_config")
+}

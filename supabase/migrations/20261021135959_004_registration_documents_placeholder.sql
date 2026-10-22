@@ -1,3 +1,0 @@
--- Migration 004: Placeholder for registration_documents and registration_form_data
--- Note: Official requirements confirmed in Task 020 (TP. 2027/2028).
--- Formal tables and document_type enum are scheduled in Task 021 (Form Schema & Migration).

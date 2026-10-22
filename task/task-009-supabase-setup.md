@@ -134,16 +134,18 @@ grep -r "service_role\|service-role" .env.local 2>/dev/null && echo "WARNING: se
 - Connected Supabase client verified
 
 ## Completion Notes
-- **Completion Date:** 2026-10-21
+- **Completion Date:** 2026-10-21 (Updated 2026-10-23 for Prisma CLI integration)
 - **Installed Packages:**
   - `@supabase/supabase-js` (^2.118.0)
   - `supabase` CLI added as devDependency (^2.121.0)
-- **Supabase CLI Local Config:**
+  - `prisma` (^7.10.1), `@prisma/client` (^7.10.1), `dotenv` for database CLI management (`npm run db:generate`, `npm run db:migrate`, `npm run db:deploy`)
+- **Supabase & Prisma CLI Local Config:**
   - Initialized `supabase/` directory with `supabase/config.toml` (`project_id = "ppdb-taud-abu-ayyub"`).
+  - Configured `prisma.config.ts` reading `DATABASE_URL` from `.env` (using Supabase Session Pooler port 5432 for IPv4 compatibility).
 - **Client & Environment Handling:**
   - Created `src/lib/supabase/client.ts` initializing client with `SUPABASE_URL` and `SUPABASE_ANON_KEY`, safe against crash if unconfigured.
   - Updated `src/lib/env.ts` with dev warnings for missing environment variables.
-  - Created `.env.example` with template keys for public repository tracking.
+  - Created `.env.example` with template keys (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `DATABASE_URL`).
   - Created `.env.local` with development placeholder (verified gitignored via `*.local` rule).
 - **Verification:**
   - `git check-ignore -v .env.local` verified ignored.

@@ -35,7 +35,8 @@ Sistem bertransformasi dari landing page statis menjadi aplikasi web terintegras
 | **Client Routing** | React Router v6 (`react-router-dom`) | Direncanakan (Task 008) |
 | **Form & Validasi** | React Hook Form + Zod | Direncanakan (Task 015, 021) |
 | **Server State** | TanStack Query (`@tanstack/react-query`) | Direncanakan (Task 008, 018) |
-| **Backend & Database** | Supabase (PostgreSQL 15+, Auth, RLS, Storage) | Direncanakan (Task 009–011) |
+| **Backend & Database** | Supabase (PostgreSQL 15+, Auth, RLS, Storage) | Terpasang (Task 009–011) |
+| **ORM & Migrations** | Prisma 7 (`prisma`, `@prisma/client`) | Terpasang (`prisma/schema.prisma`, `prisma/migrations/`) |
 | **Serverless Logic** | Supabase Edge Functions (Deno / TypeScript) | Direncanakan (Task 013, 014, 017, 019) |
 | **Testing** | Vitest + Playwright | Direncanakan (Task 031, 033) |
 | **Hosting & Deployment**| Vercel (Frontend SPA) + Supabase Cloud (Backend) | Direncanakan (Task 034, 035) |

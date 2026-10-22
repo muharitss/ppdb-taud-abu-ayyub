@@ -155,6 +155,10 @@ $$;
 
 - Policies: `"public_select_ppdb_config"` FOR SELECT TO `anon`, `authenticated` filtering by non-sensitive keys; `"admins_all_ppdb_config"` FOR ALL TO `authenticated` USING `public.is_admin()`.
 
+### `_prisma_migrations`
+
+- RLS enabled with no client policies and `REVOKE ALL ON public._prisma_migrations FROM anon, authenticated;` so migration history is never exposed via the Supabase Data API.
+
 ---
 
 ## 5. Storage Security

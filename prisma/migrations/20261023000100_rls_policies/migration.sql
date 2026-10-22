@@ -1,5 +1,4 @@
--- Migration 005: Row Level Security (RLS) Policies
--- Specifications: specs/03-security.md (Section 4), specs/04-data-model.md
+-- Row Level Security (RLS) Policies. Specs: specs/03-security.md (Section 4)
 
 -- 1. Helper Function: is_admin
 -- Evaluates whether the current authenticated user exists in admin_profiles with role 'admin'
@@ -77,3 +76,14 @@ CREATE POLICY "admins_all_ppdb_config" ON ppdb_config
   FOR ALL TO authenticated
   USING (public.is_admin())
   WITH CHECK (public.is_admin());
+
+-- 9. Prisma bookkeeping table lives in `public`, which Supabase exposes via the Data API.
+-- Lock it down so anon/authenticated cannot read or tamper with migration history.
+-- Guarded: the shadow database has no _prisma_migrations table.
+DO $$
+BEGIN
+  IF to_regclass('public._prisma_migrations') IS NOT NULL THEN
+    ALTER TABLE public._prisma_migrations ENABLE ROW LEVEL SECURITY;
+    REVOKE ALL ON public._prisma_migrations FROM anon, authenticated;
+  END IF;
+END $$;
