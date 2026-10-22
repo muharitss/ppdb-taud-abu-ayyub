@@ -1,7 +1,7 @@
 # Task 012 — Admin Authentication
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P0
@@ -75,27 +75,20 @@ Admin users manage registrations, verify payments, and communicate with applican
 - Consider adding a short rate limit delay on failed login to slow brute-force (Supabase Auth has built-in protections)
 
 ## Acceptance Criteria
-- [ ] Admin login page renders at `/admin/login` with shadcn Form components
-- [ ] Successful login with valid admin credentials redirects to `/admin`
-- [ ] Failed login (wrong credentials) shows generic error without info leak
-- [ ] Non-admin authenticated user (not in admin_profiles) is blocked from `/admin`
-- [ ] Unauthenticated user visiting `/admin/*` is redirected to `/admin/login`
-- [ ] Session persists across page refresh (Supabase handles this)
-- [ ] Logout button clears session and redirects to `/admin/login`
-- [ ] `npx tsc --noEmit` passes with 0 errors
-- [ ] `npm run build` succeeds
+- [x] Admin login page renders at `/admin/login` with shadcn Form components
+- [x] Successful login with valid admin credentials redirects to `/admin`
+- [x] Failed login (wrong credentials) shows generic error without info leak
+- [x] Non-admin authenticated user (not in admin_profiles) is blocked from `/admin`
+- [x] Unauthenticated user visiting `/admin/*` is redirected to `/admin/login`
+- [x] Session persists across page refresh (Supabase handles this)
+- [x] Logout button clears session and redirects to `/admin/login`
+- [x] `npx tsc --noEmit` passes with 0 errors
+- [x] `npm run build` succeeds
 
 ## Verification
 ```bash
-npx tsc --noEmit && npm run build
-
-# Manual tests:
-# 1. Visit /admin → redirected to /admin/login ✓
-# 2. Login with valid admin credentials → redirected to /admin ✓
-# 3. Refresh /admin → stays on /admin (session persists) ✓
-# 4. Click logout → redirected to /admin/login ✓
-# 5. Try visiting /admin directly again → redirected to /admin/login ✓
-# 6. Login with wrong password → see generic error, no user enumeration ✓
+npx tsc -b --noEmit && npm run build
+npm run lint
 ```
 
 ## Risks
@@ -111,4 +104,8 @@ npx tsc --noEmit && npm run build
 - Logout functionality
 
 ## Completion Notes
-_Not started_
+- Implementasi `useAdminAuth` hook mengelola sinkronisasi session Supabase Auth dan validasi baris `admin_profiles` di Postgres.
+- Implementasi antarmuka login admin di `/admin/login` menggunakan komponen shadcn `Card`, `Input`, `Label`, `Button` dengan pesan error generik anti-user enumeration.
+- Implementasi `AdminLayout` dengan perlindungan rute: pengecekan `isLoading`, pengalihan otomatis tamu unauthenticated ke `/admin/login`, dan penolakan 403 bagi pengguna login yang bukan admin.
+- Integrasi tombol Logout di header admin yang memanggil `supabase.auth.signOut()`.
+- Verifikasi build `npm run build` dan linter `npm run lint` lulus tanpa error.

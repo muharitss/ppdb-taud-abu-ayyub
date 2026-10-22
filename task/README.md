@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 3 In Progress (RLS Policies Selesai)  
-> **Progres Akurat:** 12 / 36 Task Selesai (**33.33%**)
+> **Status:** Phase 3 Selesai (Admin Auth & RLS Policies Berhasil)  
+> **Progres Akurat:** 13 / 36 Task Selesai (**36.11%**)
 
 ---
 
@@ -83,7 +83,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md) | Phase 3 | P0 | **DONE** | Task 004, 005, 008 |
 | **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | **DONE** | Task 005, 009 |
 | **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | **DONE** | Task 010 |
-| **012** | [Admin Authentication & Authorization](task-012-admin-auth.md) | Phase 3 | P0 | `NOT_STARTED` | Task 009, 011 |
+| **012** | [Admin Authentication & Authorization](task-012-admin-auth.md) | Phase 3 | P0 | **DONE** | Task 009, 011 |
 | **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md) | Phase 4 | P0 | `NOT_STARTED` | Task 010, 011 |
 | **014** | [Edge Fn: verify-registration-access](task-014-verify-access-edge-function.md) | Phase 4 | P0 | `NOT_STARTED` | Task 013 |
 | **015** | [Registration UI (Initial Form)](task-015-registration-ui.md) | Phase 4 | P1 | `NOT_STARTED` | Task 008, 013 |
@@ -115,16 +115,16 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 12 (Task 001–011, Task 020)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 012 (Admin Auth), Task 013 (create-registration Edge Fn), Task 021 (Form Schema & Migration)
+- **Selesai (`DONE`):** 13 (Task 001–012, Task 020)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 013 (create-registration Edge Fn), Task 018 (Admin Payment Dashboard), Task 021 (Form Schema & Migration), Task 029 (Admin PPDB Config Management)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 2 (Task 022, 023 — menunggu Task 021)
-- **Persentase Selesai Nyata:** **33.33%**
+- **Persentase Selesai Nyata:** **36.11%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 012:** Admin Authentication & Authorization (Supabase Auth, admin roles, protected route).
-2. **Task 013:** Edge Function: `create-registration` (CSPRNG access code, bcrypt hash, initial registrant record).
-3. **Task 021:** Form Schema & DB Migration (Zod validation + migration for `registration_documents` & `registration_form_data`).
+1. **Task 013:** Edge Function: `create-registration` (CSPRNG access code, bcrypt hash, initial registrant record).
+2. **Task 021:** Form Schema & DB Migration (Zod validation + migration for `registration_documents` & `registration_form_data`).
+3. **Task 029:** Admin PPDB Config Management.
 
 ### C. Task yang Terblokir & Penyebabnya
 - **Task 022, 023 (`BLOCKED`):** Bergantung pada Task 021 (Zod schema dan struktur tabel formulir/dokumen).
@@ -194,6 +194,9 @@ npm run preview
 
 ## 9. Log Riwayat Perubahan
 
+- **2026-10-23 (Phase 3):**
+  - Task 012 resmi diselesaikan (`DONE`): Admin Authentication & Authorization. Implementasi `useAdminAuth`, login form anti-enumeration di `/admin/login`, route protection dan role guard berbasis query `admin_profiles`, serta session logout. Phase 3 tuntas.
+  - Progres: 13 / 36 Task (**36.11%**).
 - **2026-10-21 (Phase 2):**
   - Task 006 resmi diselesaikan (`DONE`): Pembersihan dependensi (`keen-slider`, `cn`, `radix-ui`), perbaikan impor `cn` ke `@/lib/utils`, dan impor `Slot` ke `@radix-ui/react-slot`.
   - Progres: 6 / 36 Task (**16.67%**).
