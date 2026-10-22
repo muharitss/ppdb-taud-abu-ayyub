@@ -121,29 +121,39 @@ src/
 ├── router/
 │   └── index.tsx                  # React Router route definitions
 ├── types/
-│   └── database.ts                # Generated Supabase types (supabase gen types)
+│   └── database.ts                # Re-exports / types from Prisma generated client (prisma/generated)
 ├── App.tsx
 ├── main.tsx
 └── index.css
+```
+
+### Prisma Schema & Migrations
+
+```
+prisma/
+├── schema.prisma                  # Database schema source of truth
+├── generated/                     # Generated Prisma Client & TypeScript types
+└── migrations/
+    ├── 20261023000000_init/
+    │   └── migration.sql          # Enums, tables, indexes, sequences, triggers, seed
+    └── 20261023000100_rls_policies/
+        └── migration.sql          # RLS policies & is_admin() helper
 ```
 
 ### Supabase Edge Functions
 
 ```
 supabase/
-├── functions/
-│   ├── create-registration/
-│   │   └── index.ts
-│   ├── verify-registration-access/
-│   │   └── index.ts
-│   ├── submit-payment-proof/
-│   │   └── index.ts
-│   ├── admin-review-payment/
-│   │   └── index.ts
-│   └── document-upload/           # Phase D (deferred until Task 020 requirements confirmed)
-└── migrations/
-    ├── 0001_initial_schema.sql
-    └── 0002_rls_policies.sql
+└── functions/
+    ├── create-registration/
+    │   └── index.ts
+    ├── verify-registration-access/
+    │   └── index.ts
+    ├── submit-payment-proof/
+    │   └── index.ts
+    ├── admin-review-payment/
+    │   └── index.ts
+    └── document-upload/           # Phase D (deferred until Task 020 requirements confirmed)
 ```
 
 ---
@@ -306,7 +316,7 @@ VITE_SUPABASE_ANON_KEY=<anon-key>
 | Lint | `eslint .` (ESLint 9 flat config) |
 | Deploy frontend | Vercel (auto from main branch) |
 | Deploy Edge Functions | `supabase functions deploy` |
-| DB migrations | `supabase db push` (local) / CI migration runner (prod) |
+| DB schema & migrations | `npx prisma migrate dev` (dev) / `npx prisma migrate deploy` (prod) + `npx prisma generate` |
 
 > CI pipeline spec is out of scope for now; add when repository is set up on GitHub.
 

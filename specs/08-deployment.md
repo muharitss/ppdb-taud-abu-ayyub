@@ -84,17 +84,20 @@ supabase init
 supabase start
 ```
 
-### 3.2 Applying Migrations
+### 3.2 Applying Migrations (Prisma)
 
 ```bash
-# Apply pending migrations to local
-supabase db push
+# Create/apply migrations in development & generate Prisma client
+npx prisma migrate dev
 
-# Apply pending migrations to a linked remote project
-supabase db push --linked
+# Apply pending migrations to staging/production database
+npx prisma migrate deploy
+
+# Generate Prisma Client & TypeScript types
+npx prisma generate
 ```
 
-Migration files live in `supabase/migrations/` and are applied in chronological order.
+Migration files live in `prisma/migrations/` and are tracked in `_prisma_migrations`.
 
 ### 3.3 Edge Functions
 
@@ -216,15 +219,14 @@ const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
 ### 6.2 File Naming Convention
 
 ```
-supabase/migrations/YYYYMMDDHHMMSS_description.sql
+prisma/migrations/YYYYMMDDHHMMSS_description/migration.sql
 ```
 
 Examples:
 
 ```
-supabase/migrations/20260101000000_create_registrations_table.sql
-supabase/migrations/20260102000000_add_payment_proof_url.sql
-supabase/migrations/20260103000000_add_audit_log_table.sql
+prisma/migrations/20261023000000_init/migration.sql
+prisma/migrations/20261023000100_rls_policies/migration.sql
 ```
 
 ### 6.3 Promotion Workflow
@@ -233,10 +235,10 @@ supabase/migrations/20260103000000_add_audit_log_table.sql
 Local → Staging → Production
 ```
 
-1. Write migration and test locally: `supabase db push` (local).
-2. Apply to staging: `supabase db push --linked` (linked to staging project).
+1. Edit `prisma/schema.prisma` (or use `--create-only` for raw SQL like RLS/triggers) and run `npx prisma migrate dev`.
+2. Apply to staging: `npx prisma migrate deploy` with staging `DATABASE_URL`.
 3. Run integration and E2E tests against staging.
-4. Apply to production: switch linked project, run `supabase db push --linked`.
+4. Apply to production: `npx prisma migrate deploy` with production `DATABASE_URL`.
 
 ### 6.4 Rollback Plan
 

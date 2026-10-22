@@ -37,14 +37,14 @@ Without RLS policies, the default Supabase behavior is to deny all access — wh
 - specs/04-data-model.md
 
 ## Implementation Plan
-1. Run `npx supabase migration new 005_rls_policies`
-2. Write 005_rls_policies.sql with `is_admin()` helper and table policies
-3. Update specs/03-security.md with final policy set
-4. Document manual verification and deployment steps
+1. Create Prisma migration `prisma/migrations/20261023000100_rls_policies/migration.sql`
+2. Write `is_admin()` helper, table RLS policies, and lock down `_prisma_migrations` from `anon`/`authenticated`
+3. Update `specs/03-security.md` with final policy set
+4. Apply migration via `npx prisma migrate deploy`
 
 ## Files Expected to Change
-- supabase/migrations/20261022211526_005_rls_policies.sql (new)
-- specs/03-security.md (updated with final policies)
+- `prisma/migrations/20261023000100_rls_policies/migration.sql` (new)
+- `specs/03-security.md` (updated with final policies)
 
 ## Security Considerations
 - **Anon access to registrations must be blocked** — verified by deny-by-default with no anon policy on `registrations`
@@ -68,13 +68,13 @@ Without RLS policies, the default Supabase behavior is to deny all access — wh
 - [x] specs/03-security.md updated with final policies
 
 ## Deliverables
-- 005_rls_policies.sql migration (`supabase/migrations/20261022211526_005_rls_policies.sql`)
-- RLS enabled on all 6 tables with security definer `is_admin()`
-- Updated specs/03-security.md
+- `prisma/migrations/20261023000100_rls_policies/migration.sql`
+- RLS enabled on all 6 tables + `_prisma_migrations` with security definer `is_admin()`
+- Updated `specs/03-security.md`
 
 ## Completion Notes
-Completed on 2026-10-23. Created `supabase/migrations/20261022211526_005_rls_policies.sql`.
+Completed on 2026-10-23. Created and applied `prisma/migrations/20261023000100_rls_policies/migration.sql` via Prisma.
 Included `public.is_admin()` SECURITY DEFINER function to avoid policy recursion on `admin_profiles`.
-Configured deny-all defaults for client roles on `registrations`, `registration_access`, and `payments`.
+Configured deny-all defaults for client roles on `registrations`, `registration_access`, `payments`, and `_prisma_migrations`.
 Configured safe public access for non-sensitive `ppdb_config` keys.
 Updated `specs/03-security.md`.

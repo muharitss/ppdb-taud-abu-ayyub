@@ -14,16 +14,13 @@ P0
 Create and apply the initial database migrations for all approved tables and enums based on the confirmed schema from specs/04-data-model.md.
 
 ## Context
-With Supabase configured (Task 009) and schema approved (Task 005), database migrations can now be created. Migrations are SQL files managed by the Supabase CLI under supabase/migrations/. They are applied in order and tracked. This task creates the foundational schema; RLS policies are a separate migration (Task 011).
+With Supabase configured (Task 009) and schema approved (Task 005), database migrations are managed via **Prisma** (`prisma/schema.prisma` + `prisma/migrations/`). Prisma models the core tables, enums, and indexes, while PostgreSQL-specific objects (`generate_registration_number`, `set_updated_at` triggers, sequences, and default `ppdb_config` seed) are appended in the initial Prisma migration SQL. This task creates the foundational schema; RLS policies are in a separate migration (Task 011).
 
 ## Scope
-1. Create migration: 001_enums.sql — registration_status and payment_status enums
-2. Create migration: 002_tables.sql — all core tables
-3. Create migration: 003_indexes.sql — all performance indexes
-4. Create migration: 004_registration_documents_placeholder.sql — TBD stub or comment
-5. Apply migrations to local Supabase: `supabase db push` or `supabase migration up`
-6. Apply migrations to remote Supabase project
-7. Verify schema in Supabase Studio
+1. Define `prisma/schema.prisma` with `RegistrationStatus` and `PaymentStatus` enums and all 6 core models (`Registration`, `RegistrationAccess`, `Payment`, `AdminProfile`, `AuditEvent`, `PpdbConfig`) and their indexes
+2. Create initial Prisma migration `prisma/migrations/20261023000000_init/migration.sql` including sequences, triggers, `generate_registration_number`, and default `ppdb_config` seed
+3. Apply migrations to remote Supabase database (`npx prisma migrate deploy`) and generate Prisma Client (`npx prisma generate`)
+4. Defer `registration_documents` and `registration_form_data` models to Task 021
 
 ## Out of Scope
 - RLS policies (Task 011)
@@ -73,44 +70,40 @@ With Supabase configured (Task 009) and schema approved (Task 005), database mig
 12. Verify in remote Supabase Studio
 
 ## Files Expected to Change
-- supabase/migrations/YYYYMMDDHHMMSS_001_enums.sql (new)
-- supabase/migrations/YYYYMMDDHHMMSS_002_tables.sql (new)
-- supabase/migrations/YYYYMMDDHHMMSS_003_indexes.sql (new)
-- supabase/migrations/YYYYMMDDHHMMSS_004_registration_documents_placeholder.sql (new)
+- `prisma/schema.prisma` (new)
+- `prisma.config.ts` (new)
+- `prisma/migrations/migration_lock.toml` (new)
+- `prisma/migrations/20261023000000_init/migration.sql` (new)
 
 ## Security Considerations
-- Do NOT enable RLS in these migrations — that is Task 011. Tables will be protected by Supabase's default (no policies = no access) until RLS is set up.
-- Do NOT insert seed data with real information in migrations
-- Verify UNIQUE constraint on registration_number prevents duplicates
+- Do NOT enable RLS in this migration — that is Task 011.
+- Do NOT insert seed data with real applicant information in migrations
+- Verify UNIQUE constraint on `registration_number` prevents duplicates
 
 ## Acceptance Criteria
-- [x] Migration 001: enums created (registration_status, payment_status)
-- [x] Migration 002: all 6 tables created with correct columns, types, and constraints (registrations, registration_access, payments, admin_profiles, audit_events, ppdb_config)
-- [x] Migration 003: indexes created
-- [x] Migration 004: placeholder created with TBD comment (referenced Task 020 resolution)
-- [x] UNIQUE constraint on registrations.registration_number verified
-- [x] Migration files created in supabase/migrations/ with valid SQL syntax
+- [x] Enums created (`registration_status`, `payment_status`)
+- [x] All 6 tables created with correct columns, types, and constraints (`registrations`, `registration_access`, `payments`, `admin_profiles`, `audit_events`, `ppdb_config`)
+- [x] Performance and lookup indexes created
+- [x] `registration_documents` and `registration_form_data` deferred cleanly to Task 021
+- [x] UNIQUE constraint on `registrations.registration_number` verified
+- [x] Migration applied to Supabase database via Prisma (`npx prisma migrate deploy`) and client generated (`npx prisma generate`)
 
 ## Verification
 ```bash
-# Migration files generated:
-# supabase/migrations/20261021135938_001_enums.sql
-# supabase/migrations/20261021135946_002_tables.sql
-# supabase/migrations/20261021135952_003_indexes.sql
-# supabase/migrations/20261021135959_004_registration_documents_placeholder.sql
+npx prisma migrate status
+npx prisma generate
 ```
 
 ## Risks
-- Schema may require additive changes in Phase 6 (registration_form_data) — design for extensibility with JSONB or nullable columns
+- Schema will require additive changes in Phase 6 (`registration_form_data` & `registration_documents` in Task 021)
 - Migration ordering is critical — enums must be created before tables that reference them
-- Column type mismatches may not surface until application code runs — verify types in Studio
+- Cross-schema FKs to `auth.users` are omitted so Prisma only manages the `public` schema without introspecting Supabase internal `auth` tables
 
 ## Deliverables
-- 4 migration files in supabase/migrations/
+- `prisma/schema.prisma` and `prisma/migrations/20261023000000_init/migration.sql`
 
 ## Completion Notes
-Completed 2026-10-21. All 4 migration files written adhering to specs/04-data-model.md specifications:
-1. `20261021135938_001_enums.sql`: `registration_status`, `payment_status`.
-2. `20261021135946_002_tables.sql`: sequences, update triggers, `generate_registration_number`, tables `registrations`, `registration_access`, `payments`, `admin_profiles`, `audit_events`, `ppdb_config` with default seed.
-3. `20261021135952_003_indexes.sql`: indexes for fast querying on status, payment_status, registration_number, whatsapp_number, audit_events, and foreign keys.
-4. `20261021135959_004_registration_documents_placeholder.sql`: placeholder referencing Task 020 requirements.
+Completed 2026-10-21 (Migrated to Prisma on 2026-10-23). Schema and initial migration adhere to `specs/04-data-model.md`:
+1. `prisma/schema.prisma`: Models `Registration`, `RegistrationAccess`, `Payment`, `AdminProfile`, `AuditEvent`, `PpdbConfig` and enums `RegistrationStatus`, `PaymentStatus`.
+2. `prisma/migrations/20261023000000_init/migration.sql`: Core DDL, indexes, `ppdb_registration_seq`, `generate_registration_number`, `set_updated_at` triggers, and default `ppdb_config` seed.
+3. Applied to remote Supabase PostgreSQL and verified with `npx prisma generate`.
