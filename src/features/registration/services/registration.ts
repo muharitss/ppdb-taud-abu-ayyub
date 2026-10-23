@@ -10,7 +10,20 @@ export async function createRegistration(
   );
 
   if (error) {
-    throw new Error(error.message || "Gagal membuat pendaftaran");
+    let message = error.message || "Gagal membuat pendaftaran";
+    try {
+      // Extract specific error message from Edge Function response body if available
+      const ctx = (error as { context?: Response }).context;
+      if (ctx && typeof ctx.json === "function") {
+        const body = await ctx.json();
+        if (body?.error && typeof body.error === "string") {
+          message = body.error;
+        }
+      }
+    } catch {
+      // Ignore body parsing failure, use default error message
+    }
+    throw new Error(message);
   }
 
   if (!data || !data.registration_number || !data.access_code) {

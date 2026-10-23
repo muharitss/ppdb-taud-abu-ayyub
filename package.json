@@ -15,6 +15,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@hookform/resolvers": "^6.0.0",
     "@prisma/client": "^7.10.1",
     "@radix-ui/react-label": "^2.1.17",
     "@radix-ui/react-slot": "^1.2.4",
@@ -26,9 +27,12 @@
     "lucide-react": "^0.553.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.90.0",
     "react-router-dom": "^7.18.4",
+    "sonner": "^2.0.8",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.17"
+    "tailwindcss": "^4.1.17",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

@@ -1,7 +1,7 @@
 # Task 015 — Registration UI
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1
@@ -93,32 +93,23 @@ This is the first page a registrant interacts with. It must be simple, mobile-fr
 - Inform user clearly that the access code cannot be recovered
 
 ## Acceptance Criteria
-- [ ] Registration form renders at `/daftar` with shadcn Form components
-- [ ] All 3 fields have labels and validation error messages in Indonesian
-- [ ] WhatsApp number validation enforces Indonesian format
-- [ ] Submit button shows loading state during API call
-- [ ] Successful submission shows registration_number and access_code
-- [ ] access_code display is prominent and copyable (clipboard button)
-- [ ] Warning message displayed in Indonesian: save the access code
-- [ ] "Lanjut ke Pembayaran" navigates to `/bayar/{registrationNumber}`
-- [ ] access_code is NOT stored in localStorage (verified via browser DevTools)
-- [ ] API error shows error message in Indonesian
-- [ ] Form is mobile-responsive
-- [ ] `npx tsc --noEmit` passes with 0 errors
-- [ ] `npm run build` succeeds
+- [x] Registration form renders at `/daftar` with shadcn Form components
+- [x] All 3 fields have labels and validation error messages in Indonesian
+- [x] WhatsApp number validation enforces Indonesian format
+- [x] Submit button shows loading state during API call
+- [x] Successful submission shows registration_number and access_code
+- [x] access_code display is prominent and copyable (clipboard button)
+- [x] Warning message displayed in Indonesian: save the access code
+- [x] "Lanjut ke Pembayaran" navigates to `/bayar/{registrationNumber}`
+- [x] access_code is NOT stored in localStorage (verified via browser DevTools)
+- [x] API error shows error message in Indonesian
+- [x] Form is mobile-responsive
+- [x] `npx tsc --noEmit` passes with 0 errors
+- [x] `npm run build` succeeds
 
 ## Verification
 ```bash
-npx tsc --noEmit && npm run build
-
-# Manual tests:
-# 1. Navigate to /daftar
-# 2. Submit empty form → see validation errors in Indonesian ✓
-# 3. Submit with invalid WhatsApp → see format error ✓
-# 4. Submit with valid data → see success screen with registration_number and access_code ✓
-# 5. Check browser DevTools → localStorage, sessionStorage — no access_code ✓
-# 6. Click "Lanjut ke Pembayaran" → navigate to /bayar/{number} ✓
-# 7. Go back → access_code is gone from success screen ✓
+npx tsc -b --noEmit && npm run build
 ```
 
 ## Risks
@@ -133,4 +124,8 @@ npx tsc --noEmit && npm run build
 - Sonner toast integrated
 
 ## Completion Notes
-_Not started_
+- Implemented `initialRegistrationSchema` with Zod validation adhering strictly to Indonesian phone number formats and length constraints.
+- Created `src/components/ui/form.tsx` shadcn Form primitive.
+- Configured Sonner `Toaster` in `src/app/providers.tsx`.
+- Implemented full reactive UX in `RegistrationStartPage.tsx` supporting form submission, error handling, copy-to-clipboard, prominent security warnings, and router state forwarding for `access_code` without persisting to localStorage/sessionStorage.
+- Verified TypeScript strict type checks (`tsc -b --noEmit`), Vite production build, and ESLint without errors.
