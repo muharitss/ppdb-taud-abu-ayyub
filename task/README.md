@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 4 Selesai (Registration UI Selesai)  
-> **Progres Akurat:** 16 / 36 Task Selesai (**44.44%**)
+> **Status:** Phase 5 In Progress (Payment Page UI & submit-payment-proof Edge Function Selesai)  
+> **Progres Akurat:** 18 / 36 Task Selesai (**50.00%**)
 
 ---
 
@@ -87,8 +87,8 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md) | Phase 4 | P0 | **DONE** | Task 010, 011 |
 | **014** | [Edge Fn: verify-registration-access](task-014-verify-access-edge-function.md) | Phase 4 | P0 | **DONE** | Task 013 |
 | **015** | [Registration UI (Initial Form)](task-015-registration-ui.md) | Phase 4 | P1 | **DONE** | Task 008, 013 |
-| **016** | [Payment Page UI](task-016-payment-page-ui.md) | Phase 5 | P1 | `NOT_STARTED` | Task 015 |
-| **017** | [Edge Fn: submit-payment-proof](task-017-payment-upload-edge-function.md) | Phase 5 | P0 | `NOT_STARTED` | Task 010, 013 |
+| **016** | [Payment Page UI](task-016-payment-page-ui.md) | Phase 5 | P1 | **DONE** | Task 015 |
+| **017** | [Edge Fn: submit-payment-proof](task-017-payment-upload-edge-function.md) | Phase 5 | P0 | **DONE** | Task 010, 013 |
 | **018** | [Admin Payment Dashboard](task-018-admin-payment-dashboard.md) | Phase 5 | P1 | `NOT_STARTED` | Task 012, 017 |
 | **019** | [Edge Fn: admin-review-payment](task-019-admin-review-edge-function.md) | Phase 5 | P0 | `NOT_STARTED` | Task 010, 011, 012 |
 | **020** | [Form Requirements Confirmation](task-020-form-requirements-confirmation.md) | Phase 6 | P0 | **DONE** | Task 005 |
@@ -115,15 +115,15 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 16 (Task 001–015, Task 020)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 016 (Payment Page UI), Task 017 (submit-payment-proof Edge Fn), Task 018 (Admin Payment Dashboard), Task 021 (Form Schema & Migration), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
+- **Selesai (`DONE`):** 18 (Task 001–017, Task 020)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 018 (Admin Payment Dashboard), Task 019 (Edge Fn: admin-review-payment), Task 021 (Form Schema & Migration), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 2 (Task 022, 023 — menunggu Task 021)
-- **Persentase Selesai Nyata:** **44.44%**
+- **Persentase Selesai Nyata:** **50.00%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 016:** Payment Page UI (unblocked by Task 015).
-2. **Task 017:** Edge Function: `submit-payment-proof`.
+1. **Task 018:** Admin Payment Dashboard (unblocked by Task 012, 017).
+2. **Task 019:** Edge Function: `admin-review-payment` (unblocked by Task 010, 011, 012).
 3. **Task 021:** Form Schema & DB Migration.
 4. **Task 025:** Registration Status Page UI.
 5. **Task 029:** Admin PPDB Config Management.
@@ -196,6 +196,11 @@ npm run preview
 
 ## 9. Log Riwayat Perubahan
 
+- **2026-10-23 (Phase 5):**
+  - Task 016 & 017 resmi diselesaikan (`DONE`):
+    - **Task 017 (Edge Function `submit-payment-proof`):** Endpoint Deno untuk upload bukti transfer dengan validasi magic bytes berkas (JPEG, PNG, PDF), batas ukuran 5MB, verifikasi hash kode akses dengan proteksi timing attack (dummy bcrypt hash), pencegahan double-submission (409 Conflict), penyimpanan ke private storage bucket `payment-proofs`, insert ke tabel `payments`, update `payment_status` ke `payment_submitted`, dan pencatatan audit log `audit_events`.
+    - **Task 016 (Payment Page UI `/daftar/pembayaran` & `/bayar/:registrationNumber`):** Tampilan instruksi transfer bank resmi (BSI 7216959997 a.n TAUD SaQu Abu Ayyub) dengan tombol salin nomor rekening dan nominal Rp300.000, komponen upload bukti drag-and-drop dengan validasi client-side, pratinjau thumbnail gambar / info PDF, penanganan error ramah pengguna, integrasi API ke Edge Function `submit-payment-proof`, serta layar konfirmasi sukses yang mengarahkan ke halaman status dan tombol WhatsApp konfirmasi admin.
+  - Progres: 18 / 36 Task (**50.00%**).
 - **2026-10-23 (Phase 4):**
   - Task 015 resmi diselesaikan (`DONE`): Registration UI (`/daftar`). Implementasi formulir pendaftaran awal santri (nama calon santri, nama orang tua/wali, nomor WhatsApp Indonesia), validasi Zod + React Hook Form + shadcn Form primitive, integrasi Sonner toast, penanganan error humanis bahasa Indonesia, tampilan nomor pendaftaran & kode akses sekali-tampil dengan tombol salin (clipboard API), peringatan tegas anti-data breach, dan passing `access_code` secara strictly in-memory lewat React Router state menuju alur pembayaran tanpa disimpan di `localStorage`/`sessionStorage`. Phase 4 tuntas.
   - Progres: 16 / 36 Task (**44.44%**).
