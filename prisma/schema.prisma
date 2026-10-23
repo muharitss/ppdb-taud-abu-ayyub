@@ -33,6 +33,14 @@ enum PaymentStatus {
   @@map("payment_status")
 }
 
+enum DocumentType {
+  kartu_keluarga
+  akte_kelahiran
+  pas_foto
+
+  @@map("document_type")
+}
+
 model Registration {
   id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   registrationNumber String             @unique @map("registration_number")
@@ -47,8 +55,10 @@ model Registration {
   submittedAt        DateTime?          @map("submitted_at") @db.Timestamptz
   ppdbPeriod         String             @default("2027-2028") @map("ppdb_period")
 
-  access   RegistrationAccess?
-  payments Payment[]
+  access    RegistrationAccess?
+  payments  Payment[]
+  documents RegistrationDocument[]
+  formData  RegistrationFormData?
 
   @@index([status], map: "idx_registrations_status")
   @@index([paymentStatus], map: "idx_registrations_payment_status")
@@ -81,6 +91,30 @@ model Payment {
   @@index([registrationId], map: "idx_payments_registration_id")
   @@index([status], map: "idx_payments_status")
   @@map("payments")
+}
+
+model RegistrationDocument {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registrationId String       @map("registration_id") @db.Uuid
+  documentType   DocumentType @map("document_type")
+  filePath       String       @map("file_path")
+  uploadedAt     DateTime     @default(now()) @map("uploaded_at") @db.Timestamptz
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@unique([registrationId, documentType], map: "registration_documents_registration_id_document_type_key")
+  @@index([registrationId], map: "idx_reg_docs_registration_id")
+  @@map("registration_documents")
+}
+
+model RegistrationFormData {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registrationId String       @unique(map: "idx_form_data_registration_id") @map("registration_id") @db.Uuid
+  formData       Json         @default("{}") @map("form_data")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @default(now()) @map("updated_at") @db.Timestamptz
+  registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@map("registration_form_data")
 }
 
 model AdminProfile {

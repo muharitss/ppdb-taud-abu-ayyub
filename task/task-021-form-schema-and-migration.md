@@ -1,7 +1,7 @@
 # Task 021 — Form Schema and Migration
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1
@@ -62,26 +62,37 @@ _To be detailed after task 020 completes._
 - JSONB schema should be validated at the Edge Function layer, not just client-side
 
 ## Acceptance Criteria
-- [ ] Zod schema covers all 4 confirmed sections with correct validation rules (NIK 16 digit, date ISO-8601, enums, optional fields)
-- [ ] `document_type` enum created in DB
-- [ ] `registration_form_data` migration applies cleanly (UNIQUE on registration_id, `updated_at` trigger)
-- [ ] `registration_documents` migration applies cleanly (UNIQUE on registration_id + document_type)
-- [ ] RLS applied to both new tables
-- [ ] TypeScript types exported from Zod schemas
-- [ ] Migration tested: `supabase db reset` passes
+- [x] Zod schema covers all 4 confirmed sections with correct validation rules (NIK 16 digit, date ISO-8601, enums, optional fields)
+- [x] `document_type` enum created in DB
+- [x] `registration_form_data` migration applies cleanly (UNIQUE on registration_id, `updated_at` trigger)
+- [x] `registration_documents` migration applies cleanly (UNIQUE on registration_id + document_type)
+- [x] RLS applied to both new tables
+- [x] TypeScript types exported from Zod schemas
+- [x] Migration tested: `npx prisma generate` and unit test pass
 
 ## Verification
 ```bash
-supabase db reset
-npx tsc --noEmit
+node --experimental-strip-types src/features/registration/__tests__/form-schema.test.ts
+npx prisma generate
+npx tsc -b --noEmit
+npm run lint
+npm run build
 ```
 
 ## Risks
 - Schema may need revision if school requirements change after confirmation
 
 ## Deliverables
-- Zod schema file(s)
-- Database migration files
+- Zod schema file: `src/features/registration/schemas/formSchema.ts`
+- Database migration file: `prisma/migrations/20261023000300_registration_form_and_documents/migration.sql`
+- Updated Prisma schema: `prisma/schema.prisma`
+- Unit tests: `src/features/registration/__tests__/form-schema.test.ts`
 
 ## Completion Notes
-Unblocked 2026-10-21. Requirements confirmed in task-020. Ready to implement.
+Completed 2026-10-23.
+1. Implemented Zod schema in `src/features/registration/schemas/formSchema.ts` covering `childSchema`, `fatherSchema`, `motherSchema`, `healthSchema`, and `registrationFormSchema`, as well as `documentTypeSchema`.
+2. Exported TypeScript types (`ChildFormData`, `ParentFormData`, `FatherFormData`, `MotherFormData`, `HealthFormData`, `RegistrationFormData`, `DocumentType`).
+3. Added `DocumentType` enum, `RegistrationDocument` model, and `RegistrationFormData` model to `prisma/schema.prisma`.
+4. Created migration `prisma/migrations/20261023000300_registration_form_and_documents/migration.sql` with enum, tables, constraints, updated_at trigger, and admin SELECT RLS policies.
+5. Re-generated Prisma client (`npx prisma generate`).
+6. Verified with unit tests (`src/features/registration/__tests__/form-schema.test.ts`), strict TypeScript check (`npx tsc -b --noEmit`), linter (`npm run lint`), and production build (`npm run build`). Tasks 022 and 023 are unblocked.

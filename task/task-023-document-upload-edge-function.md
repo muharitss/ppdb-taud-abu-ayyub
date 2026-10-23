@@ -1,13 +1,13 @@
 # Task 023 — Edge Function: document-upload
 
 ## Status
-BLOCKED
+NOT_STARTED
 
 ## Priority
 P0
 
 ## Dependencies
-- Task 021 — Form Schema & Migration (BLOCKED)
+- Task 021 — Form Schema & Migration (**DONE**)
 - Task 010 — Database Migrations
 
 ## Objective

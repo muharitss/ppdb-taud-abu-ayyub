@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 5 Selesai (Payment Review Dashboard & Edge Function Tuntas), Phase 6/7 Siap Dikerjakan  
-> **Progres Akurat:** 20 / 36 Task Selesai (**55.56%**)
+> **Status:** Phase 6 Aktif (Form Schema & DB Migration Tuntas, Full Form UI & Document Upload Siap), Phase 7/8 Siap Dikerjakan  
+> **Progres Akurat:** 21 / 36 Task Selesai (**58.33%**)
 
 ---
 
@@ -92,9 +92,9 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **018** | [Admin Payment Dashboard](task-018-admin-payment-dashboard.md) | Phase 5 | P1 | **DONE** | Task 012, 017 |
 | **019** | [Edge Fn: admin-review-payment](task-019-admin-review-edge-function.md) | Phase 5 | P0 | **DONE** | Task 010, 011, 012 |
 | **020** | [Form Requirements Confirmation](task-020-form-requirements-confirmation.md) | Phase 6 | P0 | **DONE** | Task 005 |
-| **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md) | Phase 6 | P1 | `NOT_STARTED` | Task 020, 010 |
-| **022** | [Full Form UI & File Upload](task-022-full-form-ui.md) | Phase 6 | P1 | `BLOCKED` | Task 021, 015 |
-| **023** | [Edge Fn: document-upload](task-023-document-upload-edge-function.md) | Phase 6 | P0 | `BLOCKED` | Task 021, 010 |
+| **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md) | Phase 6 | P1 | **DONE** | Task 020, 010 |
+| **022** | [Full Form UI & File Upload](task-022-full-form-ui.md) | Phase 6 | P1 | `NOT_STARTED` | Task 021, 015 |
+| **023** | [Edge Fn: document-upload](task-023-document-upload-edge-function.md) | Phase 6 | P0 | `NOT_STARTED` | Task 021, 010 |
 | **024** | [Success Page & WhatsApp Action](task-024-success-page-and-whatsapp.md) | Phase 7 | P1 | `NOT_STARTED` | Task 022 |
 | **025** | [Registration Status Page UI](task-025-status-page.md) | Phase 7 | P1 | `NOT_STARTED` | Task 014 |
 | **026** | [Admin Dashboard Overview](task-026-admin-dashboard-overview.md) | Phase 8 | P2 | `NOT_STARTED` | Task 012, 018 |
@@ -115,19 +115,20 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 20 (Task 001–020)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 021 (Form Schema & DB Migration), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
+- **Selesai (`DONE`):** 21 (Task 001–021)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 022 (Full Form UI & File Upload), Task 023 (Edge Fn: document-upload), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
-- **Terblokir (`BLOCKED`):** 2 (Task 022, 023 — menunggu Task 021)
-- **Persentase Selesai Nyata:** **55.56%**
+- **Terblokir (`BLOCKED`):** 0
+- **Persentase Selesai Nyata:** **58.33%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 021:** Form Schema & DB Migration (unblocked by Task 020, 010) — membuka Task 022 & 023.
-2. **Task 025:** Registration Status Page UI (unblocked by Task 014).
-3. **Task 029:** Admin PPDB Config Management (unblocked by Task 012).
+1. **Task 022:** Full Form UI & File Upload (unblocked by Task 021, 015).
+2. **Task 023:** Edge Fn: document-upload (unblocked by Task 021, 010).
+3. **Task 025:** Registration Status Page UI (unblocked by Task 014).
+4. **Task 029:** Admin PPDB Config Management (unblocked by Task 012).
 
 ### C. Task yang Terblokir & Penyebabnya
-- **Task 022, 023 (`BLOCKED`):** Bergantung pada Task 021 (Zod schema dan struktur tabel formulir/dokumen).
+- *Tidak ada task yang terblokir saat ini.* Seluruh dependency Phase 6 telah terpenuhi.
 
 ---
 
@@ -194,6 +195,10 @@ npm run preview
 
 ## 9. Log Riwayat Perubahan
 
+- **2026-10-23 (Phase 6 Dimulai):**
+  - Task 021 resmi diselesaikan (`DONE`):
+    - **Task 021 (Form Schema & DB Migration):** Zod schema validasi formulir lengkap di `src/features/registration/schemas/formSchema.ts` mencakup 4 sub-skema (`childSchema`, `fatherSchema`, `motherSchema`, `healthSchema`) dengan normalisasi dan validasi NIK 16 digit, format tanggal ISO-8601, sanitasi string opsional lewat preprocess, serta skema `documentTypeSchema` (`kartu_keluarga`, `akte_kelahiran`, `pas_foto`). Penambahan enum `DocumentType`, relasi, model `RegistrationDocument` dan `RegistrationFormData` pada `prisma/schema.prisma`. Pembuatan migrasi PostgreSQL `20261023000300_registration_form_and_documents` lengkap dengan constraint unik, index, trigger auto-update `updated_at`, dan RLS policy admin SELECT. Task 022 (`Full Form UI`) dan Task 023 (`Edge Fn: document-upload`) resmi terbuka (`UNBLOCKED`).
+  - Progres: 21 / 36 Task (**58.33%**).
 - **2026-10-23 (Phase 5 Selesai):**
   - Task 018 & 019 resmi diselesaikan (`DONE`):
     - **Task 019 (Edge Function `admin-review-payment` & RPC `fn_review_payment`):** Endpoint Deno dan PostgreSQL RPC function atomic dengan row lock (`FOR UPDATE`), verifikasi role admin via `admin_profiles`, pencegahan double-review (409 Conflict), validasi catatan wajib saat penolakan (400 Bad Request), update status `payments` dan `registrations`, serta pencatatan audit log `audit_events`.

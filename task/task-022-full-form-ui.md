@@ -7,7 +7,7 @@ NOT_STARTED
 P1
 
 ## Dependencies
-- Task 021 — Form Schema & Migration (**NOT_STARTED**, unblocked)
+- Task 021 — Form Schema & Migration (**DONE**)
 - Task 015 — Registration UI
 
 ## Objective
