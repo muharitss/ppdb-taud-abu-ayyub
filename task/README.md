@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 3 Selesai (Admin Auth & RLS Policies Berhasil)  
-> **Progres Akurat:** 13 / 36 Task Selesai (**36.11%**)
+> **Status:** Phase 4 Berjalan (verify-registration-access Edge Fn Selesai)  
+> **Progres Akurat:** 15 / 36 Task Selesai (**41.67%**)
 
 ---
 
@@ -84,8 +84,8 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | **DONE** | Task 005, 009 |
 | **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | **DONE** | Task 010 |
 | **012** | [Admin Authentication & Authorization](task-012-admin-auth.md) | Phase 3 | P0 | **DONE** | Task 009, 011 |
-| **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md) | Phase 4 | P0 | `NOT_STARTED` | Task 010, 011 |
-| **014** | [Edge Fn: verify-registration-access](task-014-verify-access-edge-function.md) | Phase 4 | P0 | `NOT_STARTED` | Task 013 |
+| **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md) | Phase 4 | P0 | **DONE** | Task 010, 011 |
+| **014** | [Edge Fn: verify-registration-access](task-014-verify-access-edge-function.md) | Phase 4 | P0 | **DONE** | Task 013 |
 | **015** | [Registration UI (Initial Form)](task-015-registration-ui.md) | Phase 4 | P1 | `NOT_STARTED` | Task 008, 013 |
 | **016** | [Payment Page UI](task-016-payment-page-ui.md) | Phase 5 | P1 | `NOT_STARTED` | Task 015 |
 | **017** | [Edge Fn: submit-payment-proof](task-017-payment-upload-edge-function.md) | Phase 5 | P0 | `NOT_STARTED` | Task 010, 013 |
@@ -115,16 +115,18 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 13 (Task 001–012, Task 020)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 013 (create-registration Edge Fn), Task 018 (Admin Payment Dashboard), Task 021 (Form Schema & Migration), Task 029 (Admin PPDB Config Management)
+- **Selesai (`DONE`):** 15 (Task 001–014, Task 020)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 015 (Registration UI), Task 017 (submit-payment-proof Edge Fn), Task 018 (Admin Payment Dashboard), Task 021 (Form Schema & Migration), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 2 (Task 022, 023 — menunggu Task 021)
-- **Persentase Selesai Nyata:** **36.11%**
+- **Persentase Selesai Nyata:** **41.67%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 013:** Edge Function: `create-registration` (CSPRNG access code, bcrypt hash, initial registrant record).
-2. **Task 021:** Form Schema & DB Migration (Zod validation + migration for `registration_documents` & `registration_form_data`).
-3. **Task 029:** Admin PPDB Config Management.
+1. **Task 015:** Registration UI (Initial Form).
+2. **Task 017:** Edge Function: `submit-payment-proof`.
+3. **Task 021:** Form Schema & DB Migration.
+4. **Task 025:** Registration Status Page UI (unblocked by Task 014).
+5. **Task 029:** Admin PPDB Config Management.
 
 ### C. Task yang Terblokir & Penyebabnya
 - **Task 022, 023 (`BLOCKED`):** Bergantung pada Task 021 (Zod schema dan struktur tabel formulir/dokumen).
@@ -194,6 +196,10 @@ npm run preview
 
 ## 9. Log Riwayat Perubahan
 
+- **2026-10-23 (Phase 4):**
+  - Task 014 resmi diselesaikan (`DONE`): Edge Function `verify-registration-access`. Implementasi endpoint Deno dengan rate limiting (maksimal 5 percobaan gagal per 15 menit), penanganan anti-enumeration lewat error opaque seragam (`Nomor pendaftaran atau kode akses tidak sesuai`), mitigasi timing side-channel via dummy bcrypt comparison untuk pendaftar tidak ditemukan, verifikasi hash bcrypt kode akses ke tabel `registration_access`, reset counter kegagalan saat sukses lewat `audit_events`, serta whitelist ketat field respons status pendaftar (tanpa mengekspos data pribadi/rahasia).
+  - Progres: 15 / 36 Task (**41.67%**).
+  - Task 013 resmi diselesaikan (`DONE`): Edge Function `create-registration`. Implementasi endpoint Deno dengan validasi input, normalisasi nomor WhatsApp Indonesia, pengecekan status buka/tutup PPDB (`ppdb_config`), generator nomor pendaftaran atomic via DB sequence RPC / collision retry fallback, pembuatan kode akses 8 karakter alfanumerik CSPRNG (tanpa karakter ambigu `0, O, 1, I`), hashing bcrypt ke tabel `registration_access`, rollback otomatis jika terjadi kegagalan, dan logging audit event.
 - **2026-10-23 (Phase 3):**
   - Task 012 resmi diselesaikan (`DONE`): Admin Authentication & Authorization. Implementasi `useAdminAuth`, login form anti-enumeration di `/admin/login`, route protection dan role guard berbasis query `admin_profiles`, serta session logout. Phase 3 tuntas.
   - Progres: 13 / 36 Task (**36.11%**).

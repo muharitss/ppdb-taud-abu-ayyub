@@ -32,11 +32,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^24.10.0",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^18.0.9",
     "eslint": "^9.36.0",
     "eslint-plugin-react-hooks": "^5.2.0",

@@ -413,3 +413,20 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+[functions.create-registration]
+enabled = true
+verify_jwt = false
+import_map = "./functions/create-registration/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/create-registration/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/create-registration/*.html" ]
+
+[functions.verify-registration-access]
+enabled = true
+verify_jwt = false
+import_map = "./functions/verify-registration-access/deno.json"
+entrypoint = "./functions/verify-registration-access/index.ts"
