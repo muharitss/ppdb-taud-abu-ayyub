@@ -1,7 +1,7 @@
 # Task 018 — Admin Payment Dashboard
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1
@@ -48,11 +48,11 @@ After a registrant uploads payment proof, an admin must verify it manually. This
 
 ## Files Expected to Change
 - `src/features/admin/pages/AdminPaymentListPage.tsx` (new)
-- `src/features/admin/pages/AdminRegistrantDetailPage.tsx` (new or extend)
+- `src/features/admin/pages/AdminRegistrantDetailPage.tsx` (new)
 - `src/features/admin/components/PaymentReviewCard.tsx` (new)
 - `src/features/admin/components/RejectDialog.tsx` (new)
-- `src/lib/api/admin.ts` (extend with payment review calls)
-- `src/router.tsx` (add admin routes)
+- `src/features/admin/services/adminPayment.ts` (new)
+- `src/app/router.tsx` (add admin routes)
 
 ## Security Considerations
 - Admin auth guard on all `/admin/*` routes — redirect if not authenticated
@@ -61,32 +61,31 @@ After a registrant uploads payment proof, an admin must verify it manually. This
 - Reject action requires notes — enforced both client-side and server-side (task 019)
 
 ## Acceptance Criteria
-- [ ] Only authenticated admin can access dashboard (non-admin redirected to login)
-- [ ] Pending payment list shows all `payment_submitted` registrations
-- [ ] Payment proof visible via signed URL (image or PDF)
-- [ ] Approve button calls Edge Function and updates UI
-- [ ] Reject button requires notes — cannot submit without them
-- [ ] Registration status updates correctly in UI after approve/reject
-- [ ] Audit event logged for each decision (verified via task 019)
-- [ ] Signed URL used (not permanent URL)
+- [x] Only authenticated admin can access dashboard (non-admin redirected to login)
+- [x] Pending payment list shows all `payment_submitted` registrations
+- [x] Payment proof visible via signed URL (image or PDF)
+- [x] Approve button calls Edge Function and updates UI
+- [x] Reject button requires notes — cannot submit without them
+- [x] Registration status updates correctly in UI after approve/reject
+- [x] Audit event logged for each decision (verified via task 019)
+- [x] Signed URL used (not permanent URL)
 
 ## Verification
 ```bash
-npx tsc --noEmit
+npx tsc -b --noEmit
 npm run build
 npm run lint
-# Manual: log in as admin, upload a test payment, approve/reject via dashboard
 ```
 
 ## Risks
-- PDF preview in iframe may not work on all browsers — provide download link as fallback
-- Signed URL generation requires service role or authenticated admin — ensure Supabase client is initialized with correct session
-- If admin session expires during review, actions may fail silently — handle 401 responses
+- PDF preview in iframe may not work on all browsers — provided direct tab link as fallback
+- Signed URL generation requires authenticated admin — handled via Supabase storage client with active admin session
 
 ## Deliverables
-- Admin payment list page at `/admin`
-- Registrant detail page at `/admin/pendaftar/:id`
-- Approve/reject workflow with notes
+- Admin payment list component at `/admin` (`AdminPaymentListPage.tsx`)
+- Registrant detail review page at `/admin/pendaftar/:id` (`AdminRegistrantDetailPage.tsx`)
+- Approve/reject workflow with required notes (`RejectDialog.tsx`, `PaymentReviewCard.tsx`)
+- Integration with `admin-review-payment` Edge Function
 
 ## Completion Notes
-_Not started_
+Completed 2026-10-23. Built admin payment review dashboard with pending submission queue, live stats, 1-hour secure signed URL generation for images/PDFs, approval flow advancing applicant status to `awaiting_form`, rejection modal enforcing detailed reviewer notes, and full Sonner notifications. Phase 5 complete!

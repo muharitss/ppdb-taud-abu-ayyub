@@ -7,6 +7,8 @@ import StatusPage from '@/features/status/pages/StatusPage';
 import AdminLoginPage from '@/features/admin/pages/AdminLoginPage';
 import AdminLayout from '@/features/admin/layouts/AdminLayout';
 import AdminDashboardPage from '@/features/admin/pages/AdminDashboardPage';
+import AdminPaymentListPage from '@/features/admin/pages/AdminPaymentListPage';
+import AdminRegistrantDetailPage from '@/features/admin/pages/AdminRegistrantDetailPage';
 import NotFoundPage from './NotFoundPage';
 
 export const AppRouter: React.FC = () => {
@@ -20,6 +22,8 @@ export const AppRouter: React.FC = () => {
       <Route path="/admin/login" element={<AdminLoginPage />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboardPage />} />
+        <Route path="pembayaran" element={<AdminPaymentListPage />} />
+        <Route path="pendaftar/:id" element={<AdminRegistrantDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />

@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 5 In Progress (Payment Page UI & submit-payment-proof Edge Function Selesai)  
-> **Progres Akurat:** 18 / 36 Task Selesai (**50.00%**)
+> **Status:** Phase 5 Selesai (Payment Review Dashboard & Edge Function Tuntas), Phase 6/7 Siap Dikerjakan  
+> **Progres Akurat:** 20 / 36 Task Selesai (**55.56%**)
 
 ---
 
@@ -89,8 +89,8 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **015** | [Registration UI (Initial Form)](task-015-registration-ui.md) | Phase 4 | P1 | **DONE** | Task 008, 013 |
 | **016** | [Payment Page UI](task-016-payment-page-ui.md) | Phase 5 | P1 | **DONE** | Task 015 |
 | **017** | [Edge Fn: submit-payment-proof](task-017-payment-upload-edge-function.md) | Phase 5 | P0 | **DONE** | Task 010, 013 |
-| **018** | [Admin Payment Dashboard](task-018-admin-payment-dashboard.md) | Phase 5 | P1 | `NOT_STARTED` | Task 012, 017 |
-| **019** | [Edge Fn: admin-review-payment](task-019-admin-review-edge-function.md) | Phase 5 | P0 | `NOT_STARTED` | Task 010, 011, 012 |
+| **018** | [Admin Payment Dashboard](task-018-admin-payment-dashboard.md) | Phase 5 | P1 | **DONE** | Task 012, 017 |
+| **019** | [Edge Fn: admin-review-payment](task-019-admin-review-edge-function.md) | Phase 5 | P0 | **DONE** | Task 010, 011, 012 |
 | **020** | [Form Requirements Confirmation](task-020-form-requirements-confirmation.md) | Phase 6 | P0 | **DONE** | Task 005 |
 | **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md) | Phase 6 | P1 | `NOT_STARTED` | Task 020, 010 |
 | **022** | [Full Form UI & File Upload](task-022-full-form-ui.md) | Phase 6 | P1 | `BLOCKED` | Task 021, 015 |
@@ -115,18 +115,16 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 36
-- **Selesai (`DONE`):** 18 (Task 001–017, Task 020)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 018 (Admin Payment Dashboard), Task 019 (Edge Fn: admin-review-payment), Task 021 (Form Schema & Migration), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
+- **Selesai (`DONE`):** 20 (Task 001–020)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 021 (Form Schema & DB Migration), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 2 (Task 022, 023 — menunggu Task 021)
-- **Persentase Selesai Nyata:** **50.00%**
+- **Persentase Selesai Nyata:** **55.56%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 018:** Admin Payment Dashboard (unblocked by Task 012, 017).
-2. **Task 019:** Edge Function: `admin-review-payment` (unblocked by Task 010, 011, 012).
-3. **Task 021:** Form Schema & DB Migration.
-4. **Task 025:** Registration Status Page UI.
-5. **Task 029:** Admin PPDB Config Management.
+1. **Task 021:** Form Schema & DB Migration (unblocked by Task 020, 010) — membuka Task 022 & 023.
+2. **Task 025:** Registration Status Page UI (unblocked by Task 014).
+3. **Task 029:** Admin PPDB Config Management (unblocked by Task 012).
 
 ### C. Task yang Terblokir & Penyebabnya
 - **Task 022, 023 (`BLOCKED`):** Bergantung pada Task 021 (Zod schema dan struktur tabel formulir/dokumen).
@@ -196,6 +194,11 @@ npm run preview
 
 ## 9. Log Riwayat Perubahan
 
+- **2026-10-23 (Phase 5 Selesai):**
+  - Task 018 & 019 resmi diselesaikan (`DONE`):
+    - **Task 019 (Edge Function `admin-review-payment` & RPC `fn_review_payment`):** Endpoint Deno dan PostgreSQL RPC function atomic dengan row lock (`FOR UPDATE`), verifikasi role admin via `admin_profiles`, pencegahan double-review (409 Conflict), validasi catatan wajib saat penolakan (400 Bad Request), update status `payments` dan `registrations`, serta pencatatan audit log `audit_events`.
+    - **Task 018 (Admin Payment Dashboard `/admin` & `/admin/pendaftar/:id`):** Antrean verifikasi pembayaran pendaftar dengan komponen shadcn `Table`, `Badge`, `Dialog`, `Textarea`, dan `Button`. Pratinjau berkas bukti transfer gambar dan dokumen PDF via short-lived signed URL Supabase Storage (1 jam), alur persetujuan instan, dialog modal penolakan dengan input alasan wajib, integrasi toast Sonner, dan pembaruan metrik ringkasan dashboard pendaftar. Phase 5 tuntas 100%.
+  - Progres: 20 / 36 Task (**55.56%**).
 - **2026-10-23 (Phase 5):**
   - Task 016 & 017 resmi diselesaikan (`DONE`):
     - **Task 017 (Edge Function `submit-payment-proof`):** Endpoint Deno untuk upload bukti transfer dengan validasi magic bytes berkas (JPEG, PNG, PDF), batas ukuran 5MB, verifikasi hash kode akses dengan proteksi timing attack (dummy bcrypt hash), pencegahan double-submission (409 Conflict), penyimpanan ke private storage bucket `payment-proofs`, insert ke tabel `payments`, update `payment_status` ke `payment_submitted`, dan pencatatan audit log `audit_events`.
