@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import LandingPage from '@/features/landing/pages/LandingPage';
 import RegistrationStartPage from '@/features/registration/pages/RegistrationStartPage';
 import PaymentPage from '@/features/payments/pages/PaymentPage';
+import FullFormPage from '@/features/registration/pages/FullFormPage';
 import StatusPage from '@/features/status/pages/StatusPage';
 import AdminLoginPage from '@/features/admin/pages/AdminLoginPage';
 import AdminLayout from '@/features/admin/layouts/AdminLayout';
@@ -18,6 +19,8 @@ export const AppRouter: React.FC = () => {
       <Route path="/daftar" element={<RegistrationStartPage />} />
       <Route path="/daftar/pembayaran" element={<PaymentPage />} />
       <Route path="/bayar/:registrationNumber" element={<PaymentPage />} />
+      <Route path="/daftar/formulir" element={<FullFormPage />} />
+      <Route path="/daftar/formulir/:registrationNumber" element={<FullFormPage />} />
       <Route path="/status" element={<StatusPage />} />
       <Route path="/admin/login" element={<AdminLoginPage />} />
       <Route path="/admin" element={<AdminLayout />}>
