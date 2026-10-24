@@ -122,7 +122,6 @@ const PAY_STATUS_CONFIG: Record<
 
 const FILTER_TABS = [
   { id: "all", label: "Semua" },
-  { id: "needs_action", label: "Perlu Verifikasi" },
   { id: "awaiting_form", label: "Pengisian Formulir" },
   { id: "awaiting_payment", label: "Menunggu Bayar" },
   { id: "accepted", label: "Diterima" },
@@ -303,7 +302,7 @@ export const AdminDashboardPage: React.FC = () => {
         </button>
 
         {/* Perlu Tindakan */}
-        <button
+        {/* <button
           type="button"
           onClick={() => handleTabChange("needs_action")}
           className={`text-left p-4 rounded-xl border bg-white transition-all ${
@@ -329,7 +328,7 @@ export const AdminDashboardPage: React.FC = () => {
           <p className="text-[11px] text-slate-400 mt-1">
             Bukti bayar & formulir masuk
           </p>
-        </button>
+        </button> */}
 
         {/* Menunggu Formulir */}
         <button
