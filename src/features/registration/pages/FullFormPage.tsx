@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation, useParams, Link, useNavigate } from "react-router-dom";
 import {
   FileText,
@@ -55,6 +55,7 @@ export const FullFormPage: React.FC = () => {
   const [formDetails, setFormDetails] = useState<FormGetResult | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const [copiedCreds, setCopiedCreds] = useState(false);
+  const hasAutoLoadedRef = useRef(false);
 
   const loadData = useCallback(async (reg: string, code: string) => {
     if (!reg.trim() || !code.trim()) return;
@@ -102,6 +103,7 @@ export const FullFormPage: React.FC = () => {
 
   const handleSwitchSession = () => {
     clearSessionCredentials();
+    hasAutoLoadedRef.current = true;
     setHasLoaded(false);
     setFormDetails(null);
     setRegistrationNumber("");
@@ -109,10 +111,11 @@ export const FullFormPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (registrationNumber && accessCode && !hasLoaded) {
-      loadData(registrationNumber, accessCode);
+    if (!hasAutoLoadedRef.current && initialRegNumber && initialAccessCode) {
+      hasAutoLoadedRef.current = true;
+      loadData(initialRegNumber, initialAccessCode);
     }
-  }, [registrationNumber, accessCode, hasLoaded, loadData]);
+  }, [initialRegNumber, initialAccessCode, loadData]);
 
   const handleCredentialSubmit = (e: React.FormEvent) => {
     e.preventDefault();

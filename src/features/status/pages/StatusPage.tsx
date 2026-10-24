@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import {
   Search,
@@ -53,6 +53,7 @@ export const StatusPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [statusData, setStatusData] = useState<VerifyAccessData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const hasAutoCheckedRef = useRef(false);
 
   const handleLookup = useCallback(async (reg: string, code: string) => {
     const cleanReg = reg.trim().toUpperCase();
@@ -92,10 +93,11 @@ export const StatusPage: React.FC = () => {
 
   // Auto-check if credentials are fully present in session on initial load
   useEffect(() => {
-    if (initialReg && initialCode && !statusData && !isLoading) {
+    if (!hasAutoCheckedRef.current && initialReg && initialCode) {
+      hasAutoCheckedRef.current = true;
       handleLookup(initialReg, initialCode);
     }
-  }, [initialReg, initialCode, statusData, isLoading, handleLookup]);
+  }, [initialReg, initialCode, handleLookup]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,6 +106,7 @@ export const StatusPage: React.FC = () => {
 
   const handleReset = () => {
     clearSessionCredentials();
+    hasAutoCheckedRef.current = true;
     setStatusData(null);
     setErrorMessage(null);
     setRegistrationNumber("");
