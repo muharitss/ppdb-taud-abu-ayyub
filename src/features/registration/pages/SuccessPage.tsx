@@ -162,7 +162,7 @@ export const SuccessPage: React.FC = () => {
                 className="flex items-center justify-center gap-2"
               >
                 <Users className="w-4 h-4" />
-                Silahkan Gabung Grup
+                Bergabung ke Grup Whatsapp
               </a>
             </Button>
 
