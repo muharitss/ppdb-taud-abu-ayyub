@@ -6,7 +6,10 @@ const Hero: React.FC = () => {
   const sessionCreds = getSessionCredentials();
 
   return (
-    <section id="hero" className="relative bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] py-14 sm:py-20 md:py-24 overflow-hidden">
+    <section
+      id="hero"
+      className="relative bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] py-14 sm:py-20 md:py-24 overflow-hidden"
+    >
       {/* Ornament Background */}
       <div className="absolute inset-0 bg-cover bg-center opacity-25 bg-[url('/ornamen.png')]" />
 
@@ -45,7 +48,7 @@ const Hero: React.FC = () => {
                 to="/daftar"
                 className="w-full sm:w-auto min-w-[180px] bg-white/15 hover:bg-white/25 border border-white/40 text-white px-6 py-3.5 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 text-center shadow-sm "
               >
-                Daftar Santri Baru
+                Daftar Siswa Baru
               </Link>
             </>
           ) : (
@@ -73,7 +76,7 @@ const Hero: React.FC = () => {
             <img
               className="w-full h-full object-cover rounded-xl"
               src="/anak-anak.png"
-              alt="Santri TAUD SaQu Abu Ayyub"
+              alt="Siswa TAUD SaQu Abu Ayyub"
             />
           </div>
         </div>

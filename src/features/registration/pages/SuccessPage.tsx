@@ -11,7 +11,14 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ADMIN_CONTACTS } from "@/config/schoolInfo";
 import { getSessionCredentials } from "@/lib/sessionCredentials";
@@ -28,7 +35,8 @@ export const SuccessPage: React.FC = () => {
   const state = (location.state as LocationState) || {};
   const sessionCreds = getSessionCredentials();
 
-  const registrationNumber = state.registrationNumber || sessionCreds?.registrationNumber || "";
+  const registrationNumber =
+    state.registrationNumber || sessionCreds?.registrationNumber || "";
   const accessCode = state.accessCode || sessionCreds?.accessCode || "";
   const childName = state.childName || "";
 
@@ -46,7 +54,7 @@ export const SuccessPage: React.FC = () => {
     if (!registrationNumber) return;
     const infoText = [
       "BUKTI PENDAFTARAN PPDB TAUD SaQu Abu Ayyub TP.2027/2028",
-      childName ? `Nama Santri: ${childName}` : null,
+      childName ? `Nama Siswa: ${childName}` : null,
       `Nomor Pendaftaran: ${registrationNumber}`,
       accessCode ? `Kode Akses: ${accessCode}` : null,
       `Cek Status: ${window.location.origin}/status`,
@@ -76,7 +84,8 @@ export const SuccessPage: React.FC = () => {
               Pendaftaran Selesai!
             </CardTitle>
             <CardDescription className="text-emerald-800/80 max-w-md mx-auto text-xs sm:text-sm">
-              Simpan Nomor Pendaftaran dan Kode Akses Anda di bawah ini untuk melihat status pendaftaran.
+              Simpan Nomor Pendaftaran dan Kode Akses Anda di bawah ini untuk
+              melihat status pendaftaran.
             </CardDescription>
           </CardHeader>
 
@@ -86,13 +95,19 @@ export const SuccessPage: React.FC = () => {
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
                   {childName && (
                     <div className="flex justify-between items-center pb-2 border-b border-slate-200/80 text-sm">
-                      <span className="text-muted-foreground">Nama Calon Santri:</span>
-                      <span className="font-semibold text-slate-800">{childName}</span>
+                      <span className="text-muted-foreground">
+                        Nama Calon Siswa:
+                      </span>
+                      <span className="font-semibold text-slate-800">
+                        {childName}
+                      </span>
                     </div>
                   )}
 
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Nomor Pendaftaran:</span>
+                    <span className="text-muted-foreground">
+                      Nomor Pendaftaran:
+                    </span>
                     <span className="font-mono font-bold text-emerald-800 bg-emerald-100/80 px-2.5 py-0.5 rounded text-sm sm:text-base">
                       {registrationNumber}
                     </span>
@@ -130,7 +145,8 @@ export const SuccessPage: React.FC = () => {
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs text-center">
-                Silakan simpan nomor pendaftaran dan periksa status Anda secara berkala.
+                Silakan simpan nomor pendaftaran dan periksa status Anda secara
+                berkala.
               </div>
             )}
 
@@ -168,13 +184,23 @@ export const SuccessPage: React.FC = () => {
           </CardContent>
 
           <CardFooter className="bg-slate-50/80 border-t border-slate-100 flex flex-col sm:flex-row gap-2 justify-between pt-4">
-            <Button asChild variant="ghost" size="sm" className="w-full sm:w-auto text-xs">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="w-full sm:w-auto text-xs"
+            >
               <Link to="/">
                 <Home className="w-3.5 h-3.5 mr-1.5" />
                 Kembali ke Beranda
               </Link>
             </Button>
-            <Button asChild variant="outline" size="sm" className="w-full sm:w-auto text-xs border-emerald-300 text-emerald-800 hover:bg-emerald-50">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="w-full sm:w-auto text-xs border-emerald-300 text-emerald-800 hover:bg-emerald-50"
+            >
               <Link to="/status">
                 Lihat Status Pendaftaran
                 <ArrowRight className="w-3.5 h-3.5 ml-1.5" />

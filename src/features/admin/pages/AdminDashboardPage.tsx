@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback, useTransition } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback, useTransition } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -7,17 +7,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   getRegistrants,
   type RegistrantsResult,
-} from '../services/adminRegistrants';
+} from "../services/adminRegistrants";
 import {
   getDashboardStats,
   type DashboardStats,
-} from '../services/adminDashboard';
+} from "../services/adminDashboard";
 import {
   Users,
   Search,
@@ -30,46 +30,46 @@ import {
   CheckCircle2,
   Phone,
   Filter,
-} from 'lucide-react';
+} from "lucide-react";
 
 const REG_STATUS_CONFIG: Record<
   string,
   { label: string; dot: string; badge: string }
 > = {
   draft: {
-    label: 'Draf',
-    dot: 'bg-slate-400',
-    badge: 'bg-slate-50 text-slate-700 border-slate-200/80',
+    label: "Draf",
+    dot: "bg-slate-400",
+    badge: "bg-slate-50 text-slate-700 border-slate-200/80",
   },
   awaiting_payment: {
-    label: 'Menunggu Pembayaran',
-    dot: 'bg-amber-400',
-    badge: 'bg-amber-50/70 text-amber-800 border-amber-200/80',
+    label: "Menunggu Pembayaran",
+    dot: "bg-amber-400",
+    badge: "bg-amber-50/70 text-amber-800 border-amber-200/80",
   },
   awaiting_form: {
-    label: 'Menunggu Formulir',
-    dot: 'bg-blue-400',
-    badge: 'bg-blue-50/70 text-blue-800 border-blue-200/80',
+    label: "Menunggu Formulir",
+    dot: "bg-blue-400",
+    badge: "bg-blue-50/70 text-blue-800 border-blue-200/80",
   },
   submitted: {
-    label: 'Formulir Masuk',
-    dot: 'bg-purple-500',
-    badge: 'bg-purple-50/70 text-purple-800 border-purple-200/80',
+    label: "Formulir Masuk",
+    dot: "bg-purple-500",
+    badge: "bg-purple-50/70 text-purple-800 border-purple-200/80",
   },
   under_review: {
-    label: 'Sedang Ditinjau',
-    dot: 'bg-indigo-400',
-    badge: 'bg-indigo-50/70 text-indigo-800 border-indigo-200/80',
+    label: "Sedang Ditinjau",
+    dot: "bg-indigo-400",
+    badge: "bg-indigo-50/70 text-indigo-800 border-indigo-200/80",
   },
   accepted: {
-    label: 'Diterima',
-    dot: 'bg-emerald-500',
-    badge: 'bg-emerald-50/80 text-emerald-800 border-emerald-200',
+    label: "Diterima",
+    dot: "bg-emerald-500",
+    badge: "bg-emerald-50/80 text-emerald-800 border-emerald-200",
   },
   rejected: {
-    label: 'Ditolak',
-    dot: 'bg-rose-400',
-    badge: 'bg-rose-50/70 text-rose-800 border-rose-200/80',
+    label: "Ditolak",
+    dot: "bg-rose-400",
+    badge: "bg-rose-50/70 text-rose-800 border-rose-200/80",
   },
 };
 
@@ -78,44 +78,44 @@ const PAY_STATUS_CONFIG: Record<
   { label: string; dot: string; text: string }
 > = {
   payment_pending: {
-    label: 'Belum Bayar',
-    dot: 'bg-slate-300',
-    text: 'text-slate-500',
+    label: "Belum Bayar",
+    dot: "bg-slate-300",
+    text: "text-slate-500",
   },
   payment_submitted: {
-    label: 'Verifikasi Bukti',
-    dot: 'bg-amber-500',
-    text: 'text-amber-800 font-medium',
+    label: "Verifikasi Bukti",
+    dot: "bg-amber-500",
+    text: "text-amber-800 font-medium",
   },
   payment_verified: {
-    label: 'Lunas',
-    dot: 'bg-emerald-500',
-    text: 'text-emerald-700 font-medium',
+    label: "Lunas",
+    dot: "bg-emerald-500",
+    text: "text-emerald-700 font-medium",
   },
   payment_rejected: {
-    label: 'Bukti Ditolak',
-    dot: 'bg-rose-500',
-    text: 'text-rose-700 font-medium',
+    label: "Bukti Ditolak",
+    dot: "bg-rose-500",
+    text: "text-rose-700 font-medium",
   },
 };
 
 const FILTER_TABS = [
-  { id: 'all', label: 'Semua' },
-  { id: 'needs_action', label: 'Perlu Verifikasi' },
-  { id: 'awaiting_form', label: 'Pengisian Formulir' },
-  { id: 'awaiting_payment', label: 'Menunggu Bayar' },
-  { id: 'accepted', label: 'Diterima' },
-  { id: 'rejected', label: 'Ditolak' },
+  { id: "all", label: "Semua" },
+  { id: "needs_action", label: "Perlu Verifikasi" },
+  { id: "awaiting_form", label: "Pengisian Formulir" },
+  { id: "awaiting_payment", label: "Menunggu Bayar" },
+  { id: "accepted", label: "Diterima" },
+  { id: "rejected", label: "Ditolak" },
 ];
 
 function formatDate(dateStr: string): string {
-  if (!dateStr) return '-';
+  if (!dateStr) return "-";
   try {
     const d = new Date(dateStr);
-    return new Intl.DateTimeFormat('id-ID', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
+    return new Intl.DateTimeFormat("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     }).format(d);
   } catch {
     return dateStr;
@@ -123,15 +123,15 @@ function formatDate(dateStr: string): string {
 }
 
 function cleanWhatsappNumber(raw: string): string {
-  let cleaned = raw.replace(/\D/g, '');
-  if (cleaned.startsWith('0')) {
-    cleaned = '62' + cleaned.slice(1);
+  let cleaned = raw.replace(/\D/g, "");
+  if (cleaned.startsWith("0")) {
+    cleaned = "62" + cleaned.slice(1);
   }
   return cleaned;
 }
 
 function getInitials(name: string): string {
-  if (!name) return 'S';
+  if (!name) return "S";
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[1][0]).toUpperCase();
@@ -141,9 +141,9 @@ export const AdminDashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [, startTransition] = useTransition();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeSearch, setActiveSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeSearch, setActiveSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const pageSize = 15;
 
@@ -172,32 +172,29 @@ export const AdminDashboardPage: React.FC = () => {
     }
   }, []);
 
-  const fetchData = useCallback(
-    async () => {
-      setLoading(true);
-      setError(null);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        const [registrantsRes] = await Promise.all([
-          getRegistrants({
-            status: statusFilter,
-            search: activeSearch,
-            page,
-            pageSize,
-          }),
-          loadStats(),
-        ]);
-        setData(registrantsRes);
-      } catch (err: unknown) {
-        setError(
-          err instanceof Error ? err.message : 'Gagal memuat data pendaftar'
-        );
-      } finally {
-        setLoading(false);
-      }
-    },
-    [statusFilter, activeSearch, page, loadStats]
-  );
+    try {
+      const [registrantsRes] = await Promise.all([
+        getRegistrants({
+          status: statusFilter,
+          search: activeSearch,
+          page,
+          pageSize,
+        }),
+        loadStats(),
+      ]);
+      setData(registrantsRes);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "Gagal memuat data pendaftar",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [statusFilter, activeSearch, page, loadStats]);
 
   useEffect(() => {
     fetchData();
@@ -209,8 +206,8 @@ export const AdminDashboardPage: React.FC = () => {
   };
 
   const clearSearch = () => {
-    setSearchTerm('');
-    setActiveSearch('');
+    setSearchTerm("");
+    setActiveSearch("");
     setPage(1);
   };
 
@@ -223,10 +220,10 @@ export const AdminDashboardPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200/80">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-            Pendaftar Santri
+            Pendaftar Siswa
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Pantau dan kelola pendaftaran calon santri TAUD SaQu Abu Ayyub.
+            Pantau dan kelola pendaftaran calon siswa TAUD SaQu Abu Ayyub.
           </p>
         </div>
       </div>
@@ -236,11 +233,11 @@ export const AdminDashboardPage: React.FC = () => {
         {/* Total */}
         <button
           type="button"
-          onClick={() => handleTabChange('all')}
+          onClick={() => handleTabChange("all")}
           className={`text-left p-4 rounded-xl border bg-white transition-all ${
-            statusFilter === 'all'
-              ? 'border-slate-900 ring-1 ring-slate-900 shadow-xs'
-              : 'border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50'
+            statusFilter === "all"
+              ? "border-slate-900 ring-1 ring-slate-900 shadow-xs"
+              : "border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50"
           }`}
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
@@ -250,19 +247,21 @@ export const AdminDashboardPage: React.FC = () => {
             <Users className="w-4 h-4 text-slate-400" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            {stats ? stats.total : data?.total ?? '-'}
+            {stats ? stats.total : (data?.total ?? "-")}
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">Seluruh akun terdaftar</p>
+          <p className="text-[11px] text-slate-400 mt-1">
+            Seluruh akun terdaftar
+          </p>
         </button>
 
         {/* Perlu Tindakan */}
         <button
           type="button"
-          onClick={() => handleTabChange('needs_action')}
+          onClick={() => handleTabChange("needs_action")}
           className={`text-left p-4 rounded-xl border bg-white transition-all ${
-            statusFilter === 'needs_action'
-              ? 'border-amber-500 ring-1 ring-amber-500 shadow-xs'
-              : 'border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50'
+            statusFilter === "needs_action"
+              ? "border-amber-500 ring-1 ring-amber-500 shadow-xs"
+              : "border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50"
           }`}
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
@@ -272,7 +271,7 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight flex items-baseline gap-2">
-            <span>{stats ? pendingVerificationCount : '-'}</span>
+            <span>{stats ? pendingVerificationCount : "-"}</span>
             {pendingVerificationCount > 0 && (
               <span className="text-[11px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.2 rounded-full">
                 Antrean
@@ -287,11 +286,11 @@ export const AdminDashboardPage: React.FC = () => {
         {/* Menunggu Formulir */}
         <button
           type="button"
-          onClick={() => handleTabChange('awaiting_form')}
+          onClick={() => handleTabChange("awaiting_form")}
           className={`text-left p-4 rounded-xl border bg-white transition-all ${
-            statusFilter === 'awaiting_form'
-              ? 'border-blue-500 ring-1 ring-blue-500 shadow-xs'
-              : 'border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50'
+            statusFilter === "awaiting_form"
+              ? "border-blue-500 ring-1 ring-blue-500 shadow-xs"
+              : "border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50"
           }`}
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
@@ -301,29 +300,31 @@ export const AdminDashboardPage: React.FC = () => {
             <Clock className="w-4 h-4 text-blue-500" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            {stats ? stats.awaitingForm : '-'}
+            {stats ? stats.awaitingForm : "-"}
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">Lunas, isi data santri</p>
+          <p className="text-[11px] text-slate-400 mt-1">
+            Lunas, isi data siswa
+          </p>
         </button>
 
         {/* Diterima */}
         <button
           type="button"
-          onClick={() => handleTabChange('accepted')}
+          onClick={() => handleTabChange("accepted")}
           className={`text-left p-4 rounded-xl border bg-white transition-all ${
-            statusFilter === 'accepted'
-              ? 'border-emerald-600 ring-1 ring-emerald-600 shadow-xs'
-              : 'border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50'
+            statusFilter === "accepted"
+              ? "border-emerald-600 ring-1 ring-emerald-600 shadow-xs"
+              : "border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/50"
           }`}
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
-              Santri Diterima
+              Siswa Diterima
             </span>
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            {stats ? stats.accepted : '-'}
+            {stats ? stats.accepted : "-"}
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Lolos seleksi masuk</p>
         </button>
@@ -337,7 +338,7 @@ export const AdminDashboardPage: React.FC = () => {
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             <Input
               type="text"
-              placeholder="Cari santri, orang tua, no. registrasi..."
+              placeholder="Cari siswa, orang tua, no. registrasi..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9 pr-8 h-9 text-xs sm:text-sm bg-white border-slate-200 rounded-lg placeholder:text-slate-400 focus-visible:ring-1 focus-visible:ring-slate-400"
@@ -373,7 +374,7 @@ export const AdminDashboardPage: React.FC = () => {
           {FILTER_TABS.map((tab) => {
             const isActive = statusFilter === tab.id;
             const badgeCount =
-              tab.id === 'needs_action' && pendingVerificationCount > 0
+              tab.id === "needs_action" && pendingVerificationCount > 0
                 ? pendingVerificationCount
                 : null;
 
@@ -384,8 +385,8 @@ export const AdminDashboardPage: React.FC = () => {
                 onClick={() => handleTabChange(tab.id)}
                 className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 shrink-0 ${
                   isActive
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'bg-white border border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "bg-white border border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <span>{tab.label}</span>
@@ -393,8 +394,8 @@ export const AdminDashboardPage: React.FC = () => {
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${
                       isActive
-                        ? 'bg-white text-slate-900 font-bold'
-                        : 'bg-amber-100 text-amber-900 font-bold'
+                        ? "bg-white text-slate-900 font-bold"
+                        : "bg-amber-100 text-amber-900 font-bold"
                     }`}
                   >
                     {badgeCount}
@@ -442,17 +443,17 @@ export const AdminDashboardPage: React.FC = () => {
               Tidak ada data pendaftar ditemukan
             </p>
             <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-              {activeSearch || statusFilter !== 'all'
-                ? 'Tidak ada data yang cocok dengan kriteria filter atau kata kunci saat ini.'
-                : 'Belum ada pendaftaran calon santri yang masuk ke dalam sistem.'}
+              {activeSearch || statusFilter !== "all"
+                ? "Tidak ada data yang cocok dengan kriteria filter atau kata kunci saat ini."
+                : "Belum ada pendaftaran calon siswa yang masuk ke dalam sistem."}
             </p>
-            {(activeSearch || statusFilter !== 'all') && (
+            {(activeSearch || statusFilter !== "all") && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
                   clearSearch();
-                  setStatusFilter('all');
+                  setStatusFilter("all");
                 }}
                 className="mt-4 text-xs h-8"
               >
@@ -467,7 +468,7 @@ export const AdminDashboardPage: React.FC = () => {
                 <TableHeader className="bg-slate-50/75 border-b border-slate-200/80">
                   <TableRow className="hover:bg-transparent">
                     <TableHead className="py-3 px-4 font-semibold text-xs text-slate-700 w-[280px]">
-                      Calon Santri
+                      Calon Siswa
                     </TableHead>
                     <TableHead className="py-3 px-4 font-semibold text-xs text-slate-700">
                       Wali & Kontak
@@ -490,16 +491,15 @@ export const AdminDashboardPage: React.FC = () => {
                   {data.items.map((item) => {
                     const regBadge = REG_STATUS_CONFIG[item.status] || {
                       label: item.status,
-                      dot: 'bg-slate-400',
-                      badge: 'bg-slate-50 text-slate-700 border-slate-200',
+                      dot: "bg-slate-400",
+                      badge: "bg-slate-50 text-slate-700 border-slate-200",
                     };
 
-                    const payBadge =
-                      PAY_STATUS_CONFIG[item.payment_status] || {
-                        label: item.payment_status || 'Belum Bayar',
-                        dot: 'bg-slate-300',
-                        text: 'text-slate-600',
-                      };
+                    const payBadge = PAY_STATUS_CONFIG[item.payment_status] || {
+                      label: item.payment_status || "Belum Bayar",
+                      dot: "bg-slate-300",
+                      text: "text-slate-600",
+                    };
 
                     const initials = getInitials(item.child_name);
                     const waClean = cleanWhatsappNumber(item.whatsapp_number);
@@ -510,7 +510,7 @@ export const AdminDashboardPage: React.FC = () => {
                         onClick={() => navigate(`/admin/pendaftar/${item.id}`)}
                         className="cursor-pointer hover:bg-slate-50/80 transition-colors group"
                       >
-                        {/* Calon Santri: Name & Reg Number */}
+                        {/* Calon Siswa: Name & Reg Number */}
                         <TableCell className="py-3.5 px-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/60 text-slate-600 font-semibold text-xs flex items-center justify-center shrink-0">
@@ -518,7 +518,7 @@ export const AdminDashboardPage: React.FC = () => {
                             </div>
                             <div className="min-w-0">
                               <p className="font-semibold text-slate-900 text-xs sm:text-sm truncate group-hover:text-[var(--color-primary)] transition-colors">
-                                {item.child_name || 'Tanpa Nama'}
+                                {item.child_name || "Tanpa Nama"}
                               </p>
                               <p className="text-[11px] font-mono text-slate-400 tracking-tight">
                                 {item.registration_number}
@@ -531,7 +531,7 @@ export const AdminDashboardPage: React.FC = () => {
                         <TableCell className="py-3.5 px-4">
                           <div className="text-xs">
                             <p className="font-medium text-slate-700">
-                              {item.parent_name || '-'}
+                              {item.parent_name || "-"}
                             </p>
                             <div className="flex items-center gap-1.5 mt-0.5">
                               <span className="font-mono text-slate-400 text-[11px]">
@@ -607,19 +607,19 @@ export const AdminDashboardPage: React.FC = () => {
             {/* 5. Minimalist Pagination Footer */}
             <div className="p-3.5 border-t border-slate-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
               <div>
-                Menampilkan{' '}
+                Menampilkan{" "}
                 <strong className="font-semibold text-slate-800">
                   {Math.min((data.page - 1) * data.pageSize + 1, data.total)}
                 </strong>
                 -
                 <strong className="font-semibold text-slate-800">
                   {Math.min(data.page * data.pageSize, data.total)}
-                </strong>{' '}
-                dari{' '}
+                </strong>{" "}
+                dari{" "}
                 <strong className="font-semibold text-slate-800">
                   {data.total}
-                </strong>{' '}
-                santri
+                </strong>{" "}
+                siswa
               </div>
 
               {data.totalPages > 1 && (

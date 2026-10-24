@@ -19,9 +19,9 @@ export function buildWaMessage({
       ? `${window.location.origin}/status`
       : "https://ppdb-taud-abu-ayyub.vercel.app/status");
 
-  let msg = `Assalamu'alaikum Admin PPDB TAUD SaQu Abu Ayyub,\n\nAlhamdulillah formulir pendaftaran santri baru TP.2027/2028 telah selesai diisi.\n\n`;
+  let msg = `Assalamu'alaikum Admin PPDB TAUD SaQu Abu Ayyub,\n\nAlhamdulillah formulir pendaftaran siswa baru TP.2027/2028 telah selesai diisi.\n\n`;
   if (childName) {
-    msg += `Nama Santri: ${childName}\n`;
+    msg += `Nama Siswa: ${childName}\n`;
   }
   msg += `Nomor Pendaftaran: ${registrationNumber}\n`;
   if (accessCode) {
@@ -33,7 +33,7 @@ export function buildWaMessage({
 
 export function buildWaLink(
   params: BuildWaMessageParams,
-  whatsappNumber = ADMIN_CONTACTS.primary.whatsappNumber
+  whatsappNumber = ADMIN_CONTACTS.primary.whatsappNumber,
 ): string {
   const message = buildWaMessage(params);
   const cleanNumber = whatsappNumber.replace(/\D/g, "");

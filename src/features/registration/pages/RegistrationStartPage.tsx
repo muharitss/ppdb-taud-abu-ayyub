@@ -47,7 +47,9 @@ import {
 
 export const RegistrationStartPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeSession, setActiveSession] = useState(() => getSessionCredentials());
+  const [activeSession, setActiveSession] = useState(() =>
+    getSessionCredentials(),
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -69,9 +71,11 @@ export const RegistrationStartPage: React.FC = () => {
       saveSessionCredentials(
         response.registration_number,
         response.access_code,
-        values.child_name
+        values.child_name,
       );
-      toast.success("Pendaftaran awal berhasil! Silakan unggah bukti transfer.");
+      toast.success(
+        "Pendaftaran awal berhasil! Silakan unggah bukti transfer.",
+      );
       navigate(`/bayar/${encodeURIComponent(response.registration_number)}`, {
         replace: true,
         state: {
@@ -105,7 +109,8 @@ export const RegistrationStartPage: React.FC = () => {
             Formulir Pendaftaran Awal
           </CardTitle>
           <CardDescription className="text-slate-600">
-            Penerimaan Peserta Didik Baru (PPDB) TAUD SaQu Abu Ayyub TP 2027/2028
+            Penerimaan Peserta Didik Baru (PPDB) TAUD SaQu Abu Ayyub TP
+            2027/2028
           </CardDescription>
         </CardHeader>
 
@@ -117,13 +122,16 @@ export const RegistrationStartPage: React.FC = () => {
                   Anda Memiliki Pendaftaran yang Sedang Berjalan
                 </p>
                 <p className="text-xs text-emerald-800 leading-relaxed">
-                  Sistem mendeteksi pendaftaran aktif di perangkat ini. Silakan lanjutkan pendaftaran tersebut agar tidak membuat data ganda.
+                  Sistem mendeteksi pendaftaran aktif di perangkat ini. Silakan
+                  lanjutkan pendaftaran tersebut agar tidak membuat data ganda.
                 </p>
                 <div className="bg-white rounded-lg border border-emerald-200/80 p-3 space-y-1.5 text-xs">
                   {activeSession.childName && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">Calon Santri:</span>
-                      <span className="font-semibold text-slate-800">{activeSession.childName}</span>
+                      <span className="text-slate-500">Calon Siswa:</span>
+                      <span className="font-semibold text-slate-800">
+                        {activeSession.childName}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between">
@@ -175,7 +183,7 @@ export const RegistrationStartPage: React.FC = () => {
                     className="text-xs text-slate-500 hover:text-slate-800"
                   >
                     <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
-                    Daftar Calon Santri Baru (Anak Lain)
+                    Daftar Calon Siswa Baru (Anak Lain)
                   </Button>
                 </div>
               </div>
@@ -193,122 +201,128 @@ export const RegistrationStartPage: React.FC = () => {
               )}
 
               <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Child Name */}
-              <FormField
-                control={form.control}
-                name="child_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 font-medium text-slate-700">
-                      <Baby className="w-4 h-4 text-slate-500" />
-                      Nama Lengkap Calon Santri
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Contoh: Muhammad Fatih Al-Ayyubi"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Parent Name */}
-              <FormField
-                control={form.control}
-                name="parent_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 font-medium text-slate-700">
-                      <User className="w-4 h-4 text-slate-500" />
-                      Nama Orang Tua / Wali
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Contoh: Abdullah"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* WhatsApp Number */}
-              <FormField
-                control={form.control}
-                name="whatsapp_number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1.5 font-medium text-slate-700">
-                      <Phone className="w-4 h-4 text-slate-500" />
-                      Nomor WhatsApp Aktif
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="tel"
-                        placeholder="Contoh: 08123456789 atau 628123456789"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Digunakan untuk konfirmasi dan tautan komunikasi panitia PPDB.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="pt-3 flex flex-col sm:flex-row gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  asChild
-                  className="w-full sm:w-auto text-slate-700"
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
                 >
-                  <Link to="/">
-                    <Home className="w-4 h-4 mr-1" /> Beranda
-                  </Link>
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full sm:flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-medium"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Memproses...
-                    </>
-                  ) : (
-                    "Daftar Sekarang"
-                  )}
-                </Button>
-              </div>
+                  {/* Child Name */}
+                  <FormField
+                    control={form.control}
+                    name="child_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5 font-medium text-slate-700">
+                          <Baby className="w-4 h-4 text-slate-500" />
+                          Nama Lengkap Calon Siswa
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Contoh: Muhammad Fatih Al-Ayyubi"
+                            disabled={isSubmitting}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <div className="pt-3 border-t border-slate-100 text-center space-y-2">
-                <p className="text-xs text-slate-500">Sudah pernah mendaftar sebelumnya?</p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="w-full border-emerald-200 text-emerald-800 hover:bg-emerald-50"
-                >
-                  <Link to="/status">
-                    <Search className="w-3.5 h-3.5 mr-1.5" />
-                    Lihat Status Pendaftaran
-                  </Link>
-                </Button>
-              </div>
-            </form>
-          </Form>
-          </>
+                  {/* Parent Name */}
+                  <FormField
+                    control={form.control}
+                    name="parent_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5 font-medium text-slate-700">
+                          <User className="w-4 h-4 text-slate-500" />
+                          Nama Orang Tua / Wali
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Contoh: Abdullah"
+                            disabled={isSubmitting}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* WhatsApp Number */}
+                  <FormField
+                    control={form.control}
+                    name="whatsapp_number"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1.5 font-medium text-slate-700">
+                          <Phone className="w-4 h-4 text-slate-500" />
+                          Nomor WhatsApp Aktif
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            placeholder="Contoh: 08123456789 atau 628123456789"
+                            disabled={isSubmitting}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Digunakan untuk konfirmasi dan tautan komunikasi
+                          panitia PPDB.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="pt-3 flex flex-col sm:flex-row gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      asChild
+                      className="w-full sm:w-auto text-slate-700"
+                    >
+                      <Link to="/">
+                        <Home className="w-4 h-4 mr-1" /> Beranda
+                      </Link>
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full sm:flex-1 bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-medium"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Memproses...
+                        </>
+                      ) : (
+                        "Daftar Sekarang"
+                      )}
+                    </Button>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 text-center space-y-2">
+                    <p className="text-xs text-slate-500">
+                      Sudah pernah mendaftar sebelumnya?
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="w-full border-emerald-200 text-emerald-800 hover:bg-emerald-50"
+                    >
+                      <Link to="/status">
+                        <Search className="w-3.5 h-3.5 mr-1.5" />
+                        Lihat Status Pendaftaran
+                      </Link>
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </>
           )}
         </CardContent>
       </Card>

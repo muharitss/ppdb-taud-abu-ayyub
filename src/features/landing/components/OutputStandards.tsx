@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface StandardItem {
   title: string;
@@ -35,7 +35,7 @@ const standards: StandardItem[] = [
     desc: "Memiliki adab dan akhlak mulia dalam bersosialisasi dengan orang tua, guru, dan sesama.",
   },
   {
-    title: "Kemandirian Santri",
+    title: "Kemandirian Siswa",
     desc: "Mandiri, disiplin, dan bertanggung jawab dalam menjalankan aktivitas harian.",
   },
 ];
@@ -44,16 +44,19 @@ const GraduateStandards: React.FC = () => {
   const groups = [standards.slice(0, 4), standards.slice(4, 8)];
 
   return (
-    <section id="standar-kelulusan" className="bg-gradient-to-b from-slate-50 to-white py-14 sm:py-18 md:py-20 border-y border-slate-100 scroll-mt-20">
+    <section
+      id="standar-kelulusan"
+      className="bg-gradient-to-b from-slate-50 to-white py-14 sm:py-18 md:py-20 border-y border-slate-100 scroll-mt-20"
+    >
       <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
             Standar Output Kelulusan
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600">
-            Kompetensi keagamaan, adab, dan kemandirian yang dicapai santri selama menempuh pendidikan.
+            Kompetensi keagamaan, adab, dan kemandirian yang dicapai siswa
+            selama menempuh pendidikan.
           </p>
         </div>
 
@@ -72,7 +75,7 @@ const GraduateStandards: React.FC = () => {
                     className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-3.5 sm:gap-4"
                   >
                     <span className="shrink-0 font-mono text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2.5 py-1 rounded-lg mt-0.5 tracking-wider select-none">
-                      {String(itemNumber).padStart(2, '0')}
+                      {String(itemNumber).padStart(2, "0")}
                     </span>
                     <div className="min-w-0 flex-1">
                       <h3 className="font-semibold text-slate-800 text-sm sm:text-base mb-1">

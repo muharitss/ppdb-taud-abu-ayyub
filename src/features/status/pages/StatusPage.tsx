@@ -12,7 +12,14 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +29,10 @@ import {
   saveSessionCredentials,
   clearSessionCredentials,
 } from "@/lib/sessionCredentials";
-import { verifyRegistrationAccess, type VerifyAccessData } from "@/lib/api/status";
+import {
+  verifyRegistrationAccess,
+  type VerifyAccessData,
+} from "@/lib/api/status";
 import { StatusDisplay } from "../components/StatusDisplay";
 
 export const StatusPage: React.FC = () => {
@@ -30,8 +40,12 @@ export const StatusPage: React.FC = () => {
   const queryReg = searchParams.get("r") || "";
 
   const sessionCreds = getSessionCredentials();
-  const initialReg = queryReg || (sessionCreds ? sessionCreds.registrationNumber : "");
-  const initialCode = sessionCreds && sessionCreds.registrationNumber === initialReg ? sessionCreds.accessCode : "";
+  const initialReg =
+    queryReg || (sessionCreds ? sessionCreds.registrationNumber : "");
+  const initialCode =
+    sessionCreds && sessionCreds.registrationNumber === initialReg
+      ? sessionCreds.accessCode
+      : "";
 
   const [registrationNumber, setRegistrationNumber] = useState(initialReg);
   const [accessCode, setAccessCode] = useState(initialCode);
@@ -64,7 +78,10 @@ export const StatusPage: React.FC = () => {
       setStatusData(res);
       toast.success("Status pendaftaran berhasil ditemukan!");
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Nomor pendaftaran atau kode akses tidak valid";
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Nomor pendaftaran atau kode akses tidak valid";
       setErrorMessage(msg);
       toast.error(msg);
       setStatusData(null);
@@ -96,7 +113,7 @@ export const StatusPage: React.FC = () => {
   const waRecoveryUrl = `https://wa.me/${ADMIN_CONTACTS.primary.whatsappNumber}?text=${encodeURIComponent(
     `Assalamu'alaikum Admin PPDB TAUD Abu Ayyub, saya ingin menanyakan kode akses pendaftaran saya.${
       registrationNumber ? ` (Nomor Pendaftaran: ${registrationNumber})` : ""
-    }`
+    }`,
   )}`;
 
   return (
@@ -104,8 +121,13 @@ export const StatusPage: React.FC = () => {
       <div className="w-full max-w-xl space-y-6">
         {/* Navigation Breadcrumb */}
         <div className="flex justify-between items-center text-xs text-muted-foreground px-1">
-          <span className="font-semibold text-emerald-800">TAUD SaQu Abu Ayyub</span>
-          <Link to="/" className="inline-flex items-center hover:text-foreground">
+          <span className="font-semibold text-emerald-800">
+            TAUD SaQu Abu Ayyub
+          </span>
+          <Link
+            to="/"
+            className="inline-flex items-center hover:text-foreground"
+          >
             <Home className="w-3.5 h-3.5 mr-1" />
             Kembali ke Beranda
           </Link>
@@ -139,14 +161,18 @@ export const StatusPage: React.FC = () => {
                 Cek Status Pendaftaran
               </CardTitle>
               <CardDescription className="text-emerald-800/80 text-xs sm:text-sm">
-                Masukkan Nomor Pendaftaran dan Kode Akses rahasia Anda untuk melihat status terkini berkas pendaftaran santri baru.
+                Masukkan Nomor Pendaftaran dan Kode Akses rahasia Anda untuk
+                melihat status terkini berkas pendaftaran siswa baru.
               </CardDescription>
             </CardHeader>
 
             <form onSubmit={handleSubmit}>
               <CardContent className="pt-6 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="regNumber" className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                  <Label
+                    htmlFor="regNumber"
+                    className="text-xs font-semibold text-slate-700 flex items-center gap-1.5"
+                  >
                     <FileText className="w-3.5 h-3.5 text-slate-500" />
                     Nomor Pendaftaran <span className="text-red-500">*</span>
                   </Label>
@@ -154,22 +180,30 @@ export const StatusPage: React.FC = () => {
                     id="regNumber"
                     placeholder="Contoh: PPDB-2027-00001"
                     value={registrationNumber}
-                    onChange={(e) => setRegistrationNumber(e.target.value.toUpperCase())}
+                    onChange={(e) =>
+                      setRegistrationNumber(e.target.value.toUpperCase())
+                    }
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="accessCode" className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                  <Label
+                    htmlFor="accessCode"
+                    className="text-xs font-semibold text-slate-700 flex items-center gap-1.5"
+                  >
                     <KeyRound className="w-3.5 h-3.5 text-slate-500" />
-                    Kode Akses (8 Karakter) <span className="text-red-500">*</span>
+                    Kode Akses (8 Karakter){" "}
+                    <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="accessCode"
                     maxLength={8}
                     placeholder="Contoh: ABCD2345"
                     value={accessCode}
-                    onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+                    onChange={(e) =>
+                      setAccessCode(e.target.value.toUpperCase())
+                    }
                     required
                   />
                   <p className="text-[11px] text-muted-foreground">

@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { RejectDialog } from './RejectDialog';
-import { createPaymentProofSignedUrl, reviewPayment } from '../services/adminPayment';
-import type { RegistrantDetail } from '../types';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { RejectDialog } from "./RejectDialog";
+import {
+  createPaymentProofSignedUrl,
+  reviewPayment,
+} from "../services/adminPayment";
+import type { RegistrantDetail } from "../types";
 import {
   CheckCircle2,
   XCircle,
@@ -16,8 +25,8 @@ import {
   Phone,
   FileCheck,
   AlertTriangle,
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { toast } from "sonner";
 
 interface PaymentReviewCardProps {
   registrant: RegistrantDetail;
@@ -37,11 +46,12 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
   const [isRejecting, setIsRejecting] = useState(false);
 
   // Latest payment record
-  const latestPayment = registrant.payments && registrant.payments.length > 0
-    ? registrant.payments[0]
-    : null;
+  const latestPayment =
+    registrant.payments && registrant.payments.length > 0
+      ? registrant.payments[0]
+      : null;
 
-  const isPdf = latestPayment?.proof_file_path.toLowerCase().endsWith('.pdf');
+  const isPdf = latestPayment?.proof_file_path.toLowerCase().endsWith(".pdf");
 
   useEffect(() => {
     let isMounted = true;
@@ -53,7 +63,8 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
           if (isMounted) setSignedUrl(url);
         })
         .catch((err) => {
-          if (isMounted) setProofError(err.message || 'Gagal memuat URL berkas bukti');
+          if (isMounted)
+            setProofError(err.message || "Gagal memuat URL berkas bukti");
         })
         .finally(() => {
           if (isMounted) setLoadingProof(false);
@@ -72,10 +83,13 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
         payment_id: latestPayment.id,
         approved: true,
       });
-      toast.success(`Pembayaran ${registrant.registration_number} berhasil disetujui!`);
+      toast.success(
+        `Pembayaran ${registrant.registration_number} berhasil disetujui!`,
+      );
       onStatusUpdated?.();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Gagal menyetujui pembayaran';
+      const message =
+        err instanceof Error ? err.message : "Gagal menyetujui pembayaran";
       toast.error(message);
     } finally {
       setIsApproving(false);
@@ -91,18 +105,21 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
         approved: false,
         review_notes: notes,
       });
-      toast.success(`Pembayaran ${registrant.registration_number} telah ditolak dengan catatan.`);
+      toast.success(
+        `Pembayaran ${registrant.registration_number} telah ditolak dengan catatan.`,
+      );
       setIsRejectDialogOpen(false);
       onStatusUpdated?.();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Gagal menolak pembayaran';
+      const message =
+        err instanceof Error ? err.message : "Gagal menolak pembayaran";
       toast.error(message);
     } finally {
       setIsRejecting(false);
     }
   };
 
-  const canReview = latestPayment?.status === 'payment_submitted';
+  const canReview = latestPayment?.status === "payment_submitted";
 
   return (
     <div className="space-y-6">
@@ -116,22 +133,27 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
                 </CardTitle>
                 <Badge
                   variant={
-                    registrant.payment_status === 'payment_verified'
-                      ? 'default'
-                      : registrant.payment_status === 'payment_rejected'
-                      ? 'destructive'
-                      : 'secondary'
+                    registrant.payment_status === "payment_verified"
+                      ? "default"
+                      : registrant.payment_status === "payment_rejected"
+                        ? "destructive"
+                        : "secondary"
                   }
                   className="font-medium"
                 >
-                  {registrant.payment_status === 'payment_verified' && 'Diverifikasi'}
-                  {registrant.payment_status === 'payment_submitted' && 'Menunggu Verifikasi'}
-                  {registrant.payment_status === 'payment_rejected' && 'Ditolak'}
-                  {registrant.payment_status === 'payment_pending' && 'Belum Bayar'}
+                  {registrant.payment_status === "payment_verified" &&
+                    "Diverifikasi"}
+                  {registrant.payment_status === "payment_submitted" &&
+                    "Menunggu Verifikasi"}
+                  {registrant.payment_status === "payment_rejected" &&
+                    "Ditolak"}
+                  {registrant.payment_status === "payment_pending" &&
+                    "Belum Bayar"}
                 </Badge>
               </div>
               <CardDescription className="mt-1">
-                Calon Santri: <strong>{registrant.child_name}</strong> • Orang Tua: {registrant.parent_name}
+                Calon Siswa: <strong>{registrant.child_name}</strong> • Orang
+                Tua: {registrant.parent_name}
               </CardDescription>
             </div>
 
@@ -154,24 +176,28 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl text-sm">
             <div>
               <span className="text-xs text-slate-500 flex items-center gap-1">
-                <User className="w-3.5 h-3.5" /> Nama Santri
+                <User className="w-3.5 h-3.5" /> Nama Siswa
               </span>
-              <p className="font-semibold text-slate-800 mt-0.5">{registrant.child_name}</p>
+              <p className="font-semibold text-slate-800 mt-0.5">
+                {registrant.child_name}
+              </p>
             </div>
             <div>
               <span className="text-xs text-slate-500 flex items-center gap-1">
-                <User className="w-3.5 h-3.5" /> Wali Santri
+                <User className="w-3.5 h-3.5" /> Wali Siswa
               </span>
-              <p className="font-semibold text-slate-800 mt-0.5">{registrant.parent_name}</p>
+              <p className="font-semibold text-slate-800 mt-0.5">
+                {registrant.parent_name}
+              </p>
             </div>
             <div>
               <span className="text-xs text-slate-500 flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5" /> Tanggal Daftar
               </span>
               <p className="font-semibold text-slate-800 mt-0.5">
-                {new Date(registrant.created_at).toLocaleString('id-ID', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
+                {new Date(registrant.created_at).toLocaleString("id-ID", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
                 })}
               </p>
             </div>
@@ -180,7 +206,7 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
                 <FileCheck className="w-3.5 h-3.5" /> Status Alur
               </span>
               <p className="font-semibold text-slate-800 mt-0.5 capitalize">
-                {registrant.status.replace(/_/g, ' ')}
+                {registrant.status.replace(/_/g, " ")}
               </p>
             </div>
           </div>
@@ -194,10 +220,10 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
               </h3>
               {latestPayment?.uploaded_at && (
                 <span className="text-xs text-slate-500">
-                  Diunggah:{' '}
-                  {new Date(latestPayment.uploaded_at).toLocaleString('id-ID', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short',
+                  Diunggah:{" "}
+                  {new Date(latestPayment.uploaded_at).toLocaleString("id-ID", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
                   })}
                 </span>
               )}
@@ -206,7 +232,9 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
             {loadingProof && (
               <div className="flex flex-col items-center justify-center p-12 bg-slate-50 rounded-lg text-slate-500 gap-2">
                 <Loader2 className="w-6 h-6 animate-spin text-[var(--color-primary)]" />
-                <span className="text-xs">Membuat secure signed URL berkas bukti...</span>
+                <span className="text-xs">
+                  Membuat secure signed URL berkas bukti...
+                </span>
               </div>
             )}
 
@@ -233,7 +261,8 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
                         rel="noreferrer"
                         className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
                       >
-                        Buka Dokumen PDF di Tab Baru <ExternalLink className="w-3.5 h-3.5" />
+                        Buka Dokumen PDF di Tab Baru{" "}
+                        <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                     </div>
                   </div>
@@ -244,11 +273,13 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
                         src={signedUrl}
                         alt={`Bukti transfer ${registrant.registration_number}`}
                         className="max-h-[500px] w-auto object-contain hover:scale-105 transition-transform cursor-pointer"
-                        onClick={() => window.open(signedUrl, '_blank')}
+                        onClick={() => window.open(signedUrl, "_blank")}
                       />
                     </div>
                     <div className="flex justify-between items-center text-xs text-slate-500">
-                      <span>Klik gambar untuk melihat resolusi penuh di tab baru</span>
+                      <span>
+                        Klik gambar untuk melihat resolusi penuh di tab baru
+                      </span>
                       <a
                         href={signedUrl}
                         target="_blank"
@@ -272,7 +303,8 @@ export const PaymentReviewCard: React.FC<PaymentReviewCardProps> = ({
             {/* Riwayat Catatan Review (Jika Ada) */}
             {latestPayment?.review_notes && (
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs">
-                <strong>Catatan Admin Sebelumnya:</strong> {latestPayment.review_notes}
+                <strong>Catatan Admin Sebelumnya:</strong>{" "}
+                {latestPayment.review_notes}
               </div>
             )}
 

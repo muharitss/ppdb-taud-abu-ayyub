@@ -11,8 +11,9 @@
 Aplikasi **PPDB TAUD Abu Ayyub** adalah sistem Penerimaan Peserta Didik Baru berbasis web untuk **TAUD SaQu Abu Ayyub** (Tahun Pelajaran 2027/2028) di Duri, Mandau, Bengkalis, Riau.
 
 Sistem bertransformasi dari landing page statis menjadi aplikasi web terintegrasi yang mencakup:
+
 1. **Landing Page Publik:** Mempertahankan branding, kurikulum, dan informasi sekolah yang sudah ada.
-2. **Pendaftaran Awal:** Pengisian data inti santri/orang tua dan penerbitan Nomor Pendaftaran unik serta Kode Akses aman sekali-tampil.
+2. **Pendaftaran Awal:** Pengisian data inti siswa/orang tua dan penerbitan Nomor Pendaftaran unik serta Kode Akses aman sekali-tampil.
 3. **Pembayaran Transfer Manual & Bantuan Admin:** Instruksi transfer resmi Rp300.000, akses langsung ke nomor WhatsApp Admin untuk bantuan & pertanyaan, dan upload foto bukti transfer tanpa payment gateway.
 4. **Akses Langsung Formulir Lengkap & Upload Dokumen:** Begitu pendaftar mengunggah foto bukti pembayaran (`payment_submitted`), status pendaftaran langsung menjadi `awaiting_form` sehingga pendaftar dapat langsung mengisi formulir lengkap serta mengunggah foto **Kartu Keluarga (KK)** dan **Akte Kelahiran** (tanpa perlu menunggu verifikasi admin terlebih dahulu).
 5. **Verifikasi Admin:** Verifikasi bukti pembayaran dan berkas pendaftaran oleh admin melalui dashboard.
@@ -24,22 +25,22 @@ Sistem bertransformasi dari landing page statis menjadi aplikasi web terintegras
 
 ## 2. Tech Stack Terkonfirmasi
 
-| Lapisan | Teknologi | Status / Catatan |
-|---|---|---|
-| **Frontend Framework** | React 19.1 (`react`, `react-dom`) | Terpasang, kompatibel |
-| **Language & Tooling** | TypeScript 5.9 (Strict Mode), Vite 7 | Terpasang, strict typing |
-| **Styling & Theme** | Tailwind CSS v4 (`@tailwindcss/vite`) | Terpasang, CSS Variables branding aman |
-| **UI Component System** | **shadcn/ui** (Style: New York, Base: Neutral) | `components.json` terpasang, aturan murni shadcn |
-| **Icons** | Lucide React | Terpasang |
-| **Carousel** | Embla Carousel React (`embla-carousel-react`) | Terpasang, digunakan di landing page |
-| **Client Routing** | React Router v6 (`react-router-dom`) | Direncanakan (Task 008) |
-| **Form & Validasi** | React Hook Form + Zod | Direncanakan (Task 015, 021) |
-| **Server State** | TanStack Query (`@tanstack/react-query`) | Direncanakan (Task 008, 018) |
-| **Backend & Database** | Supabase (PostgreSQL 15+, Auth, RLS, Storage) | Terpasang (Task 009–011) |
-| **ORM & Migrations** | Prisma 7 (`prisma`, `@prisma/client`) | Terpasang (`prisma/schema.prisma`, `prisma/migrations/`) |
-| **Serverless Logic** | Supabase Edge Functions (Deno / TypeScript) | Direncanakan (Task 013, 014, 017, 019) |
-| **Testing** | Vitest + Playwright | Direncanakan (Task 031, 033) |
-| **Hosting & Deployment**| Vercel (Frontend SPA) + Supabase Cloud (Backend) | Direncanakan (Task 034, 035) |
+| Lapisan                  | Teknologi                                        | Status / Catatan                                         |
+| ------------------------ | ------------------------------------------------ | -------------------------------------------------------- |
+| **Frontend Framework**   | React 19.1 (`react`, `react-dom`)                | Terpasang, kompatibel                                    |
+| **Language & Tooling**   | TypeScript 5.9 (Strict Mode), Vite 7             | Terpasang, strict typing                                 |
+| **Styling & Theme**      | Tailwind CSS v4 (`@tailwindcss/vite`)            | Terpasang, CSS Variables branding aman                   |
+| **UI Component System**  | **shadcn/ui** (Style: New York, Base: Neutral)   | `components.json` terpasang, aturan murni shadcn         |
+| **Icons**                | Lucide React                                     | Terpasang                                                |
+| **Carousel**             | Embla Carousel React (`embla-carousel-react`)    | Terpasang, digunakan di landing page                     |
+| **Client Routing**       | React Router v6 (`react-router-dom`)             | Direncanakan (Task 008)                                  |
+| **Form & Validasi**      | React Hook Form + Zod                            | Direncanakan (Task 015, 021)                             |
+| **Server State**         | TanStack Query (`@tanstack/react-query`)         | Direncanakan (Task 008, 018)                             |
+| **Backend & Database**   | Supabase (PostgreSQL 15+, Auth, RLS, Storage)    | Terpasang (Task 009–011)                                 |
+| **ORM & Migrations**     | Prisma 7 (`prisma`, `@prisma/client`)            | Terpasang (`prisma/schema.prisma`, `prisma/migrations/`) |
+| **Serverless Logic**     | Supabase Edge Functions (Deno / TypeScript)      | Direncanakan (Task 013, 014, 017, 019)                   |
+| **Testing**              | Vitest + Playwright                              | Direncanakan (Task 031, 033)                             |
+| **Hosting & Deployment** | Vercel (Frontend SPA) + Supabase Cloud (Backend) | Direncanakan (Task 034, 035)                             |
 
 ---
 
@@ -62,6 +63,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 ## 4. Master Task Breakdown & Status Pelaksanaan
 
 ### Legend Status
+
 - `DONE`: Task telah diverifikasi dan acceptance criteria terpenuhi 100%.
 - `IN_PROGRESS`: Sedang dalam pengerjaan aktif.
 - `NOT_STARTED`: Siap dikerjakan begitu dependencies terpenuhi.
@@ -70,54 +72,55 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### Tabel Progres Task (36 Task Total)
 
-| Task | Judul Task | Fase | Prioritas | Status | Dependencies |
-|:---:|---|:---:|:---:|:---:|---|
-| **001** | [Project Audit](task-001-project-audit.md) | Phase 0 | P0 | **DONE** | — |
-| **002** | [Specifications Writing](task-002-specifications.md) | Phase 0 | P0 | **DONE** | Task 001 |
-| **003** | [Task Planning & Dashboard](task-003-task-planning.md) | Phase 0 | P0 | **DONE** | Task 001, 002 |
-| **004** | [Architecture Review & Approval](task-004-architecture-review.md) | Phase 1 | P0 | **DONE** | Task 001–003 |
-| **005** | [Database Schema Review & Approval](task-005-database-schema-review.md) | Phase 1 | P0 | **DONE** | Task 002 |
-| **006** | [Dependency Cleanup & Import Bug Fix](task-006-dependency-cleanup.md) | Phase 2 | P1 | **DONE** | Task 001 |
-| **007** | [Dead Code Removal & TS Fix](task-007-dead-code-removal.md) | Phase 2 | P1 | **DONE** | Task 006 |
-| **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md) | Phase 2 | P1 | **DONE** | Task 006, 007 |
-| **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md) | Phase 3 | P0 | **DONE** | Task 004, 005, 008 |
-| **010** | [Database Migrations](task-010-database-migrations.md) | Phase 3 | P0 | **DONE** | Task 005, 009 |
-| **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md) | Phase 3 | P0 | **DONE** | Task 010 |
-| **012** | [Admin Authentication & Authorization](task-012-admin-auth.md) | Phase 3 | P0 | **DONE** | Task 009, 011 |
-| **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md) | Phase 4 | P0 | **DONE** | Task 010, 011 |
-| **014** | [Edge Fn: verify-registration-access](task-014-verify-access-edge-function.md) | Phase 4 | P0 | **DONE** | Task 013 |
-| **015** | [Registration UI (Initial Form)](task-015-registration-ui.md) | Phase 4 | P1 | **DONE** | Task 008, 013 |
-| **016** | [Payment Page UI](task-016-payment-page-ui.md) | Phase 5 | P1 | **DONE** | Task 015 |
-| **017** | [Edge Fn: submit-payment-proof](task-017-payment-upload-edge-function.md) | Phase 5 | P0 | **DONE** | Task 010, 013 |
-| **018** | [Admin Payment Dashboard](task-018-admin-payment-dashboard.md) | Phase 5 | P1 | **DONE** | Task 012, 017 |
-| **019** | [Edge Fn: admin-review-payment](task-019-admin-review-edge-function.md) | Phase 5 | P0 | **DONE** | Task 010, 011, 012 |
-| **020** | [Form Requirements Confirmation](task-020-form-requirements-confirmation.md) | Phase 6 | P0 | **DONE** | Task 005 |
-| **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md) | Phase 6 | P1 | **DONE** | Task 020, 010 |
-| **022** | [Full Form UI & File Upload](task-022-full-form-ui.md) | Phase 6 | P1 | **DONE** | Task 021, 015 |
-| **023** | [Edge Fn: document-upload](task-023-document-upload-edge-function.md) | Phase 6 | P0 | **DONE** | Task 021, 010 |
-| **024** | [Success Page & WhatsApp Action](task-024-success-page-and-whatsapp.md) | Phase 7 | P1 | **DONE** | Task 022 |
-| **025** | [Registration Status Page UI](task-025-status-page.md) | Phase 7 | P1 | **DONE** | Task 014 |
-| **026** | [Admin Dashboard Overview](task-026-admin-dashboard-overview.md) | Phase 8 | P2 | **DONE** | Task 012, 018 |
-| **027** | [Admin Registrant List & Search](task-027-admin-registrant-list.md) | Phase 8 | P2 | **DONE** | Task 026 |
-| **028** | [Admin Registrant Detail & Audit](task-028-admin-registrant-detail.md) | Phase 8 | P2 | **DONE** | Task 027, 022 |
-| **029** | [Admin PPDB Config Management](task-029-admin-ppdb-config.md) | Phase 8 | P2 | **DONE** | Task 012 |
-| **030** | [Audit Log Viewer UI](task-030-audit-log-ui.md) | Phase 8 | P2 | **DONE** | Task 026 |
-| **031** | [Unit Testing Setup & Logic Tests](task-031-unit-tests.md) | Phase 9 | P1 | `NOT_STARTED` | Task 013, 014, 022 |
-| **032** | [RLS Security Policy Tests](task-032-rls-tests.md) | Phase 9 | P0 | `NOT_STARTED` | Task 011 |
-| **033** | [End-to-End Flow Tests](task-033-e2e-tests.md) | Phase 9 | P1 | `NOT_STARTED` | Task 018, 025 |
-| **034** | [Production Supabase Setup](task-034-production-supabase.md) | Phase 10 | P0 | `NOT_STARTED` | Task 010–019 |
-| **035** | [Vercel Deployment & SPA Routing](task-035-vercel-deployment.md) | Phase 10 | P0 | `NOT_STARTED` | Task 008, 034 |
-| **036** | [Go-Live Checklist & Verification](task-036-go-live-checklist.md) | Phase 10 | P0 | `NOT_STARTED` | Task 033, 034, 035 |
-| **037** | [Landing Page CTA & Navigation Routing Fix](task-037-landing-cta-and-navigation-fix.md) | Phase 11 | P1 | **DONE** | Task 015, 022 |
-| **038** | [Bank Information & Contact Consistency](task-038-bank-info-and-contact-consistency.md) | Phase 11 | P0 | **DONE** | Task 016, 020 |
-| **039** | [Access Code Session Retention & Anti-Lockout](task-039-access-code-session-retention.md) | Phase 11 | P1 | **DONE** | Task 015, 016, 022 |
-| **040** | [Full Form Wizard Simplification & Component Refactor](task-040-form-wizard-simplification.md) | Phase 11 | P2 | **DONE** | Task 021, 022 |
+|  Task   | Judul Task                                                                                     |   Fase   | Prioritas |    Status     | Dependencies       |
+| :-----: | ---------------------------------------------------------------------------------------------- | :------: | :-------: | :-----------: | ------------------ |
+| **001** | [Project Audit](task-001-project-audit.md)                                                     | Phase 0  |    P0     |   **DONE**    | —                  |
+| **002** | [Specifications Writing](task-002-specifications.md)                                           | Phase 0  |    P0     |   **DONE**    | Task 001           |
+| **003** | [Task Planning & Dashboard](task-003-task-planning.md)                                         | Phase 0  |    P0     |   **DONE**    | Task 001, 002      |
+| **004** | [Architecture Review & Approval](task-004-architecture-review.md)                              | Phase 1  |    P0     |   **DONE**    | Task 001–003       |
+| **005** | [Database Schema Review & Approval](task-005-database-schema-review.md)                        | Phase 1  |    P0     |   **DONE**    | Task 002           |
+| **006** | [Dependency Cleanup & Import Bug Fix](task-006-dependency-cleanup.md)                          | Phase 2  |    P1     |   **DONE**    | Task 001           |
+| **007** | [Dead Code Removal & TS Fix](task-007-dead-code-removal.md)                                    | Phase 2  |    P1     |   **DONE**    | Task 006           |
+| **008** | [Project Restructure & Routing Setup](task-008-project-restructure.md)                         | Phase 2  |    P1     |   **DONE**    | Task 006, 007      |
+| **009** | [Supabase Setup & Local Dev Init](task-009-supabase-setup.md)                                  | Phase 3  |    P0     |   **DONE**    | Task 004, 005, 008 |
+| **010** | [Database Migrations](task-010-database-migrations.md)                                         | Phase 3  |    P0     |   **DONE**    | Task 005, 009      |
+| **011** | [Row Level Security (RLS) Policies](task-011-rls-policies.md)                                  | Phase 3  |    P0     |   **DONE**    | Task 010           |
+| **012** | [Admin Authentication & Authorization](task-012-admin-auth.md)                                 | Phase 3  |    P0     |   **DONE**    | Task 009, 011      |
+| **013** | [Edge Fn: create-registration](task-013-registration-edge-function.md)                         | Phase 4  |    P0     |   **DONE**    | Task 010, 011      |
+| **014** | [Edge Fn: verify-registration-access](task-014-verify-access-edge-function.md)                 | Phase 4  |    P0     |   **DONE**    | Task 013           |
+| **015** | [Registration UI (Initial Form)](task-015-registration-ui.md)                                  | Phase 4  |    P1     |   **DONE**    | Task 008, 013      |
+| **016** | [Payment Page UI](task-016-payment-page-ui.md)                                                 | Phase 5  |    P1     |   **DONE**    | Task 015           |
+| **017** | [Edge Fn: submit-payment-proof](task-017-payment-upload-edge-function.md)                      | Phase 5  |    P0     |   **DONE**    | Task 010, 013      |
+| **018** | [Admin Payment Dashboard](task-018-admin-payment-dashboard.md)                                 | Phase 5  |    P1     |   **DONE**    | Task 012, 017      |
+| **019** | [Edge Fn: admin-review-payment](task-019-admin-review-edge-function.md)                        | Phase 5  |    P0     |   **DONE**    | Task 010, 011, 012 |
+| **020** | [Form Requirements Confirmation](task-020-form-requirements-confirmation.md)                   | Phase 6  |    P0     |   **DONE**    | Task 005           |
+| **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md)                            | Phase 6  |    P1     |   **DONE**    | Task 020, 010      |
+| **022** | [Full Form UI & File Upload](task-022-full-form-ui.md)                                         | Phase 6  |    P1     |   **DONE**    | Task 021, 015      |
+| **023** | [Edge Fn: document-upload](task-023-document-upload-edge-function.md)                          | Phase 6  |    P0     |   **DONE**    | Task 021, 010      |
+| **024** | [Success Page & WhatsApp Action](task-024-success-page-and-whatsapp.md)                        | Phase 7  |    P1     |   **DONE**    | Task 022           |
+| **025** | [Registration Status Page UI](task-025-status-page.md)                                         | Phase 7  |    P1     |   **DONE**    | Task 014           |
+| **026** | [Admin Dashboard Overview](task-026-admin-dashboard-overview.md)                               | Phase 8  |    P2     |   **DONE**    | Task 012, 018      |
+| **027** | [Admin Registrant List & Search](task-027-admin-registrant-list.md)                            | Phase 8  |    P2     |   **DONE**    | Task 026           |
+| **028** | [Admin Registrant Detail & Audit](task-028-admin-registrant-detail.md)                         | Phase 8  |    P2     |   **DONE**    | Task 027, 022      |
+| **029** | [Admin PPDB Config Management](task-029-admin-ppdb-config.md)                                  | Phase 8  |    P2     |   **DONE**    | Task 012           |
+| **030** | [Audit Log Viewer UI](task-030-audit-log-ui.md)                                                | Phase 8  |    P2     |   **DONE**    | Task 026           |
+| **031** | [Unit Testing Setup & Logic Tests](task-031-unit-tests.md)                                     | Phase 9  |    P1     | `NOT_STARTED` | Task 013, 014, 022 |
+| **032** | [RLS Security Policy Tests](task-032-rls-tests.md)                                             | Phase 9  |    P0     | `NOT_STARTED` | Task 011           |
+| **033** | [End-to-End Flow Tests](task-033-e2e-tests.md)                                                 | Phase 9  |    P1     | `NOT_STARTED` | Task 018, 025      |
+| **034** | [Production Supabase Setup](task-034-production-supabase.md)                                   | Phase 10 |    P0     | `NOT_STARTED` | Task 010–019       |
+| **035** | [Vercel Deployment & SPA Routing](task-035-vercel-deployment.md)                               | Phase 10 |    P0     | `NOT_STARTED` | Task 008, 034      |
+| **036** | [Go-Live Checklist & Verification](task-036-go-live-checklist.md)                              | Phase 10 |    P0     | `NOT_STARTED` | Task 033, 034, 035 |
+| **037** | [Landing Page CTA & Navigation Routing Fix](task-037-landing-cta-and-navigation-fix.md)        | Phase 11 |    P1     |   **DONE**    | Task 015, 022      |
+| **038** | [Bank Information & Contact Consistency](task-038-bank-info-and-contact-consistency.md)        | Phase 11 |    P0     |   **DONE**    | Task 016, 020      |
+| **039** | [Access Code Session Retention & Anti-Lockout](task-039-access-code-session-retention.md)      | Phase 11 |    P1     |   **DONE**    | Task 015, 016, 022 |
+| **040** | [Full Form Wizard Simplification & Component Refactor](task-040-form-wizard-simplification.md) | Phase 11 |    P2     |   **DONE**    | Task 021, 022      |
 
 ---
 
 ## 5. Ringkasan Status & Task Siap Eksekusi
 
 ### A. Metrik Progres Proyek
+
 - **Total Task:** 40
 - **Selesai (`DONE`):** 34 (Task 001–030, Task 037–040)
 - **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 031, Task 032, Task 033
@@ -126,12 +129,14 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 - **Persentase Selesai Nyata:** **85.00%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
+
 1. **Task 031:** Unit Testing Setup & Logic Tests (Vitest untuk Edge Functions & Form Schemas).
 2. **Task 032:** RLS Security Policy Tests (verifikasi RLS database PostgreSQL).
 3. **Task 033:** End-to-End Flow Tests (pengujian alur pendaftaran s.d. dashboard admin).
 
 ### C. Task yang Terblokir & Penyebabnya
-- *Tidak ada task yang terblokir saat ini.* Seluruh dependency Phase 6 telah terpenuhi.
+
+- _Tidak ada task yang terblokir saat ini._ Seluruh dependency Phase 6 telah terpenuhi.
 
 ---
 
@@ -165,7 +170,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 ## 7. Daftar Hal yang Menunggu Keputusan Stakeholder
 
 1. **Detail Rekening Bank Resmi Sekolah:** Nomor rekening, nama bank, dan atas nama pemilik rekening untuk ditampilkan pada halaman pembayaran.
-2. **Formulir Pendaftaran Lengkap:** Daftar field data diri santri, data orang tua/wali, riwayat kesehatan, dan kontak darurat.
+2. **Formulir Pendaftaran Lengkap:** Daftar field data diri siswa, data orang tua/wali, riwayat kesehatan, dan kontak darurat.
 3. **Dokumen Persyaratan Final:** Format dan ukuran berkas (KK, Akta Kelahiran, Pas Foto, dll.).
 4. **Fitur Simpan Draft Formulir:** Apakah orang tua diizinkan menyimpan draf formulir yang belum lengkap, atau harus diisi sekali selesai.
 5. **Akun Admin Perdana:** Alamat email admin utama untuk didaftarkan ke Supabase Auth (undangan manual).
@@ -202,7 +207,7 @@ npm run preview
   - Penyelesaian komprehensif seluruh 5 task Phase 8 (Task 026, Task 027, Task 028, Task 029, Task 030):
     - **Task 026 (Admin Dashboard Overview `/admin`):** Metrik ringkasan kartu statistik (total pendaftar, antrean pembayaran, menunggu formulir, formulir masuk, diterima, ditolak), banner peringatan verifikasi pembayaran aktif, auto-refresh 30 detik tanpa dependensi eksternal berlebih, 10 aktivitas jejak audit terkini, dan top navigation bar portal admin.
     - **Task 027 (Admin Registrant List & Search `/admin/pendaftar`):** Tabel daftar seluruh pendaftar dengan debounced search, filter status pendaftaran (tersinkronisasi query params URL), database-level pagination, badge status, tautan kontak WhatsApp, dan tombol navigasi detail pendaftar.
-    - **Task 028 (Admin Registrant Detail & Audit `/admin/pendaftar/:id`):** Tampilan lengkap data formulir santri & orang tua (read-only), berkas persyaratan (Kartu Keluarga & Akte Kelahiran) dengan short-lived signed URLs (gambar & PDF), alur verifikasi keputusan status (Terima, Tolak dengan catatan wajib, Tandai Sedang Ditinjau), riwayat pembayaran, serta jejak audit spesifik pendaftar.
+    - **Task 028 (Admin Registrant Detail & Audit `/admin/pendaftar/:id`):** Tampilan lengkap data formulir siswa & orang tua (read-only), berkas persyaratan (Kartu Keluarga & Akte Kelahiran) dengan short-lived signed URLs (gambar & PDF), alur verifikasi keputusan status (Terima, Tolak dengan catatan wajib, Tandai Sedang Ditinjau), riwayat pembayaran, serta jejak audit spesifik pendaftar.
     - **Task 029 (Admin PPDB Config Management `/admin/pengaturan`):** Pengelolaan terintegrasi status buka/tutup pendaftaran, tahun ajaran, rentang tanggal pendaftaran, biaya registrasi, rekening bank resmi, dan kontak WhatsApp admin dengan audit logging.
     - **Task 030 (Audit Log Viewer UI `/admin/audit`):** Tabel pencatatan audit keamanan sistem komprehensif dengan filter tipe aksi (12 jenis event), filter rentang tanggal kalender, tautan entitas ke detail pendaftar, dan database-level pagination.
   - Progres: 34 / 40 Task (**85.00%**). Phase 8 resmi tuntas 100%.
@@ -223,7 +228,7 @@ npm run preview
     - Halaman formulir lengkap (`/daftar/formulir`) memiliki tambahan upload foto **Kartu Keluarga (KK)** dan **Akte Kelahiran** (`kartu_keluarga`, `akte_kelahiran`).
   - Task 022 & 023 resmi diselesaikan (`DONE`):
     - **Task 023 (Edge Function `document-upload` & `submit-full-form`):** Endpoint Deno untuk upload berkas dokumen persyaratan (Kartu Keluarga dan Akte Kelahiran) dengan validasi magic bytes (JPEG/PNG/PDF), batas 5MB, timing-attack protection bcrypt, penyimpanan ke private storage bucket `registration-documents`, upsert ke tabel `registration_documents`, dan pencatatan audit log `audit_events`. Serta Edge function `submit-full-form` untuk query status draf formulir (`get`), simpan kemajuan draf (`save_draft`), dan validasi final lengkap serta perubahan status ke `submitted`.
-    - **Task 022 (Full Form UI & File Upload `/daftar/formulir`):** Halaman formulir pendaftaran lengkap yang langsung dapat diakses setelah upload bukti pembayaran (`payment_submitted` atau `payment_verified`). Dilengkapi gating instruksi pembayaran + bantuan admin WA + upload bukti pembayaran inline jika `payment_pending`. Wizard 5 langkah (Calon Santri, Data Ayah, Data Ibu, Kesehatan, Upload Foto KK & Akte Kelahiran) dengan validasi Zod bertahap, auto-save draf setiap langkah, dan tombol tautan bergabung ke grup resmi WhatsApp PPDB. Phase 6 tuntas 100%.
+    - **Task 022 (Full Form UI & File Upload `/daftar/formulir`):** Halaman formulir pendaftaran lengkap yang langsung dapat diakses setelah upload bukti pembayaran (`payment_submitted` atau `payment_verified`). Dilengkapi gating instruksi pembayaran + bantuan admin WA + upload bukti pembayaran inline jika `payment_pending`. Wizard 5 langkah (Calon Siswa, Data Ayah, Data Ibu, Kesehatan, Upload Foto KK & Akte Kelahiran) dengan validasi Zod bertahap, auto-save draf setiap langkah, dan tombol tautan bergabung ke grup resmi WhatsApp PPDB. Phase 6 tuntas 100%.
   - Progres: 23 / 36 Task (**63.89%**).
 - **2026-10-23 (Phase 6 Dimulai):**
   - Task 021 resmi diselesaikan (`DONE`):
@@ -240,7 +245,7 @@ npm run preview
     - **Task 016 (Payment Page UI `/daftar/pembayaran` & `/bayar/:registrationNumber`):** Tampilan instruksi transfer bank resmi (BSI 7216959997 a.n TAUD SaQu Abu Ayyub) dengan tombol salin nomor rekening dan nominal Rp300.000, komponen upload bukti drag-and-drop dengan validasi client-side, pratinjau thumbnail gambar / info PDF, penanganan error ramah pengguna, integrasi API ke Edge Function `submit-payment-proof`, serta layar konfirmasi sukses yang mengarahkan ke halaman status dan tombol WhatsApp konfirmasi admin.
   - Progres: 18 / 36 Task (**50.00%**).
 - **2026-10-23 (Phase 4):**
-  - Task 015 resmi diselesaikan (`DONE`): Registration UI (`/daftar`). Implementasi formulir pendaftaran awal santri (nama calon santri, nama orang tua/wali, nomor WhatsApp Indonesia), validasi Zod + React Hook Form + shadcn Form primitive, integrasi Sonner toast, penanganan error humanis bahasa Indonesia, tampilan nomor pendaftaran & kode akses sekali-tampil dengan tombol salin (clipboard API), peringatan tegas anti-data breach, dan passing `access_code` secara strictly in-memory lewat React Router state menuju alur pembayaran tanpa disimpan di `localStorage`/`sessionStorage`. Phase 4 tuntas.
+  - Task 015 resmi diselesaikan (`DONE`): Registration UI (`/daftar`). Implementasi formulir pendaftaran awal siswa (nama calon siswa, nama orang tua/wali, nomor WhatsApp Indonesia), validasi Zod + React Hook Form + shadcn Form primitive, integrasi Sonner toast, penanganan error humanis bahasa Indonesia, tampilan nomor pendaftaran & kode akses sekali-tampil dengan tombol salin (clipboard API), peringatan tegas anti-data breach, dan passing `access_code` secara strictly in-memory lewat React Router state menuju alur pembayaran tanpa disimpan di `localStorage`/`sessionStorage`. Phase 4 tuntas.
   - Progres: 16 / 36 Task (**44.44%**).
   - Task 014 resmi diselesaikan (`DONE`): Edge Function `verify-registration-access`. Implementasi endpoint Deno dengan rate limiting (maksimal 5 percobaan gagal per 15 menit), penanganan anti-enumeration lewat error opaque seragam (`Nomor pendaftaran atau kode akses tidak sesuai`), mitigasi timing side-channel via dummy bcrypt comparison untuk pendaftar tidak ditemukan, verifikasi hash bcrypt kode akses ke tabel `registration_access`, reset counter kegagalan saat sukses lewat `audit_events`, serta whitelist ketat field respons status pendaftar (tanpa mengekspos data pribadi/rahasia).
   - Progres: 15 / 36 Task (**41.67%**).

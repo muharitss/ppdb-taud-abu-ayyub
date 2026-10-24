@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, Link, useOutletContext } from 'react-router-dom';
-import type { User } from '@supabase/supabase-js';
-import type { AdminProfile } from '@/hooks/useAdminAuth';
+import React, { useEffect, useState, useCallback } from "react";
+import { useParams, Link, useOutletContext } from "react-router-dom";
+import type { User } from "@supabase/supabase-js";
+import type { AdminProfile } from "@/hooks/useAdminAuth";
 import {
   getRegistrantFullDetail,
   updateRegistrantStatus,
   type RegistrantFullData,
   type DocumentItem,
-} from '../services/adminDetail';
-import { reviewPayment } from '../services/adminPayment';
-import { Button } from '@/components/ui/button';
+} from "../services/adminDetail";
+import { reviewPayment } from "../services/adminPayment";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import {
   ArrowLeft,
   Loader2,
@@ -34,44 +34,100 @@ import {
   FileText,
   Activity,
   X,
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { toast } from "sonner";
 
 interface AdminContextType {
   user: User;
   profile: AdminProfile | null;
 }
 
-const REG_STATUS_CONFIG: Record<string, { label: string; dot: string; badge: string }> = {
-  draft: { label: 'Draf', dot: 'bg-slate-400', badge: 'bg-slate-100 text-slate-700 border-slate-200' },
-  awaiting_payment: { label: 'Menunggu Pembayaran', dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
-  awaiting_form: { label: 'Menunggu Formulir', dot: 'bg-blue-500', badge: 'bg-blue-50 text-blue-700 border-blue-200' },
-  submitted: { label: 'Formulir Masuk', dot: 'bg-purple-500', badge: 'bg-purple-50 text-purple-700 border-purple-200' },
-  under_review: { label: 'Sedang Ditinjau', dot: 'bg-indigo-500', badge: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
-  accepted: { label: 'Diterima', dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  rejected: { label: 'Ditolak', dot: 'bg-rose-500', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
+const REG_STATUS_CONFIG: Record<
+  string,
+  { label: string; dot: string; badge: string }
+> = {
+  draft: {
+    label: "Draf",
+    dot: "bg-slate-400",
+    badge: "bg-slate-100 text-slate-700 border-slate-200",
+  },
+  awaiting_payment: {
+    label: "Menunggu Pembayaran",
+    dot: "bg-amber-500",
+    badge: "bg-amber-50 text-amber-700 border-amber-200",
+  },
+  awaiting_form: {
+    label: "Menunggu Formulir",
+    dot: "bg-blue-500",
+    badge: "bg-blue-50 text-blue-700 border-blue-200",
+  },
+  submitted: {
+    label: "Formulir Masuk",
+    dot: "bg-purple-500",
+    badge: "bg-purple-50 text-purple-700 border-purple-200",
+  },
+  under_review: {
+    label: "Sedang Ditinjau",
+    dot: "bg-indigo-500",
+    badge: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  },
+  accepted: {
+    label: "Diterima",
+    dot: "bg-emerald-500",
+    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+  rejected: {
+    label: "Ditolak",
+    dot: "bg-rose-500",
+    badge: "bg-rose-50 text-rose-700 border-rose-200",
+  },
 };
 
-const PAY_STATUS_CONFIG: Record<string, { label: string; dot: string; badge: string }> = {
-  payment_pending: { label: 'Belum Bayar', dot: 'bg-slate-400', badge: 'bg-slate-100 text-slate-700 border-slate-200' },
-  payment_submitted: { label: 'Menunggu Verifikasi', dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200' },
-  payment_verified: { label: 'Lunas', dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  payment_rejected: { label: 'Ditolak', dot: 'bg-rose-500', badge: 'bg-rose-50 text-rose-700 border-rose-200' },
+const PAY_STATUS_CONFIG: Record<
+  string,
+  { label: string; dot: string; badge: string }
+> = {
+  payment_pending: {
+    label: "Belum Bayar",
+    dot: "bg-slate-400",
+    badge: "bg-slate-100 text-slate-700 border-slate-200",
+  },
+  payment_submitted: {
+    label: "Menunggu Verifikasi",
+    dot: "bg-amber-500",
+    badge: "bg-amber-50 text-amber-700 border-amber-200",
+  },
+  payment_verified: {
+    label: "Lunas",
+    dot: "bg-emerald-500",
+    badge: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+  payment_rejected: {
+    label: "Ditolak",
+    dot: "bg-rose-500",
+    badge: "bg-rose-50 text-rose-700 border-rose-200",
+  },
 };
 
 function formatWaLink(phone: string) {
-  const cleaned = phone.replace(/\D/g, '');
-  const normalized = cleaned.startsWith('0') ? '62' + cleaned.slice(1) : cleaned;
+  const cleaned = phone.replace(/\D/g, "");
+  const normalized = cleaned.startsWith("0")
+    ? "62" + cleaned.slice(1)
+    : cleaned;
   return `https://wa.me/${normalized}`;
 }
 
 function formatDate(dateStr?: string | null) {
-  if (!dateStr) return '-';
+  if (!dateStr) return "-";
   try {
     const d = new Date(dateStr);
     return isNaN(d.getTime())
       ? dateStr
-      : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+      : d.toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
   } catch {
     return dateStr;
   }
@@ -87,9 +143,11 @@ function DetailField({
   fullWidth?: boolean;
 }) {
   return (
-    <div className={`space-y-1 ${fullWidth ? 'col-span-full' : ''}`}>
+    <div className={`space-y-1 ${fullWidth ? "col-span-full" : ""}`}>
       <dt className="text-xs font-medium text-slate-500">{label}</dt>
-      <dd className="text-sm font-medium text-slate-900 break-words">{value || '-'}</dd>
+      <dd className="text-sm font-medium text-slate-900 break-words">
+        {value || "-"}
+      </dd>
     </div>
   );
 }
@@ -103,12 +161,17 @@ export const AdminRegistrantDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [targetStatus, setTargetStatus] = useState<'accepted' | 'rejected' | null>(null);
-  const [reviewNotes, setReviewNotes] = useState('');
+  const [targetStatus, setTargetStatus] = useState<
+    "accepted" | "rejected" | null
+  >(null);
+  const [reviewNotes, setReviewNotes] = useState("");
   const [submittingStatus, setSubmittingStatus] = useState(false);
 
   // Lightbox preview modal for proof & documents
-  const [previewModal, setPreviewModal] = useState<{ url: string; title: string } | null>(null);
+  const [previewModal, setPreviewModal] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
 
   const fetchDetail = useCallback(async () => {
     if (!id) return;
@@ -118,7 +181,9 @@ export const AdminRegistrantDetailPage: React.FC = () => {
       const res = await getRegistrantFullDetail(id);
       setData(res);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Gagal memuat detail pendaftar');
+      setError(
+        err instanceof Error ? err.message : "Gagal memuat detail pendaftar",
+      );
     } finally {
       setLoading(false);
     }
@@ -131,8 +196,8 @@ export const AdminRegistrantDetailPage: React.FC = () => {
   const handleStatusSubmit = async () => {
     if (!data || !targetStatus) return;
 
-    if (targetStatus === 'rejected' && !reviewNotes.trim()) {
-      toast.error('Catatan penolakan wajib diisi!');
+    if (targetStatus === "rejected" && !reviewNotes.trim()) {
+      toast.error("Catatan penolakan wajib diisi!");
       return;
     }
 
@@ -147,16 +212,18 @@ export const AdminRegistrantDetailPage: React.FC = () => {
       });
 
       toast.success(
-        targetStatus === 'accepted'
+        targetStatus === "accepted"
           ? `Pendaftar ${data.registration.registration_number} resmi DITERIMA!`
-          : `Pendaftar ${data.registration.registration_number} telah DITOLAK.`
+          : `Pendaftar ${data.registration.registration_number} telah DITOLAK.`,
       );
 
       setTargetStatus(null);
-      setReviewNotes('');
+      setReviewNotes("");
       fetchDetail();
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Gagal mengubah status pendaftar');
+      toast.error(
+        err instanceof Error ? err.message : "Gagal mengubah status pendaftar",
+      );
     } finally {
       setSubmittingStatus(false);
     }
@@ -176,11 +243,13 @@ export const AdminRegistrantDetailPage: React.FC = () => {
       });
 
       toast.success(
-        `Pembayaran untuk ${data.registration.registration_number} berhasil diverifikasi!`
+        `Pembayaran untuk ${data.registration.registration_number} berhasil diverifikasi!`,
       );
       fetchDetail();
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Gagal memverifikasi pembayaran');
+      toast.error(
+        err instanceof Error ? err.message : "Gagal memverifikasi pembayaran",
+      );
     } finally {
       setVerifyingPayment(false);
     }
@@ -205,9 +274,12 @@ export const AdminRegistrantDetailPage: React.FC = () => {
         </Link>
         <div className="p-10 bg-white border border-red-200 rounded-2xl text-center space-y-3 shadow-xs">
           <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
-          <h2 className="text-base font-semibold text-slate-800">Gagal Mengambil Data</h2>
+          <h2 className="text-base font-semibold text-slate-800">
+            Gagal Mengambil Data
+          </h2>
           <p className="text-sm text-slate-500 max-w-sm mx-auto">
-            {error || 'Data pendaftar tidak ditemukan atau terjadi kendala jaringan.'}
+            {error ||
+              "Data pendaftar tidak ditemukan atau terjadi kendala jaringan."}
           </p>
         </div>
       </div>
@@ -217,13 +289,13 @@ export const AdminRegistrantDetailPage: React.FC = () => {
   const { registration, formData, payments, documents } = data;
   const statusInfo = REG_STATUS_CONFIG[registration.status] || {
     label: registration.status,
-    dot: 'bg-slate-400',
-    badge: 'bg-slate-100 text-slate-700 border-slate-200',
+    dot: "bg-slate-400",
+    badge: "bg-slate-100 text-slate-700 border-slate-200",
   };
   const payStatusInfo = PAY_STATUS_CONFIG[registration.payment_status] || {
     label: registration.payment_status,
-    dot: 'bg-slate-400',
-    badge: 'bg-slate-100 text-slate-700 border-slate-200',
+    dot: "bg-slate-400",
+    badge: "bg-slate-100 text-slate-700 border-slate-200",
   };
 
   const child = (formData?.child || {}) as Record<string, unknown>;
@@ -232,61 +304,67 @@ export const AdminRegistrantDetailPage: React.FC = () => {
   const health = (formData?.health || {}) as Record<string, unknown>;
 
   const latestPayment = payments?.[0];
-  const kkDoc = documents.find((d) => d.document_type === 'kartu_keluarga');
-  const akteDoc = documents.find((d) => d.document_type === 'akte_kelahiran');
+  const kkDoc = documents.find((d) => d.document_type === "kartu_keluarga");
+  const akteDoc = documents.find((d) => d.document_type === "akte_kelahiran");
 
-  const genderRaw = String(child.gender || '');
+  const genderRaw = String(child.gender || "");
   const genderLabel =
-    genderRaw === 'laki_laki' || genderRaw === 'male'
-      ? 'Laki-laki'
-      : genderRaw === 'perempuan' || genderRaw === 'female'
-      ? 'Perempuan'
-      : '-';
+    genderRaw === "laki_laki" || genderRaw === "male"
+      ? "Laki-laki"
+      : genderRaw === "perempuan" || genderRaw === "female"
+        ? "Perempuan"
+        : "-";
 
-  const childBirthPlace = String(child.birth_place || child.birthPlace || '');
-  const childBirthDate = String(child.birth_date || child.birthDate || '');
+  const childBirthPlace = String(child.birth_place || child.birthPlace || "");
+  const childBirthDate = String(child.birth_date || child.birthDate || "");
   const childTtl =
     childBirthPlace || childBirthDate
-      ? `${childBirthPlace}${childBirthPlace && childBirthDate ? ', ' : ''}${childBirthDate}`
-      : '-';
+      ? `${childBirthPlace}${childBirthPlace && childBirthDate ? ", " : ""}${childBirthDate}`
+      : "-";
 
-  const fatherBirthPlace = String(father.birth_place || father.birthPlace || '');
-  const fatherBirthDate = String(father.birth_date || father.birthDate || '');
+  const fatherBirthPlace = String(
+    father.birth_place || father.birthPlace || "",
+  );
+  const fatherBirthDate = String(father.birth_date || father.birthDate || "");
   const fatherTtl =
     fatherBirthPlace || fatherBirthDate
-      ? `${fatherBirthPlace}${fatherBirthPlace && fatherBirthDate ? ', ' : ''}${fatherBirthDate}`
-      : '-';
+      ? `${fatherBirthPlace}${fatherBirthPlace && fatherBirthDate ? ", " : ""}${fatherBirthDate}`
+      : "-";
 
-  const motherBirthPlace = String(mother.birth_place || mother.birthPlace || '');
-  const motherBirthDate = String(mother.birth_date || mother.birthDate || '');
+  const motherBirthPlace = String(
+    mother.birth_place || mother.birthPlace || "",
+  );
+  const motherBirthDate = String(mother.birth_date || mother.birthDate || "");
   const motherTtl =
     motherBirthPlace || motherBirthDate
-      ? `${motherBirthPlace}${motherBirthPlace && motherBirthDate ? ', ' : ''}${motherBirthDate}`
-      : '-';
+      ? `${motherBirthPlace}${motherBirthPlace && motherBirthDate ? ", " : ""}${motherBirthDate}`
+      : "-";
 
-  const programRaw = String(child.program || '');
+  const programRaw = String(child.program || "");
   const programLabel =
-    programRaw === '1_tahun'
-      ? '1 Tahun (5-6 Tahun)'
-      : programRaw === '2_tahun'
-      ? '2 Tahun (4-5 Tahun)'
-      : programRaw || '-';
+    programRaw === "1_tahun"
+      ? "1 Tahun (5-6 Tahun)"
+      : programRaw === "2_tahun"
+        ? "2 Tahun (4-5 Tahun)"
+        : programRaw || "-";
 
-  const bloodRaw = String(health.blood_type || health.bloodType || '');
+  const bloodRaw = String(health.blood_type || health.bloodType || "");
   const bloodLabel =
-    bloodRaw === 'tidak_diketahui' ? 'Tidak Diketahui' : bloodRaw || '-';
+    bloodRaw === "tidak_diketahui" ? "Tidak Diketahui" : bloodRaw || "-";
 
   const renderDocumentItem = (doc: DocumentItem | undefined, title: string) => {
     if (!doc) {
       return (
         <div className="space-y-1">
           <span className="text-xs font-semibold text-slate-700">{title}</span>
-          <p className="text-xs text-slate-400 py-3 italic">Berkas belum diunggah.</p>
+          <p className="text-xs text-slate-400 py-3 italic">
+            Berkas belum diunggah.
+          </p>
         </div>
       );
     }
 
-    const isPdf = doc.file_path.toLowerCase().endsWith('.pdf');
+    const isPdf = doc.file_path.toLowerCase().endsWith(".pdf");
 
     return (
       <div className="space-y-2">
@@ -322,7 +400,9 @@ export const AdminRegistrantDetailPage: React.FC = () => {
             className="w-full h-auto cursor-pointer hover:opacity-95 transition-opacity"
           />
         ) : (
-          <p className="text-xs text-amber-600 py-2">Tautan berkas sementara kadaluarsa.</p>
+          <p className="text-xs text-amber-600 py-2">
+            Tautan berkas sementara kadaluarsa.
+          </p>
         )}
       </div>
     );
@@ -340,7 +420,7 @@ export const AdminRegistrantDetailPage: React.FC = () => {
           Kembali ke Daftar Pendaftar
         </Link>
         <span className="text-xs text-slate-400 font-mono">
-          Periode: {registration.ppdb_period || '2026/2027'}
+          Periode: {registration.ppdb_period || "2026/2027"}
         </span>
       </div>
 
@@ -356,16 +436,20 @@ export const AdminRegistrantDetailPage: React.FC = () => {
               <span
                 className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${statusInfo.badge}`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`} />
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${statusInfo.dot}`}
+                />
                 {statusInfo.label}
               </span>
               <span
                 className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${payStatusInfo.badge}`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${payStatusInfo.dot}`} />
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${payStatusInfo.dot}`}
+                />
                 Bayar: {payStatusInfo.label}
               </span>
-              {programLabel !== '-' && (
+              {programLabel !== "-" && (
                 <span className="text-xs text-slate-600 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200 hidden md:inline-flex">
                   {programLabel}
                 </span>
@@ -378,7 +462,12 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                 {registration.child_name}
               </h1>
               <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-600 mt-1">
-                <span>Wali: <strong className="text-slate-800">{registration.parent_name}</strong></span>
+                <span>
+                  Wali:{" "}
+                  <strong className="text-slate-800">
+                    {registration.parent_name}
+                  </strong>
+                </span>
                 <span>&bull;</span>
                 <a
                   href={formatWaLink(registration.whatsapp_number)}
@@ -395,21 +484,21 @@ export const AdminRegistrantDetailPage: React.FC = () => {
 
           {/* Quick Decision Actions */}
           <div className="flex items-center gap-2 sm:self-center shrink-0">
-            {registration.status !== 'accepted' && (
+            {registration.status !== "accepted" && (
               <Button
                 size="sm"
-                onClick={() => setTargetStatus('accepted')}
+                onClick={() => setTargetStatus("accepted")}
                 className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs font-medium"
               >
                 <CheckCircle2 className="w-4 h-4" />
-                Terima Santri
+                Terima Siswa
               </Button>
             )}
-            {registration.status !== 'rejected' && (
+            {registration.status !== "rejected" && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setTargetStatus('rejected')}
+                onClick={() => setTargetStatus("rejected")}
                 className="gap-1.5 text-xs text-rose-600 border-rose-200 hover:bg-rose-50 hover:border-rose-300 font-medium"
               >
                 <XCircle className="w-4 h-4" />
@@ -420,24 +509,28 @@ export const AdminRegistrantDetailPage: React.FC = () => {
         </div>
 
         {/* Status Callout Banner */}
-        {registration.status === 'accepted' && (
+        {registration.status === "accepted" && (
           <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-emerald-900 text-xs">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <div>
-              Calon santri ini telah <strong>resmi diterima</strong>.
+              Calon siswa ini telah <strong>resmi diterima</strong>.
               {registration.review_notes && (
-                <span className="block mt-0.5 text-emerald-700">Catatan: {registration.review_notes}</span>
+                <span className="block mt-0.5 text-emerald-700">
+                  Catatan: {registration.review_notes}
+                </span>
               )}
             </div>
           </div>
         )}
-        {registration.status === 'rejected' && (
+        {registration.status === "rejected" && (
           <div className="flex items-start gap-2.5 p-3 rounded-xl bg-rose-50/70 border border-rose-200/80 text-rose-900 text-xs">
             <XCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <div>
               <span className="font-semibold">Pendaftaran ditolak</span>
               {registration.review_notes && (
-                <p className="mt-0.5 text-rose-700">Alasan: {registration.review_notes}</p>
+                <p className="mt-0.5 text-rose-700">
+                  Alasan: {registration.review_notes}
+                </p>
               )}
             </div>
           </div>
@@ -448,7 +541,7 @@ export const AdminRegistrantDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Form Data (7 Cols on LG) */}
         <div className="lg:col-span-7 space-y-6">
-          {/* Card 1: Data Calon Santri */}
+          {/* Card 1: Data Calon Siswa */}
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
@@ -456,8 +549,12 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-slate-900">Data Calon Santri</h2>
-                  <p className="text-xs text-slate-500">Identitas dan data kesehatan anak</p>
+                  <h2 className="text-sm font-bold text-slate-900">
+                    Data Calon Siswa
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Identitas dan data kesehatan anak
+                  </p>
                 </div>
               </div>
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
@@ -467,7 +564,7 @@ export const AdminRegistrantDetailPage: React.FC = () => {
 
             {!formData ? (
               <div className="p-8 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
-                Formulir pendaftaran lengkap belum diisi oleh wali santri.
+                Formulir pendaftaran lengkap belum diisi oleh wali siswa.
               </div>
             ) : (
               <div className="space-y-6">
@@ -475,24 +572,22 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DetailField
                     label="Nama Lengkap"
-                    value={String(child.full_name || child.fullName || registration.child_name)}
+                    value={String(
+                      child.full_name ||
+                        child.fullName ||
+                        registration.child_name,
+                    )}
                   />
                   <DetailField
                     label="Nama Panggilan"
-                    value={String(child.nickname || '-')}
+                    value={String(child.nickname || "-")}
                   />
                   <DetailField
                     label="NIK (Nomor Induk Kependudukan)"
-                    value={String(child.nik || '-')}
+                    value={String(child.nik || "-")}
                   />
-                  <DetailField
-                    label="Jenis Kelamin"
-                    value={genderLabel}
-                  />
-                  <DetailField
-                    label="Tempat, Tanggal Lahir"
-                    value={childTtl}
-                  />
+                  <DetailField label="Jenis Kelamin" value={genderLabel} />
+                  <DetailField label="Tempat, Tanggal Lahir" value={childTtl} />
                   <DetailField
                     label="Urutan Anak"
                     value={
@@ -500,12 +595,12 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                         ? `Anak ke-${child.child_order ?? child.childOrder} (dari ${
                             child.sibling_count ?? child.siblingCount ?? 0
                           } bersaudara)`
-                        : '-'
+                        : "-"
                     }
                   />
                   <DetailField
                     label="Alamat Tempat Tinggal"
-                    value={String(child.address || '-')}
+                    value={String(child.address || "-")}
                     fullWidth
                   />
                 </div>
@@ -519,24 +614,27 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50/70 p-3.5 rounded-xl border border-slate-100">
                     <DetailField
                       label="Berat Badan"
-                      value={health.weight_kg ? `${health.weight_kg} kg` : '-'}
+                      value={health.weight_kg ? `${health.weight_kg} kg` : "-"}
                     />
                     <DetailField
                       label="Tinggi Badan"
-                      value={health.height_cm ? `${health.height_cm} cm` : '-'}
+                      value={health.height_cm ? `${health.height_cm} cm` : "-"}
                     />
-                    <DetailField
-                      label="Golongan Darah"
-                      value={bloodLabel}
-                    />
+                    <DetailField label="Golongan Darah" value={bloodLabel} />
                     <DetailField
                       label="Riwayat Alergi"
-                      value={String(health.allergy_history || health.allergies || '-')}
+                      value={String(
+                        health.allergy_history || health.allergies || "-",
+                      )}
                     />
                     <div className="col-span-full pt-1">
                       <DetailField
                         label="Riwayat Penyakit"
-                        value={String(health.disease_history || health.illnessHistory || '-')}
+                        value={String(
+                          health.disease_history ||
+                            health.illnessHistory ||
+                            "-",
+                        )}
                       />
                     </div>
                   </div>
@@ -552,8 +650,12 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                 <Users className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-slate-900">Data Orang Tua / Wali</h2>
-                <p className="text-xs text-slate-500">Informasi identitas ayah dan ibu</p>
+                <h2 className="text-sm font-bold text-slate-900">
+                  Data Orang Tua / Wali
+                </h2>
+                <p className="text-xs text-slate-500">
+                  Informasi identitas ayah dan ibu
+                </p>
               </div>
             </div>
 
@@ -584,11 +686,11 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <DetailField
                       label="Nama Ayah"
-                      value={String(father.full_name || father.fullName || '-')}
+                      value={String(father.full_name || father.fullName || "-")}
                     />
                     <DetailField
                       label="NIK Ayah"
-                      value={String(father.nik || '-')}
+                      value={String(father.nik || "-")}
                     />
                     <DetailField
                       label="Tempat, Tanggal Lahir"
@@ -596,23 +698,29 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                     />
                     <DetailField
                       label="Pendidikan Terakhir"
-                      value={String(father.last_education || father.lastEducation || '-')}
+                      value={String(
+                        father.last_education || father.lastEducation || "-",
+                      )}
                     />
                     <DetailField
                       label="Pekerjaan"
-                      value={String(father.occupation || '-')}
+                      value={String(father.occupation || "-")}
                     />
                     <DetailField
                       label="Penghasilan Bulanan"
-                      value={String(father.monthly_income || father.monthlyIncome || '-')}
+                      value={String(
+                        father.monthly_income || father.monthlyIncome || "-",
+                      )}
                     />
                     <DetailField
                       label="No. WhatsApp / HP"
-                      value={String(father.whatsapp_number || father.phone || '-')}
+                      value={String(
+                        father.whatsapp_number || father.phone || "-",
+                      )}
                     />
                     <DetailField
                       label="Alamat Tempat Tinggal"
-                      value={String(father.address || '-')}
+                      value={String(father.address || "-")}
                     />
                   </div>
                 </div>
@@ -641,11 +749,11 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <DetailField
                       label="Nama Ibu"
-                      value={String(mother.full_name || mother.fullName || '-')}
+                      value={String(mother.full_name || mother.fullName || "-")}
                     />
                     <DetailField
                       label="NIK Ibu"
-                      value={String(mother.nik || '-')}
+                      value={String(mother.nik || "-")}
                     />
                     <DetailField
                       label="Tempat, Tanggal Lahir"
@@ -653,23 +761,29 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                     />
                     <DetailField
                       label="Pendidikan Terakhir"
-                      value={String(mother.last_education || mother.lastEducation || '-')}
+                      value={String(
+                        mother.last_education || mother.lastEducation || "-",
+                      )}
                     />
                     <DetailField
                       label="Pekerjaan"
-                      value={String(mother.occupation || '-')}
+                      value={String(mother.occupation || "-")}
                     />
                     <DetailField
                       label="Penghasilan Bulanan"
-                      value={String(mother.monthly_income || mother.monthlyIncome || '-')}
+                      value={String(
+                        mother.monthly_income || mother.monthlyIncome || "-",
+                      )}
                     />
                     <DetailField
                       label="No. WhatsApp / HP"
-                      value={String(mother.whatsapp_number || mother.phone || '-')}
+                      value={String(
+                        mother.whatsapp_number || mother.phone || "-",
+                      )}
                     />
                     <DetailField
                       label="Alamat Tempat Tinggal"
-                      value={String(mother.address || '-')}
+                      value={String(mother.address || "-")}
                     />
                   </div>
                 </div>
@@ -685,18 +799,22 @@ export const AdminRegistrantDetailPage: React.FC = () => {
             <div className="flex items-center justify-between pb-1 border-b border-slate-200">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-amber-600" />
-                <h2 className="text-sm font-bold text-slate-900">Bukti Pembayaran</h2>
+                <h2 className="text-sm font-bold text-slate-900">
+                  Bukti Pembayaran
+                </h2>
               </div>
               <span
                 className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${payStatusInfo.badge}`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${payStatusInfo.dot}`} />
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${payStatusInfo.dot}`}
+                />
                 {payStatusInfo.label}
               </span>
             </div>
 
             {latestPayment?.signed_url ? (
-              latestPayment.proof_file_path.toLowerCase().endsWith('.pdf') ? (
+              latestPayment.proof_file_path.toLowerCase().endsWith(".pdf") ? (
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
                   <a
                     href={latestPayment.signed_url}
@@ -707,7 +825,7 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                     <FileText className="w-4 h-4 text-rose-500" />
                     Buka PDF Pembayaran <ExternalLink className="w-3 h-3" />
                   </a>
-                  {registration.payment_status !== 'payment_verified' ? (
+                  {registration.payment_status !== "payment_verified" ? (
                     <Button
                       size="sm"
                       onClick={handleVerifyPayment}
@@ -738,13 +856,15 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                       onClick={() =>
                         setPreviewModal({
                           url: latestPayment.signed_url!,
-                          title: 'Bukti Pembayaran Pendaftaran',
+                          title: "Bukti Pembayaran Pendaftaran",
                         })
                       }
                       className="max-h-44 w-auto max-w-full cursor-pointer hover:opacity-95 transition-opacity"
                     />
                     <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                      <span>Diunggah: {formatDate(latestPayment.uploaded_at)}</span>
+                      <span>
+                        Diunggah: {formatDate(latestPayment.uploaded_at)}
+                      </span>
                       <span>&bull;</span>
                       <a
                         href={latestPayment.signed_url}
@@ -759,7 +879,7 @@ export const AdminRegistrantDetailPage: React.FC = () => {
 
                   {/* Tombol / Status Verifikasi di samping gambar */}
                   <div className="flex-1 space-y-2 pt-0.5 w-full sm:w-auto">
-                    {registration.payment_status !== 'payment_verified' ? (
+                    {registration.payment_status !== "payment_verified" ? (
                       <Button
                         size="sm"
                         onClick={handleVerifyPayment}
@@ -800,18 +920,23 @@ export const AdminRegistrantDetailPage: React.FC = () => {
       <div className="space-y-4 pt-4 border-t border-slate-200">
         <div className="flex items-center gap-2 pb-1">
           <FileCheck className="w-4 h-4 text-emerald-600" />
-          <h2 className="text-sm font-bold text-slate-900">Berkas Persyaratan</h2>
+          <h2 className="text-sm font-bold text-slate-900">
+            Berkas Persyaratan
+          </h2>
         </div>
 
         {/* Di laptop berjejer kesamping (md:grid-cols-2), di hape ke bawah (grid-cols-1) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          {renderDocumentItem(kkDoc, 'Kartu Keluarga (KK)')}
-          {renderDocumentItem(akteDoc, 'Akte Kelahiran')}
+          {renderDocumentItem(kkDoc, "Kartu Keluarga (KK)")}
+          {renderDocumentItem(akteDoc, "Akte Kelahiran")}
         </div>
       </div>
 
       {/* Lightbox Image Preview Modal - Langsung gambar tanpa border dan tanpa card */}
-      <Dialog open={previewModal !== null} onOpenChange={(open) => !open && setPreviewModal(null)}>
+      <Dialog
+        open={previewModal !== null}
+        onOpenChange={(open) => !open && setPreviewModal(null)}
+      >
         <DialogContent
           showCloseButton={false}
           className="p-0 border-0 bg-transparent shadow-none max-w-[95vw] max-h-[95vh] w-auto flex items-center justify-center outline-none ring-0 focus:outline-hidden"
@@ -838,30 +963,35 @@ export const AdminRegistrantDetailPage: React.FC = () => {
       </Dialog>
 
       {/* Status Decision Confirmation Dialog */}
-      <Dialog open={targetStatus !== null} onOpenChange={(open) => !open && setTargetStatus(null)}>
+      <Dialog
+        open={targetStatus !== null}
+        onOpenChange={(open) => !open && setTargetStatus(null)}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {targetStatus === 'accepted'
-                ? 'Konfirmasi Penerimaan Santri'
-                : 'Konfirmasi Penolakan Pendaftaran'}
+              {targetStatus === "accepted"
+                ? "Konfirmasi Penerimaan Siswa"
+                : "Konfirmasi Penolakan Pendaftaran"}
             </DialogTitle>
             <DialogDescription>
-              {targetStatus === 'accepted'
-                ? `Apakah Anda yakin ingin MENERIMA santri ${registration.child_name} (${registration.registration_number})?`
+              {targetStatus === "accepted"
+                ? `Apakah Anda yakin ingin MENERIMA siswa ${registration.child_name} (${registration.registration_number})?`
                 : `Apakah Anda yakin ingin MENOLAK pendaftaran ${registration.child_name} (${registration.registration_number})?`}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-2 py-2">
             <label className="text-xs font-medium text-slate-700">
-              {targetStatus === 'rejected' ? 'Alasan Penolakan (Wajib Diisi):' : 'Catatan Tambahan (Opsional):'}
+              {targetStatus === "rejected"
+                ? "Alasan Penolakan (Wajib Diisi):"
+                : "Catatan Tambahan (Opsional):"}
             </label>
             <Textarea
               placeholder={
-                targetStatus === 'rejected'
-                  ? 'Contoh: Berkas tidak lengkap, usia belum memenuhi syarat...'
-                  : 'Catatan untuk wali atau panitia...'
+                targetStatus === "rejected"
+                  ? "Contoh: Berkas tidak lengkap, usia belum memenuhi syarat..."
+                  : "Catatan untuk wali atau panitia..."
               }
               value={reviewNotes}
               onChange={(e) => setReviewNotes(e.target.value)}
@@ -884,9 +1014,9 @@ export const AdminRegistrantDetailPage: React.FC = () => {
               onClick={handleStatusSubmit}
               disabled={submittingStatus}
               className={
-                targetStatus === 'accepted'
-                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                  : 'bg-rose-600 hover:bg-rose-700 text-white'
+                targetStatus === "accepted"
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                  : "bg-rose-600 hover:bg-rose-700 text-white"
               }
             >
               {submittingStatus ? (
@@ -894,10 +1024,10 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                   <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
                   Menyimpan...
                 </>
-              ) : targetStatus === 'accepted' ? (
-                'Terima Santri'
+              ) : targetStatus === "accepted" ? (
+                "Terima Siswa"
               ) : (
-                'Tolak Pendaftar'
+                "Tolak Pendaftar"
               )}
             </Button>
           </DialogFooter>

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -8,31 +8,51 @@ import {
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
-} from '@/components/ui/carousel';
+} from "@/components/ui/carousel";
 
 interface MediaItem {
   id: number;
-  type: 'foto' | 'video';
+  type: "foto" | "video";
   title: string;
   image: string;
   video?: string;
 }
 
 const mediaItems: MediaItem[] = [
-  { id: 1, type: 'foto', title: '', image: '/kegiatan-1.jpg' },
-  { id: 2, type: 'foto', title: '', image: '/kegiatan-2.jpg' },
-  { id: 3, type: 'foto', title: '', image: '/kegiatan-3.jpg' },
-  { id: 4, type: 'foto', title: '', image: '/kegiatan-4.jpg' },
-  { id: 5, type: 'foto', title: '', image: '/kegiatan-5.jpg' },
-  { id: 6, type: 'foto', title: 'Aktivitas Kelas', image: '/kegiatan-6.jpg' },
-  { id: 7, type: 'foto', title: 'Aktivitas Kelas', image: '/kegiatan-7.jpg' },
-  { id: 8, type: 'foto', title: 'Aktivitas Kelas', image: '/kegiatan-8.jpg' },
-  { id: 9, type: 'foto', title: 'Aktivitas Kelas', image: '/kegiatan-9.jpg' },
-  { id: 10, type: 'foto', title: 'Aktivitas Kelas', image: '/kegiatan-10.jpg' },
-  { id: 11, type: 'foto', title: 'Ruangan Belajar Nyaman', image: '/kelas.jpg' },
-  { id: 12, type: 'foto', title: 'Kitab Belajar Membaca', image: '/kegiatan-11.jpg' },
-  { id: 13, type: 'foto', title: 'Kitab Metode Aisar', image: '/kegiatan-12.jpg' },
-  { id: 14, type: 'foto', title: 'Kitab Ilmu Al-Qur\'an', image: '/kegiatan-13.jpg' },
+  { id: 1, type: "foto", title: "", image: "/kegiatan-1.jpg" },
+  { id: 2, type: "foto", title: "", image: "/kegiatan-2.jpg" },
+  { id: 3, type: "foto", title: "", image: "/kegiatan-3.jpg" },
+  { id: 4, type: "foto", title: "", image: "/kegiatan-4.jpg" },
+  { id: 5, type: "foto", title: "", image: "/kegiatan-5.jpg" },
+  { id: 6, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-6.jpg" },
+  { id: 7, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-7.jpg" },
+  { id: 8, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-8.jpg" },
+  { id: 9, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-9.jpg" },
+  { id: 10, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-10.jpg" },
+  {
+    id: 11,
+    type: "foto",
+    title: "Ruangan Belajar Nyaman",
+    image: "/kelas.jpg",
+  },
+  {
+    id: 12,
+    type: "foto",
+    title: "Kitab Belajar Membaca",
+    image: "/kegiatan-11.jpg",
+  },
+  {
+    id: 13,
+    type: "foto",
+    title: "Kitab Metode Aisar",
+    image: "/kegiatan-12.jpg",
+  },
+  {
+    id: 14,
+    type: "foto",
+    title: "Kitab Ilmu Al-Qur'an",
+    image: "/kegiatan-13.jpg",
+  },
 ];
 
 const Documentation: React.FC = () => {
@@ -50,23 +70,26 @@ const Documentation: React.FC = () => {
       setCurrent(api.selectedScrollSnap());
     };
 
-    api.on('select', onSelect);
-    api.on('reInit', onSelect);
+    api.on("select", onSelect);
+    api.on("reInit", onSelect);
 
     return () => {
-      api.off('select', onSelect);
-      api.off('reInit', onSelect);
+      api.off("select", onSelect);
+      api.off("reInit", onSelect);
     };
   }, [api]);
 
   const handleMediaClick = (item: MediaItem) => {
-    if (item.type === 'video' && item.video) {
-      window.open(item.video, '_blank');
+    if (item.type === "video" && item.video) {
+      window.open(item.video, "_blank");
     }
   };
 
   return (
-    <section id="dokumentasi" className="bg-white py-14 sm:py-18 md:py-20 scroll-mt-20">
+    <section
+      id="dokumentasi"
+      className="bg-white py-14 sm:py-18 md:py-20 scroll-mt-20"
+    >
       <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
@@ -74,7 +97,8 @@ const Documentation: React.FC = () => {
             Dokumentasi Kegiatan & Fasilitas
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600">
-            Potret aktivitas pembelajaran, sarana belajar, dan kebersamaan santri di TAUD SaQu Abu Ayyub.
+            Potret aktivitas pembelajaran, sarana belajar, dan kebersamaan siswa
+            di TAUD SaQu Abu Ayyub.
           </p>
         </div>
 
@@ -82,7 +106,7 @@ const Documentation: React.FC = () => {
           <Carousel
             setApi={setApi}
             opts={{
-              align: 'start',
+              align: "start",
             }}
             className="w-full"
           >
@@ -104,7 +128,7 @@ const Documentation: React.FC = () => {
                       />
 
                       {/* Video Indicator */}
-                      {item.type === 'video' && (
+                      {item.type === "video" && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 z-10">
                           <div className="rounded-full bg-[var(--color-primary)] p-3 transition-transform duration-300 group-hover/card:scale-110">
                             <span className="text-xl text-white">▶</span>
@@ -121,7 +145,9 @@ const Documentation: React.FC = () => {
                           {item.title.trim()}
                         </h3>
                         <p className="text-[10px] sm:text-xs text-white/80">
-                          {item.type === 'foto' ? 'Dokumentasi Kegiatan' : 'Video Dokumentasi'}
+                          {item.type === "foto"
+                            ? "Dokumentasi Kegiatan"
+                            : "Video Dokumentasi"}
                         </p>
                       </div>
                     </Card>
@@ -138,10 +164,10 @@ const Documentation: React.FC = () => {
                 <button
                   key={index}
                   className={cn(
-                    'h-2 cursor-pointer rounded-full transition-all duration-300 ease-in-out',
+                    "h-2 cursor-pointer rounded-full transition-all duration-300 ease-in-out",
                     index === current
-                      ? 'bg-[var(--color-primary)] w-5 opacity-100'
-                      : 'bg-gray-300 w-2 opacity-50 hover:opacity-80'
+                      ? "bg-[var(--color-primary)] w-5 opacity-100"
+                      : "bg-gray-300 w-2 opacity-50 hover:opacity-80",
                   )}
                   onClick={() => api?.scrollTo(index)}
                   aria-label={`Ke slide ${index + 1}`}

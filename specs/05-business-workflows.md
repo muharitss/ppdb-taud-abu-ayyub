@@ -67,17 +67,18 @@ stateDiagram-v2
 
 ### 2.1 registration_status
 
-| From | To | Triggered by | Condition | Effect |
-|---|---|---|---|---|
-| *(initial)* | `draft` | Edge Function `create-registration` | Valid initial registration payload | Row created; `registration_number` + `access_code` generated |
-| `draft` | `awaiting_payment` | Edge Function (same invocation) | Registration row persisted | `payment_status` set to `payment_pending` |
-| `awaiting_payment` | `awaiting_form` | User (`submit-payment-proof`) | Valid payment proof file uploaded | `payment_status` set to `payment_submitted`; user may immediately access full form |
-| `awaiting_form` | `submitted` | User (form submit) | All required fields + KK & Akte Kelahiran present | Form locked; admin notified |
-| `submitted` | `under_review` | Automatic / Admin | Form submission received | Admin begins review |
-| `under_review` | `accepted` | Admin | Admin approves registration | Final state; success notification shown |
-| `under_review` | `rejected` | Admin | Admin rejects with written reason | Final state; reason stored |
+| From               | To                 | Triggered by                        | Condition                                         | Effect                                                                             |
+| ------------------ | ------------------ | ----------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| _(initial)_        | `draft`            | Edge Function `create-registration` | Valid initial registration payload                | Row created; `registration_number` + `access_code` generated                       |
+| `draft`            | `awaiting_payment` | Edge Function (same invocation)     | Registration row persisted                        | `payment_status` set to `payment_pending`                                          |
+| `awaiting_payment` | `awaiting_form`    | User (`submit-payment-proof`)       | Valid payment proof file uploaded                 | `payment_status` set to `payment_submitted`; user may immediately access full form |
+| `awaiting_form`    | `submitted`        | User (form submit)                  | All required fields + KK & Akte Kelahiran present | Form locked; admin notified                                                        |
+| `submitted`        | `under_review`     | Automatic / Admin                   | Form submission received                          | Admin begins review                                                                |
+| `under_review`     | `accepted`         | Admin                               | Admin approves registration                       | Final state; success notification shown                                            |
+| `under_review`     | `rejected`         | Admin                               | Admin rejects with written reason                 | Final state; reason stored                                                         |
 
 **Forbidden transitions:**
+
 - `draft → submitted` (must upload payment proof first)
 - `awaiting_payment → submitted` (payment proof must be uploaded first)
 - `accepted → *` (terminal — no transitions out)
@@ -89,15 +90,16 @@ stateDiagram-v2
 
 ### 2.2 payment_status
 
-| From | To | Triggered by | Condition | Effect |
-|---|---|---|---|---|
-| *(initial)* | `payment_pending` | Edge Function `create-registration` | Registration created | Awaiting user proof upload |
-| `payment_pending` | `payment_submitted` | User (proof upload) | Valid image/PDF file uploaded to Storage | Proof URL saved; `registration_status` → `awaiting_form` immediately; admin dashboard updated |
-| `payment_submitted` | `payment_verified` | Admin | Admin confirms proof is valid | Payment marked verified in admin dashboard |
-| `payment_submitted` | `payment_rejected` | Admin | Admin rejects proof (must provide reason) | Rejection reason stored; if form not yet submitted, `registration_status` → `awaiting_payment` |
-| `payment_rejected` | `payment_submitted` | User (re-upload) | User uploads new proof | New proof saved; `registration_status` → `awaiting_form` |
+| From                | To                  | Triggered by                        | Condition                                 | Effect                                                                                         |
+| ------------------- | ------------------- | ----------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| _(initial)_         | `payment_pending`   | Edge Function `create-registration` | Registration created                      | Awaiting user proof upload                                                                     |
+| `payment_pending`   | `payment_submitted` | User (proof upload)                 | Valid image/PDF file uploaded to Storage  | Proof URL saved; `registration_status` → `awaiting_form` immediately; admin dashboard updated  |
+| `payment_submitted` | `payment_verified`  | Admin                               | Admin confirms proof is valid             | Payment marked verified in admin dashboard                                                     |
+| `payment_submitted` | `payment_rejected`  | Admin                               | Admin rejects proof (must provide reason) | Rejection reason stored; if form not yet submitted, `registration_status` → `awaiting_payment` |
+| `payment_rejected`  | `payment_submitted` | User (re-upload)                    | User uploads new proof                    | New proof saved; `registration_status` → `awaiting_form`                                       |
 
 **Forbidden transitions:**
+
 - `payment_pending → payment_verified` (admin must see proof; cannot auto-verify)
 - `payment_verified → *` (terminal — verified payments are not reversed)
 - `payment_verified → payment_rejected` (no clawback after approval)
@@ -156,7 +158,7 @@ stateDiagram-v2
 2. Edge Function `submit-full-form` (`action: 'get'`) validates credentials.
 3. If `payment_status = payment_pending` or `payment_rejected`, page displays payment instructions, admin WhatsApp help contact, and inline payment proof upload — once uploaded, the form opens immediately.
 4. When `payment_status = payment_submitted` or `payment_verified`, the full form wizard is displayed immediately.
-5. User fills all required fields (Calon Santri, Data Ayah, Data Ibu, Kesehatan) and uploads required documents (**Foto Kartu Keluarga** and **Foto Akte Kelahiran**) to Supabase Storage via `document-upload`.
+5. User fills all required fields (Calon Siswa, Data Ayah, Data Ibu, Kesehatan) and uploads required documents (**Foto Kartu Keluarga** and **Foto Akte Kelahiran**) to Supabase Storage via `document-upload`.
 6. On submit, Edge Function `submit-full-form` (`action: 'submit'`) is called:
    a. Validates all required fields and confirms both `kartu_keluarga` and `akte_kelahiran` documents are present.
    b. Updates `registration_status → submitted`.
@@ -179,7 +181,7 @@ stateDiagram-v2
    Where `{message}` is the template defined in §5.
 3. Clicking the WhatsApp button opens WhatsApp (web or app) with the message pre-filled.
 4. **The user must press "Send" manually** — the system does not send any message automatically.
-5. The page includes a prominent note: *"Simpan nomor pendaftaran dan kode akses Anda sebelum menutup halaman ini."*
+5. The page includes a prominent note: _"Simpan nomor pendaftaran dan kode akses Anda sebelum menutup halaman ini."_
 
 > **Important:** There is no SMS, email, or automated WA notification in this system. The wa.me link is the only distribution mechanism. If the user closes the page without sending the message, they must contact admin via manual WhatsApp.
 
@@ -196,10 +198,10 @@ stateDiagram-v2
    c. Compares `bcrypt/argon2` hash of provided `access_code` against stored hash.
    d. If mismatch → returns same opaque error. Increments failed attempt counter.
    e. If matched → returns **only the following fields**:
-      - `registration_status`
-      - `payment_status`
-      - `payment_rejection_reason` (only if `payment_status = payment_rejected`)
-      - `form_completeness_indicator` (boolean or percentage — not raw form data)
+   - `registration_status`
+   - `payment_status`
+   - `payment_rejection_reason` (only if `payment_status = payment_rejected`)
+   - `form_completeness_indicator` (boolean or percentage — not raw form data)
 5. Status page renders a read-only view using the returned fields.
 6. **The Edge Function NEVER returns:** documents, full form data, parent contact info, proof URLs, or the `access_code` hash.
 
@@ -247,7 +249,7 @@ stateDiagram-v2
 ### 4.3 Registration Number Does Not Exist (Confirm-Existence Prevention)
 
 - See §4.2 — the same opaque error is returned.
-- The UI message must not differentiate between "not found" and "wrong code". Use: *"Nomor pendaftaran atau kode akses tidak valid."*
+- The UI message must not differentiate between "not found" and "wrong code". Use: _"Nomor pendaftaran atau kode akses tidak valid."_
 
 ---
 
@@ -277,6 +279,7 @@ Simpan nomor pendaftaran dan kode akses ini untuk memeriksa status pendaftaran A
 | `{status_page_url}` | Full URL, e.g. `https://ppdb.taud-abu-ayyub.sch.id/status?r=PPDB-2026-0001` |
 
 **wa.me link construction:**
+
 ```
 https://wa.me/6282169599979?text=<encodeURIComponent(message)>
 ```

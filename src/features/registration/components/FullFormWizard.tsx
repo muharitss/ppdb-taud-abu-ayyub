@@ -13,7 +13,14 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +34,11 @@ import {
   registrationFormSchema,
   type RegistrationFormData,
 } from "../schemas/formSchema";
-import { saveFormDraft, submitFullForm, uploadRegistrationDocument } from "../services/formService";
+import {
+  saveFormDraft,
+  submitFullForm,
+  uploadRegistrationDocument,
+} from "../services/formService";
 import { validateUploadFile } from "@/lib/cloudinary";
 import {
   saveLocalFormDraft,
@@ -39,7 +50,7 @@ import { ParentFormSection } from "./ParentFormSection";
 function mergeSection<T extends Record<string, unknown>>(
   base: T,
   server?: Partial<T>,
-  local?: Partial<T>
+  local?: Partial<T>,
 ): T {
   const result = { ...base, ...(server || {}) };
   if (local) {
@@ -71,7 +82,7 @@ interface FullFormWizardProps {
 }
 
 const STEPS = [
-  { id: 1, label: "Calon Santri", icon: User },
+  { id: 1, label: "Calon Siswa", icon: User },
   { id: 2, label: "Data Ayah", icon: Users },
   { id: 3, label: "Data Ibu", icon: Users },
   { id: 4, label: "Kesehatan", icon: HeartPulse },
@@ -91,72 +102,78 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
     : null;
 
   // Form State (merges DB draft + real-time localStorage draft so refreshes never lose keystrokes)
-  const [formData, setFormData] = useState<Partial<RegistrationFormData>>(() => {
-    const localData = localDraft?.formData;
-    return {
-      child: mergeSection<RegistrationFormData["child"]>(
-        {
-          full_name: "",
-          nickname: "",
-          nik: "",
-          birth_place: "",
-          birth_date: "",
-          gender: "laki_laki",
-          child_order: 1,
-          sibling_count: 0,
-          address: "",
-          program: "2_tahun",
-        },
-        initialData?.child,
-        localData?.child
-      ),
-      father: mergeSection(
-        {
-          full_name: "",
-          nik: "",
-          birth_place: "",
-          birth_date: "",
-          last_education: "",
-          occupation: "",
-          monthly_income: "",
-          whatsapp_number: "",
-          address: "",
-        },
-        initialData?.father,
-        localData?.father
-      ),
-      mother: mergeSection(
-        {
-          full_name: "",
-          nik: "",
-          birth_place: "",
-          birth_date: "",
-          last_education: "",
-          occupation: "",
-          monthly_income: "",
-          whatsapp_number: "",
-          address: "",
-        },
-        initialData?.mother,
-        localData?.mother
-      ),
-      health: mergeSection<RegistrationFormData["health"]>(
-        {
-          weight_kg: "" as unknown as number,
-          height_cm: "" as unknown as number,
-          blood_type: "tidak_diketahui",
-          allergy_history: "",
-          disease_history: "",
-        },
-        initialData?.health,
-        localData?.health
-      ),
-    };
-  });
+  const [formData, setFormData] = useState<Partial<RegistrationFormData>>(
+    () => {
+      const localData = localDraft?.formData;
+      return {
+        child: mergeSection<RegistrationFormData["child"]>(
+          {
+            full_name: "",
+            nickname: "",
+            nik: "",
+            birth_place: "",
+            birth_date: "",
+            gender: "laki_laki",
+            child_order: 1,
+            sibling_count: 0,
+            address: "",
+            program: "2_tahun",
+          },
+          initialData?.child,
+          localData?.child,
+        ),
+        father: mergeSection(
+          {
+            full_name: "",
+            nik: "",
+            birth_place: "",
+            birth_date: "",
+            last_education: "",
+            occupation: "",
+            monthly_income: "",
+            whatsapp_number: "",
+            address: "",
+          },
+          initialData?.father,
+          localData?.father,
+        ),
+        mother: mergeSection(
+          {
+            full_name: "",
+            nik: "",
+            birth_place: "",
+            birth_date: "",
+            last_education: "",
+            occupation: "",
+            monthly_income: "",
+            whatsapp_number: "",
+            address: "",
+          },
+          initialData?.mother,
+          localData?.mother,
+        ),
+        health: mergeSection<RegistrationFormData["health"]>(
+          {
+            weight_kg: "" as unknown as number,
+            height_cm: "" as unknown as number,
+            blood_type: "tidak_diketahui",
+            allergy_history: "",
+            disease_history: "",
+          },
+          initialData?.health,
+          localData?.health,
+        ),
+      };
+    },
+  );
 
   const [currentStep, setCurrentStep] = useState(() => {
     const detected = detectInitialStep(formData);
-    if (localDraft?.currentStep && localDraft.currentStep >= 1 && localDraft.currentStep <= 5) {
+    if (
+      localDraft?.currentStep &&
+      localDraft.currentStep >= 1 &&
+      localDraft.currentStep <= 5
+    ) {
       return Math.min(localDraft.currentStep, detected);
     }
     return detected;
@@ -171,19 +188,25 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
   }, [formData, currentStep, isReadOnly, registrationNumber]);
 
   // Uploaded docs tracker (by document_type)
-  const [uploadedDocs, setUploadedDocs] = useState<Record<string, string>>(() => {
-    const map: Record<string, string> = {};
-    initialDocs.forEach((doc) => {
-      map[doc.document_type] = doc.file_path;
-    });
-    return map;
-  });
+  const [uploadedDocs, setUploadedDocs] = useState<Record<string, string>>(
+    () => {
+      const map: Record<string, string> = {};
+      initialDocs.forEach((doc) => {
+        map[doc.document_type] = doc.file_path;
+      });
+      return map;
+    },
+  );
 
   const [uploadingDoc, setUploadingDoc] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Helper to update deeply nested form state
-  const updateField = (section: keyof RegistrationFormData, field: string, value: unknown) => {
+  const updateField = (
+    section: keyof RegistrationFormData,
+    field: string,
+    value: unknown,
+  ) => {
     if (isReadOnly) return;
     setFormData((prev) => ({
       ...prev,
@@ -211,7 +234,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
           errs[`child.${iss.path.join(".")}`] = iss.message;
         });
         setErrors(errs);
-        toast.error(res.error.issues[0]?.message || "Periksa kembali data santri");
+        toast.error(
+          res.error.issues[0]?.message || "Periksa kembali data siswa",
+        );
         return false;
       }
     } else if (currentStep === 2) {
@@ -222,7 +247,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
           errs[`father.${iss.path.join(".")}`] = iss.message;
         });
         setErrors(errs);
-        toast.error(res.error.issues[0]?.message || "Periksa kembali data ayah");
+        toast.error(
+          res.error.issues[0]?.message || "Periksa kembali data ayah",
+        );
         return false;
       }
     } else if (currentStep === 3) {
@@ -244,7 +271,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
           errs[`health.${iss.path.join(".")}`] = iss.message;
         });
         setErrors(errs);
-        toast.error(res.error.issues[0]?.message || "Periksa kembali data kesehatan");
+        toast.error(
+          res.error.issues[0]?.message || "Periksa kembali data kesehatan",
+        );
         return false;
       }
     }
@@ -294,7 +323,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
   const handleDocUpload = async (
     docType: "kartu_keluarga" | "akte_kelahiran",
     file: File,
-    inputEl?: HTMLInputElement | null
+    inputEl?: HTMLInputElement | null,
   ) => {
     if (isReadOnly) return;
     const check = validateUploadFile(file);
@@ -306,12 +335,19 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
 
     try {
       setUploadingDoc(docType);
-      const res = await uploadRegistrationDocument(registrationNumber, accessCode, docType, file);
+      const res = await uploadRegistrationDocument(
+        registrationNumber,
+        accessCode,
+        docType,
+        file,
+      );
       setUploadedDocs((prev) => ({ ...prev, [docType]: res.file_path }));
       toast.success("Dokumen berhasil diunggah!");
     } catch (err) {
       if (inputEl) inputEl.value = "";
-      toast.error(err instanceof Error ? err.message : "Gagal mengunggah dokumen");
+      toast.error(
+        err instanceof Error ? err.message : "Gagal mengunggah dokumen",
+      );
     } finally {
       setUploadingDoc(null);
     }
@@ -323,7 +359,10 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
     // 1. Validate full schema
     const fullValidation = registrationFormSchema.safeParse(formData);
     if (!fullValidation.success) {
-      toast.error(fullValidation.error.issues[0]?.message || "Data formulir belum lengkap");
+      toast.error(
+        fullValidation.error.issues[0]?.message ||
+          "Data formulir belum lengkap",
+      );
       return;
     }
 
@@ -331,7 +370,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
     const requiredTypes = ["kartu_keluarga", "akte_kelahiran"];
     const missing = requiredTypes.filter((t) => !uploadedDocs[t]);
     if (missing.length > 0) {
-      toast.error("Wajib mengunggah foto Kartu Keluarga (KK) dan Akte Kelahiran");
+      toast.error(
+        "Wajib mengunggah foto Kartu Keluarga (KK) dan Akte Kelahiran",
+      );
       return;
     }
 
@@ -344,7 +385,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
         onSubmitted(fullValidation.data.child.full_name);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Gagal mengirim formulir");
+      toast.error(
+        err instanceof Error ? err.message : "Gagal mengirim formulir",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -374,8 +417,8 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   isActive
                     ? "bg-primary text-primary-foreground shadow-xs"
                     : isCompleted
-                    ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 hover:bg-muted"
-                    : "text-muted-foreground hover:text-foreground opacity-60"
+                      ? "bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 hover:bg-muted"
+                      : "text-muted-foreground hover:text-foreground opacity-60"
                 }`}
               >
                 {isCompleted ? (
@@ -397,7 +440,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
           <div className="flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
             <div>
-              <p className="font-semibold text-sm">Formulir Pendaftaran Telah Dikirim</p>
+              <p className="font-semibold text-sm">
+                Formulir Pendaftaran Telah Dikirim
+              </p>
               <p className="text-xs text-blue-700 dark:text-blue-300">
                 Data Anda telah terkunci dan tersimpan dalam sistem kami.
               </p>
@@ -424,11 +469,16 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 Langkah {currentStep} dari 5: {STEPS[currentStep - 1]?.label}
               </CardTitle>
               <CardDescription>
-                {currentStep === 1 && "Lengkapi identitas lengkap dan program pembelajaran calon peserta didik."}
-                {currentStep === 2 && "Lengkapi data identitas, pendidikan, dan kontak ayah kandung/wali."}
-                {currentStep === 3 && "Lengkapi data identitas, pendidikan, dan kontak ibu kandung."}
-                {currentStep === 4 && "Informasi riwayat kesehatan, fisik, dan golongan darah santri."}
-                {currentStep === 5 && "Unggah foto/berkas Kartu Keluarga (KK) dan Akte Kelahiran."}
+                {currentStep === 1 &&
+                  "Lengkapi identitas lengkap dan program pembelajaran calon peserta didik."}
+                {currentStep === 2 &&
+                  "Lengkapi data identitas, pendidikan, dan kontak ayah kandung/wali."}
+                {currentStep === 3 &&
+                  "Lengkapi data identitas, pendidikan, dan kontak ibu kandung."}
+                {currentStep === 4 &&
+                  "Informasi riwayat kesehatan, fisik, dan golongan darah siswa."}
+                {currentStep === 5 &&
+                  "Unggah foto/berkas Kartu Keluarga (KK) dan Akte Kelahiran."}
               </CardDescription>
             </div>
             {!isReadOnly && currentStep < 5 && (
@@ -439,7 +489,11 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 disabled={isSaving}
                 className="inline-flex shrink-0 items-center gap-2"
               >
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {isSaving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
                 Simpan Draf
               </Button>
             )}
@@ -447,20 +501,24 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* STEP 1: CALON SANTRI */}
+          {/* STEP 1: CALON SISWA */}
           {currentStep === 1 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="child_name">Nama Lengkap Santri *</Label>
+                <Label htmlFor="child_name">Nama Lengkap Siswa *</Label>
                 <Input
                   id="child_name"
                   placeholder="Contoh: Muhammad Rayyan Al-Fatih"
                   value={formData.child?.full_name || ""}
-                  onChange={(e) => updateField("child", "full_name", e.target.value)}
+                  onChange={(e) =>
+                    updateField("child", "full_name", e.target.value)
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.full_name"] && (
-                  <p className="text-xs text-destructive">{errors["child.full_name"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.full_name"]}
+                  </p>
                 )}
               </div>
 
@@ -470,26 +528,38 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   id="child_nickname"
                   placeholder="Contoh: Rayyan"
                   value={formData.child?.nickname || ""}
-                  onChange={(e) => updateField("child", "nickname", e.target.value)}
+                  onChange={(e) =>
+                    updateField("child", "nickname", e.target.value)
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.nickname"] && (
-                  <p className="text-xs text-destructive">{errors["child.nickname"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.nickname"]}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="child_nik">NIK Santri (16 Digit) *</Label>
+                <Label htmlFor="child_nik">NIK Siswa (16 Digit) *</Label>
                 <Input
                   id="child_nik"
                   maxLength={16}
                   placeholder="16 digit sesuai Kartu Keluarga"
                   value={formData.child?.nik || ""}
-                  onChange={(e) => updateField("child", "nik", e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) =>
+                    updateField(
+                      "child",
+                      "nik",
+                      e.target.value.replace(/\D/g, ""),
+                    )
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.nik"] && (
-                  <p className="text-xs text-destructive">{errors["child.nik"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.nik"]}
+                  </p>
                 )}
               </div>
 
@@ -499,11 +569,15 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   id="child_birth_place"
                   placeholder="Contoh: Duri"
                   value={formData.child?.birth_place || ""}
-                  onChange={(e) => updateField("child", "birth_place", e.target.value)}
+                  onChange={(e) =>
+                    updateField("child", "birth_place", e.target.value)
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.birth_place"] && (
-                  <p className="text-xs text-destructive">{errors["child.birth_place"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.birth_place"]}
+                  </p>
                 )}
               </div>
 
@@ -513,11 +587,15 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   id="child_birth_date"
                   type="date"
                   value={formData.child?.birth_date || ""}
-                  onChange={(e) => updateField("child", "birth_date", e.target.value)}
+                  onChange={(e) =>
+                    updateField("child", "birth_date", e.target.value)
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.birth_date"] && (
-                  <p className="text-xs text-destructive">{errors["child.birth_date"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.birth_date"]}
+                  </p>
                 )}
               </div>
 
@@ -526,7 +604,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 <select
                   id="child_gender"
                   value={formData.child?.gender || "laki_laki"}
-                  onChange={(e) => updateField("child", "gender", e.target.value)}
+                  onChange={(e) =>
+                    updateField("child", "gender", e.target.value)
+                  }
                   disabled={isReadOnly}
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none"
                 >
@@ -540,7 +620,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 <select
                   id="child_program"
                   value={formData.child?.program || "2_tahun"}
-                  onChange={(e) => updateField("child", "program", e.target.value)}
+                  onChange={(e) =>
+                    updateField("child", "program", e.target.value)
+                  }
                   disabled={isReadOnly}
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none"
                 >
@@ -556,41 +638,61 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   type="number"
                   min={1}
                   value={formData.child?.child_order || ""}
-                  onChange={(e) => updateField("child", "child_order", Number(e.target.value))}
+                  onChange={(e) =>
+                    updateField("child", "child_order", Number(e.target.value))
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.child_order"] && (
-                  <p className="text-xs text-destructive">{errors["child.child_order"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.child_order"]}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="child_sibling_count">Jumlah Saudara Kandung *</Label>
+                <Label htmlFor="child_sibling_count">
+                  Jumlah Saudara Kandung *
+                </Label>
                 <Input
                   id="child_sibling_count"
                   type="number"
                   min={0}
                   value={formData.child?.sibling_count ?? 0}
-                  onChange={(e) => updateField("child", "sibling_count", Number(e.target.value))}
+                  onChange={(e) =>
+                    updateField(
+                      "child",
+                      "sibling_count",
+                      Number(e.target.value),
+                    )
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.sibling_count"] && (
-                  <p className="text-xs text-destructive">{errors["child.sibling_count"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.sibling_count"]}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="child_address">Alamat Tempat Tinggal Santri *</Label>
+                <Label htmlFor="child_address">
+                  Alamat Tempat Tinggal Siswa *
+                </Label>
                 <Textarea
                   id="child_address"
                   rows={3}
-                  placeholder="Alamat lengkap domisili santri (Jl, RT/RW, Kelurahan, Kecamatan, Kota)"
+                  placeholder="Alamat lengkap domisili siswa (Jl, RT/RW, Kelurahan, Kecamatan, Kota)"
                   value={formData.child?.address || ""}
-                  onChange={(e) => updateField("child", "address", e.target.value)}
+                  onChange={(e) =>
+                    updateField("child", "address", e.target.value)
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["child.address"] && (
-                  <p className="text-xs text-destructive">{errors["child.address"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["child.address"]}
+                  </p>
                 )}
               </div>
             </div>
@@ -632,11 +734,15 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   min={1}
                   placeholder="Contoh: 16.5"
                   value={formData.health?.weight_kg || ""}
-                  onChange={(e) => updateField("health", "weight_kg", Number(e.target.value))}
+                  onChange={(e) =>
+                    updateField("health", "weight_kg", Number(e.target.value))
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["health.weight_kg"] && (
-                  <p className="text-xs text-destructive">{errors["health.weight_kg"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["health.weight_kg"]}
+                  </p>
                 )}
               </div>
 
@@ -649,11 +755,15 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   min={1}
                   placeholder="Contoh: 105"
                   value={formData.health?.height_cm || ""}
-                  onChange={(e) => updateField("health", "height_cm", Number(e.target.value))}
+                  onChange={(e) =>
+                    updateField("health", "height_cm", Number(e.target.value))
+                  }
                   disabled={isReadOnly}
                 />
                 {errors["health.height_cm"] && (
-                  <p className="text-xs text-destructive">{errors["health.height_cm"]}</p>
+                  <p className="text-xs text-destructive">
+                    {errors["health.height_cm"]}
+                  </p>
                 )}
               </div>
 
@@ -662,11 +772,15 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 <select
                   id="health_blood"
                   value={formData.health?.blood_type || "tidak_diketahui"}
-                  onChange={(e) => updateField("health", "blood_type", e.target.value)}
+                  onChange={(e) =>
+                    updateField("health", "blood_type", e.target.value)
+                  }
                   disabled={isReadOnly}
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none"
                 >
-                  <option value="tidak_diketahui">Tidak Diketahui / Belum Cek</option>
+                  <option value="tidak_diketahui">
+                    Tidak Diketahui / Belum Cek
+                  </option>
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="AB">AB</option>
@@ -675,25 +789,33 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="health_allergy">Riwayat Alergi (Opsional)</Label>
+                <Label htmlFor="health_allergy">
+                  Riwayat Alergi (Opsional)
+                </Label>
                 <Textarea
                   id="health_allergy"
                   rows={2}
                   placeholder="Alergi makanan (telur, seafood), obat-obatan, dingin, debu, dll."
                   value={formData.health?.allergy_history || ""}
-                  onChange={(e) => updateField("health", "allergy_history", e.target.value)}
+                  onChange={(e) =>
+                    updateField("health", "allergy_history", e.target.value)
+                  }
                   disabled={isReadOnly}
                 />
               </div>
 
               <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="health_disease">Riwayat Penyakit Khusus (Opsional)</Label>
+                <Label htmlFor="health_disease">
+                  Riwayat Penyakit Khusus (Opsional)
+                </Label>
                 <Textarea
                   id="health_disease"
                   rows={2}
                   placeholder="Riwayat kejang, asma, riwayat operasi, dll jika ada"
                   value={formData.health?.disease_history || ""}
-                  onChange={(e) => updateField("health", "disease_history", e.target.value)}
+                  onChange={(e) =>
+                    updateField("health", "disease_history", e.target.value)
+                  }
                   disabled={isReadOnly}
                 />
               </div>

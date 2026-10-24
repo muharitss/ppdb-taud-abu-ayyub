@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -7,11 +7,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { getPendingPayments } from '../services/adminPayment';
-import type { RegistrantPaymentItem } from '../types';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { getPendingPayments } from "../services/adminPayment";
+import type { RegistrantPaymentItem } from "../types";
 import {
   CreditCard,
   RefreshCw,
@@ -21,7 +21,7 @@ import {
   Inbox,
   Clock,
   Phone,
-} from 'lucide-react';
+} from "lucide-react";
 
 export const AdminPaymentListPage: React.FC = () => {
   const [items, setItems] = useState<RegistrantPaymentItem[]>([]);
@@ -35,7 +35,8 @@ export const AdminPaymentListPage: React.FC = () => {
       const data = await getPendingPayments();
       setItems(data);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Gagal memuat antrean pembayaran';
+      const msg =
+        err instanceof Error ? err.message : "Gagal memuat antrean pembayaran";
       setError(msg);
     } finally {
       setLoading(false);
@@ -55,7 +56,8 @@ export const AdminPaymentListPage: React.FC = () => {
             Antrean Verifikasi Pembayaran
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            Daftar pendaftar yang telah mengunggah bukti transfer biaya pendaftaran Rp300.000.
+            Daftar pendaftar yang telah mengunggah bukti transfer biaya
+            pendaftaran Rp300.000.
           </p>
         </div>
 
@@ -70,7 +72,9 @@ export const AdminPaymentListPage: React.FC = () => {
             disabled={loading}
             className="gap-1.5"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`}
+            />
             Muat Ulang
           </Button>
         </div>
@@ -89,7 +93,12 @@ export const AdminPaymentListPage: React.FC = () => {
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{error}</span>
           </div>
-          <Button variant="outline" size="sm" onClick={fetchPayments} className="text-xs">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchPayments}
+            className="text-xs"
+          >
             Coba Lagi
           </Button>
         </div>
@@ -103,7 +112,8 @@ export const AdminPaymentListPage: React.FC = () => {
           <div>
             <h3 className="font-semibold text-slate-800">Tidak Ada Antrean</h3>
             <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-              Semua bukti transfer telah diverifikasi. Antrean baru akan muncul otomatis ketika orang tua santri mengunggah bukti pembayaran.
+              Semua bukti transfer telah diverifikasi. Antrean baru akan muncul
+              otomatis ketika orang tua siswa mengunggah bukti pembayaran.
             </p>
           </div>
         </div>
@@ -114,24 +124,44 @@ export const AdminPaymentListPage: React.FC = () => {
           <Table>
             <TableHeader className="bg-slate-50">
               <TableRow>
-                <TableHead className="font-semibold text-slate-700">No. Pendaftaran</TableHead>
-                <TableHead className="font-semibold text-slate-700">Calon Santri</TableHead>
-                <TableHead className="font-semibold text-slate-700">Nama Orang Tua</TableHead>
-                <TableHead className="font-semibold text-slate-700">WhatsApp</TableHead>
-                <TableHead className="font-semibold text-slate-700">Waktu Unggah</TableHead>
-                <TableHead className="font-semibold text-slate-700">Status</TableHead>
-                <TableHead className="font-semibold text-slate-700 text-right">Aksi</TableHead>
+                <TableHead className="font-semibold text-slate-700">
+                  No. Pendaftaran
+                </TableHead>
+                <TableHead className="font-semibold text-slate-700">
+                  Calon Siswa
+                </TableHead>
+                <TableHead className="font-semibold text-slate-700">
+                  Nama Orang Tua
+                </TableHead>
+                <TableHead className="font-semibold text-slate-700">
+                  WhatsApp
+                </TableHead>
+                <TableHead className="font-semibold text-slate-700">
+                  Waktu Unggah
+                </TableHead>
+                <TableHead className="font-semibold text-slate-700">
+                  Status
+                </TableHead>
+                <TableHead className="font-semibold text-slate-700 text-right">
+                  Aksi
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.map((item) => {
-                const latestPayment = item.payments && item.payments.length > 0 ? item.payments[0] : null;
+                const latestPayment =
+                  item.payments && item.payments.length > 0
+                    ? item.payments[0]
+                    : null;
                 const uploadTime = latestPayment?.uploaded_at
-                  ? new Date(latestPayment.uploaded_at).toLocaleString('id-ID', {
-                      dateStyle: 'short',
-                      timeStyle: 'short',
-                    })
-                  : '-';
+                  ? new Date(latestPayment.uploaded_at).toLocaleString(
+                      "id-ID",
+                      {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      },
+                    )
+                  : "-";
 
                 return (
                   <TableRow key={item.id} className="hover:bg-slate-50/80">
@@ -162,7 +192,10 @@ export const AdminPaymentListPage: React.FC = () => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className="font-normal text-xs bg-amber-50 text-amber-800 border-amber-200">
+                      <Badge
+                        variant="secondary"
+                        className="font-normal text-xs bg-amber-50 text-amber-800 border-amber-200"
+                      >
                         Menunggu Review
                       </Badge>
                     </TableCell>

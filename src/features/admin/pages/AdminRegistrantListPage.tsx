@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from "react";
+import { useSearchParams, Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -7,14 +7,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   getRegistrants,
   type RegistrantsResult,
-} from '../services/adminRegistrants';
+} from "../services/adminRegistrants";
 import {
   Users,
   Search,
@@ -26,42 +26,71 @@ import {
   Loader2,
   AlertCircle,
   Phone,
-} from 'lucide-react';
+} from "lucide-react";
 
 const STATUS_OPTIONS = [
-  { value: 'all', label: 'Semua Status Pendaftaran' },
-  { value: 'awaiting_payment', label: 'Menunggu Pembayaran' },
-  { value: 'awaiting_form', label: 'Menunggu Pengisian Formulir' },
-  { value: 'submitted', label: 'Formulir Masuk' },
-  { value: 'under_review', label: 'Sedang Ditinjau' },
-  { value: 'accepted', label: 'Diterima' },
-  { value: 'rejected', label: 'Ditolak' },
+  { value: "all", label: "Semua Status Pendaftaran" },
+  { value: "awaiting_payment", label: "Menunggu Pembayaran" },
+  { value: "awaiting_form", label: "Menunggu Pengisian Formulir" },
+  { value: "submitted", label: "Formulir Masuk" },
+  { value: "under_review", label: "Sedang Ditinjau" },
+  { value: "accepted", label: "Diterima" },
+  { value: "rejected", label: "Ditolak" },
 ];
 
-const REG_STATUS_BADGES: Record<string, { label: string; className: string }> = {
-  draft: { label: 'Draf', className: 'bg-slate-100 text-slate-700' },
-  awaiting_payment: { label: 'Menunggu Transfer', className: 'bg-amber-100 text-amber-800' },
-  awaiting_form: { label: 'Menunggu Formulir', className: 'bg-blue-100 text-blue-800' },
-  submitted: { label: 'Formulir Masuk', className: 'bg-purple-100 text-purple-800' },
-  under_review: { label: 'Sedang Ditinjau', className: 'bg-indigo-100 text-indigo-800' },
-  accepted: { label: 'Diterima', className: 'bg-emerald-100 text-emerald-800' },
-  rejected: { label: 'Ditolak', className: 'bg-rose-100 text-rose-800' },
-};
+const REG_STATUS_BADGES: Record<string, { label: string; className: string }> =
+  {
+    draft: { label: "Draf", className: "bg-slate-100 text-slate-700" },
+    awaiting_payment: {
+      label: "Menunggu Transfer",
+      className: "bg-amber-100 text-amber-800",
+    },
+    awaiting_form: {
+      label: "Menunggu Formulir",
+      className: "bg-blue-100 text-blue-800",
+    },
+    submitted: {
+      label: "Formulir Masuk",
+      className: "bg-purple-100 text-purple-800",
+    },
+    under_review: {
+      label: "Sedang Ditinjau",
+      className: "bg-indigo-100 text-indigo-800",
+    },
+    accepted: {
+      label: "Diterima",
+      className: "bg-emerald-100 text-emerald-800",
+    },
+    rejected: { label: "Ditolak", className: "bg-rose-100 text-rose-800" },
+  };
 
-const PAY_STATUS_BADGES: Record<string, { label: string; className: string }> = {
-  payment_pending: { label: 'Belum Bayar', className: 'bg-slate-100 text-slate-600' },
-  payment_submitted: { label: 'Menunggu Verifikasi', className: 'bg-amber-100 text-amber-800' },
-  payment_verified: { label: 'Lunas', className: 'bg-emerald-100 text-emerald-800' },
-  payment_rejected: { label: 'Ditolak', className: 'bg-rose-100 text-rose-800' },
-};
+const PAY_STATUS_BADGES: Record<string, { label: string; className: string }> =
+  {
+    payment_pending: {
+      label: "Belum Bayar",
+      className: "bg-slate-100 text-slate-600",
+    },
+    payment_submitted: {
+      label: "Menunggu Verifikasi",
+      className: "bg-amber-100 text-amber-800",
+    },
+    payment_verified: {
+      label: "Lunas",
+      className: "bg-emerald-100 text-emerald-800",
+    },
+    payment_rejected: {
+      label: "Ditolak",
+      className: "bg-rose-100 text-rose-800",
+    },
+  };
 
 export const AdminRegistrantListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialStatus = searchParams.get('status') || 'all';
+  const initialStatus = searchParams.get("status") || "all";
 
   const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [activeSearch, setActiveSearch] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [activeSearch, setActiveSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [data, setData] = useState<RegistrantsResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -69,7 +98,7 @@ export const AdminRegistrantListPage: React.FC = () => {
 
   // Sync state if URL searchParams change
   useEffect(() => {
-    const urlStatus = searchParams.get('status');
+    const urlStatus = searchParams.get("status");
     if (urlStatus && urlStatus !== statusFilter) {
       setStatusFilter(urlStatus);
       setPage(1);
@@ -97,7 +126,9 @@ export const AdminRegistrantListPage: React.FC = () => {
       });
       setData(res);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Gagal memuat data pendaftar');
+      setError(
+        err instanceof Error ? err.message : "Gagal memuat data pendaftar",
+      );
     } finally {
       setLoading(false);
     }
@@ -110,10 +141,10 @@ export const AdminRegistrantListPage: React.FC = () => {
   const handleStatusChange = (val: string) => {
     setStatusFilter(val);
     setPage(1);
-    if (val === 'all') {
-      searchParams.delete('status');
+    if (val === "all") {
+      searchParams.delete("status");
     } else {
-      searchParams.set('status', val);
+      searchParams.set("status", val);
     }
     setSearchParams(searchParams);
   };
@@ -128,13 +159,14 @@ export const AdminRegistrantListPage: React.FC = () => {
             Daftar Seluruh Pendaftar
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Kelola, telusuri, dan periksa data calon santri PPDB TAUD Abu Ayyub TP 2027/2028.
+            Kelola, telusuri, dan periksa data calon siswa PPDB TAUD Abu Ayyub
+            TP 2027/2028.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Badge variant="outline" className="px-3 py-1 text-xs">
-            {data ? `${data.total} Pendaftar` : '...'}
+            {data ? `${data.total} Pendaftar` : "..."}
           </Badge>
           <Button
             variant="outline"
@@ -143,7 +175,9 @@ export const AdminRegistrantListPage: React.FC = () => {
             disabled={loading}
             className="gap-1.5"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`}
+            />
             Perbarui
           </Button>
         </div>
@@ -154,7 +188,7 @@ export const AdminRegistrantListPage: React.FC = () => {
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <Input
-            placeholder="Cari nomor pendaftaran, nama calon santri, atau orang tua..."
+            placeholder="Cari nomor pendaftaran, nama calon siswa, atau orang tua..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9 text-sm"
@@ -184,7 +218,12 @@ export const AdminRegistrantListPage: React.FC = () => {
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{error}</span>
           </div>
-          <Button variant="outline" size="sm" onClick={fetchData} className="text-xs">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchData}
+            className="text-xs"
+          >
             Coba Lagi
           </Button>
         </div>
@@ -202,11 +241,13 @@ export const AdminRegistrantListPage: React.FC = () => {
         {!loading && !error && (!data || data.items.length === 0) && (
           <div className="p-16 text-center space-y-2 text-slate-500">
             <Users className="w-8 h-8 text-slate-300 mx-auto" />
-            <p className="text-sm font-semibold text-slate-700">Tidak ada pendaftar ditemukan</p>
+            <p className="text-sm font-semibold text-slate-700">
+              Tidak ada pendaftar ditemukan
+            </p>
             <p className="text-xs max-w-sm mx-auto">
-              {searchTerm || statusFilter !== 'all'
-                ? 'Tidak ada data pendaftar yang cocok dengan filter atau kata kunci pencarian.'
-                : 'Belum ada pendaftar yang masuk ke sistem.'}
+              {searchTerm || statusFilter !== "all"
+                ? "Tidak ada data pendaftar yang cocok dengan filter atau kata kunci pencarian."
+                : "Belum ada pendaftar yang masuk ke sistem."}
             </p>
           </div>
         )}
@@ -216,29 +257,45 @@ export const AdminRegistrantListPage: React.FC = () => {
             <Table>
               <TableHeader className="bg-slate-50">
                 <TableRow>
-                  <TableHead className="font-semibold text-slate-700">No. Pendaftaran</TableHead>
-                  <TableHead className="font-semibold text-slate-700">Calon Santri</TableHead>
-                  <TableHead className="font-semibold text-slate-700">Orang Tua / Wali</TableHead>
-                  <TableHead className="font-semibold text-slate-700">Status Pendaftaran</TableHead>
-                  <TableHead className="font-semibold text-slate-700">Pembayaran</TableHead>
-                  <TableHead className="font-semibold text-slate-700">Tgl Masuk</TableHead>
-                  <TableHead className="font-semibold text-slate-700 text-right">Aksi</TableHead>
+                  <TableHead className="font-semibold text-slate-700">
+                    No. Pendaftaran
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-700">
+                    Calon Siswa
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-700">
+                    Orang Tua / Wali
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-700">
+                    Status Pendaftaran
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-700">
+                    Pembayaran
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-700">
+                    Tgl Masuk
+                  </TableHead>
+                  <TableHead className="font-semibold text-slate-700 text-right">
+                    Aksi
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {data.items.map((item) => {
                   const regBadge = REG_STATUS_BADGES[item.status] || {
                     label: item.status,
-                    className: 'bg-slate-100 text-slate-700',
+                    className: "bg-slate-100 text-slate-700",
                   };
                   const payBadge = PAY_STATUS_BADGES[item.payment_status] || {
                     label: item.payment_status,
-                    className: 'bg-slate-100 text-slate-700',
+                    className: "bg-slate-100 text-slate-700",
                   };
-                  const formattedDate = new Date(item.created_at).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
+                  const formattedDate = new Date(
+                    item.created_at,
+                  ).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
                   });
 
                   return (
@@ -282,7 +339,11 @@ export const AdminRegistrantListPage: React.FC = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <Link to={`/admin/pendaftar/${item.id}`}>
-                          <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1.5 text-xs"
+                          >
                             <Eye className="w-3.5 h-3.5" />
                             Detail
                           </Button>
@@ -297,8 +358,9 @@ export const AdminRegistrantListPage: React.FC = () => {
             {/* Pagination Controls */}
             <div className="p-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
               <div>
-                Menampilkan {(data.page - 1) * data.pageSize + 1} -{' '}
-                {Math.min(data.page * data.pageSize, data.total)} dari {data.total} pendaftar
+                Menampilkan {(data.page - 1) * data.pageSize + 1} -{" "}
+                {Math.min(data.page * data.pageSize, data.total)} dari{" "}
+                {data.total} pendaftar
               </div>
 
               <div className="flex items-center gap-2">
@@ -318,7 +380,9 @@ export const AdminRegistrantListPage: React.FC = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
+                  onClick={() =>
+                    setPage((p) => Math.min(data.totalPages, p + 1))
+                  }
                   disabled={data.page >= data.totalPages}
                   className="h-8 px-2 gap-1"
                 >

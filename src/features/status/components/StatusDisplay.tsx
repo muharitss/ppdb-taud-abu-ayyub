@@ -23,7 +23,10 @@ interface StatusDisplayProps {
   accessCode: string;
 }
 
-export const StatusDisplay: React.FC<StatusDisplayProps> = ({ data, accessCode }) => {
+export const StatusDisplay: React.FC<StatusDisplayProps> = ({
+  data,
+  accessCode,
+}) => {
   const regMeta = getRegistrationStatusMeta(data.registration_status);
   const payMeta = getPaymentStatusMeta(data.payment_status);
 
@@ -35,7 +38,7 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({ data, accessCode }
     : null;
 
   const waHelpUrl = `https://wa.me/${ADMIN_CONTACTS.primary.whatsappNumber}?text=${encodeURIComponent(
-    `Assalamu'alaikum Admin PPDB TAUD Abu Ayyub, saya ingin menanyakan status pendaftaran nomor ${data.registration_number}.`
+    `Assalamu'alaikum Admin PPDB TAUD Abu Ayyub, saya ingin menanyakan status pendaftaran nomor ${data.registration_number}.`,
   )}`;
 
   return (
@@ -120,9 +123,14 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({ data, accessCode }
                 Langkah Berikutnya: Pembayaran Biaya Pendaftaran
               </div>
               <p className="text-xs text-amber-800 leading-relaxed">
-                Silakan lakukan transfer sebesar Rp 300.000 ke rekening resmi sekolah dan unggah foto bukti transfer untuk membuka formulir pendaftaran.
+                Silakan lakukan transfer sebesar Rp 300.000 ke rekening resmi
+                sekolah dan unggah foto bukti transfer untuk membuka formulir
+                pendaftaran.
               </p>
-              <Button asChild className="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white">
+              <Button
+                asChild
+                className="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white"
+              >
                 <Link
                   to={`/bayar/${encodeURIComponent(data.registration_number)}`}
                   state={{ accessCode }}
@@ -141,12 +149,20 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({ data, accessCode }
                 Langkah Berikutnya: Lengkapi Formulir & Berkas
               </div>
               <p className="text-xs text-blue-800 leading-relaxed">
-                Bukti pembayaran telah diterima. Silakan isi data lengkap calon santri dan orang tua serta unggah foto Kartu Keluarga dan Akte Kelahiran.
+                Bukti pembayaran telah diterima. Silakan isi data lengkap calon
+                siswa dan orang tua serta unggah foto Kartu Keluarga dan Akte
+                Kelahiran.
               </p>
-              <Button asChild className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white">
+              <Button
+                asChild
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 <Link
                   to={`/daftar/formulir/${encodeURIComponent(data.registration_number)}`}
-                  state={{ registrationNumber: data.registration_number, accessCode }}
+                  state={{
+                    registrationNumber: data.registration_number,
+                    accessCode,
+                  }}
                 >
                   Lengkapi Formulir Sekarang
                   <ArrowRight className="w-4 h-4 ml-1.5" />
@@ -156,7 +172,10 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({ data, accessCode }
           )}
 
           {data.registration_status === "accepted" && (
-            <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Button
+              asChild
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
               <a
                 href={ADMIN_CONTACTS.waGroupLink}
                 target="_blank"
