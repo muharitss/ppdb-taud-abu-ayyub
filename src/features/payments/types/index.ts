@@ -7,6 +7,7 @@ export interface SubmitPaymentProofParams {
 export interface SubmitPaymentProofResponse {
   success: boolean;
   status: "payment_submitted";
+  registration_status?: "awaiting_form";
   message: string;
 }
 

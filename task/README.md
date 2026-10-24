@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 6 Selesai 100% (Form Schema, DB Migration, Edge Functions, & Full Form Wizard Tuntas), Phase 7 Aktif  
-> **Progres Akurat:** 23 / 36 Task Selesai (**63.89%**)
+> **Status:** Phase 6, Phase 7, & Phase 11 Selesai 100% (Form Schema, DB Migration, Edge Functions, Wizard Refactor, Success & Status Pages Tuntas), Phase 8 (Admin Suite) Siap Aktif  
+> **Progres Akurat:** 29 / 40 Task Selesai (**72.50%**)
 
 ---
 
@@ -13,9 +13,9 @@ Aplikasi **PPDB TAUD Abu Ayyub** adalah sistem Penerimaan Peserta Didik Baru ber
 Sistem bertransformasi dari landing page statis menjadi aplikasi web terintegrasi yang mencakup:
 1. **Landing Page Publik:** Mempertahankan branding, kurikulum, dan informasi sekolah yang sudah ada.
 2. **Pendaftaran Awal:** Pengisian data inti santri/orang tua dan penerbitan Nomor Pendaftaran unik serta Kode Akses aman sekali-tampil.
-3. **Pembayaran Transfer Manual:** Instruksi transfer resmi Rp300.000 dan upload bukti transfer tanpa payment gateway.
-4. **Verifikasi Admin:** Verifikasi pembayaran manual oleh admin sebelum formulir lengkap dapat diakses.
-5. **Formulir Lengkap & Upload Dokumen:** Pengisian data santri dan upload berkas persyaratan (berstatus `BLOCKED` menunggu penetapan resmi sekolah).
+3. **Pembayaran Transfer Manual & Bantuan Admin:** Instruksi transfer resmi Rp300.000, akses langsung ke nomor WhatsApp Admin untuk bantuan & pertanyaan, dan upload foto bukti transfer tanpa payment gateway.
+4. **Akses Langsung Formulir Lengkap & Upload Dokumen:** Begitu pendaftar mengunggah foto bukti pembayaran (`payment_submitted`), status pendaftaran langsung menjadi `awaiting_form` sehingga pendaftar dapat langsung mengisi formulir lengkap serta mengunggah foto **Kartu Keluarga (KK)** dan **Akte Kelahiran** (tanpa perlu menunggu verifikasi admin terlebih dahulu).
+5. **Verifikasi Admin:** Verifikasi bukti pembayaran dan berkas pendaftaran oleh admin melalui dashboard.
 6. **Notifikasi WhatsApp:** Pembuatan tautan `https://wa.me/...` berisi pesan ter-encode untuk dikirimkan secara manual oleh pendaftar.
 7. **Pemeriksaan Status:** Halaman status aman yang memverifikasi nomor pendaftaran dan hash kode akses via backend.
 8. **Dashboard Admin:** Pengelolaan antrean pendaftar, verifikasi pembayaran, audit log, dan pengaturan PPDB.
@@ -95,8 +95,8 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **021** | [Form Schema & DB Migration](task-021-form-schema-and-migration.md) | Phase 6 | P1 | **DONE** | Task 020, 010 |
 | **022** | [Full Form UI & File Upload](task-022-full-form-ui.md) | Phase 6 | P1 | **DONE** | Task 021, 015 |
 | **023** | [Edge Fn: document-upload](task-023-document-upload-edge-function.md) | Phase 6 | P0 | **DONE** | Task 021, 010 |
-| **024** | [Success Page & WhatsApp Action](task-024-success-page-and-whatsapp.md) | Phase 7 | P1 | `NOT_STARTED` | Task 022 |
-| **025** | [Registration Status Page UI](task-025-status-page.md) | Phase 7 | P1 | `NOT_STARTED` | Task 014 |
+| **024** | [Success Page & WhatsApp Action](task-024-success-page-and-whatsapp.md) | Phase 7 | P1 | **DONE** | Task 022 |
+| **025** | [Registration Status Page UI](task-025-status-page.md) | Phase 7 | P1 | **DONE** | Task 014 |
 | **026** | [Admin Dashboard Overview](task-026-admin-dashboard-overview.md) | Phase 8 | P2 | `NOT_STARTED` | Task 012, 018 |
 | **027** | [Admin Registrant List & Search](task-027-admin-registrant-list.md) | Phase 8 | P2 | `NOT_STARTED` | Task 026 |
 | **028** | [Admin Registrant Detail & Audit](task-028-admin-registrant-detail.md) | Phase 8 | P2 | `NOT_STARTED` | Task 027, 022 |
@@ -108,23 +108,29 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **034** | [Production Supabase Setup](task-034-production-supabase.md) | Phase 10 | P0 | `NOT_STARTED` | Task 010–019 |
 | **035** | [Vercel Deployment & SPA Routing](task-035-vercel-deployment.md) | Phase 10 | P0 | `NOT_STARTED` | Task 008, 034 |
 | **036** | [Go-Live Checklist & Verification](task-036-go-live-checklist.md) | Phase 10 | P0 | `NOT_STARTED` | Task 033, 034, 035 |
+| **037** | [Landing Page CTA & Navigation Routing Fix](task-037-landing-cta-and-navigation-fix.md) | Phase 11 | P1 | **DONE** | Task 015, 022 |
+| **038** | [Bank Information & Contact Consistency](task-038-bank-info-and-contact-consistency.md) | Phase 11 | P0 | **DONE** | Task 016, 020 |
+| **039** | [Access Code Session Retention & Anti-Lockout](task-039-access-code-session-retention.md) | Phase 11 | P1 | **DONE** | Task 015, 016, 022 |
+| **040** | [Full Form Wizard Simplification & Component Refactor](task-040-form-wizard-simplification.md) | Phase 11 | P2 | **DONE** | Task 021, 022 |
 
 ---
 
 ## 5. Ringkasan Status & Task Siap Eksekusi
 
 ### A. Metrik Progres Proyek
-- **Total Task:** 36
-- **Selesai (`DONE`):** 23 (Task 001–023)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 024 (Success Page & WhatsApp Action), Task 025 (Registration Status Page UI), Task 029 (Admin PPDB Config Management)
+- **Total Task:** 40
+- **Selesai (`DONE`):** 29 (Task 001–025, Task 037–040)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 026, Task 027, Task 028, Task 029, Task 030
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 0
-- **Persentase Selesai Nyata:** **63.89%**
+- **Persentase Selesai Nyata:** **72.50%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 024:** Success Page & WhatsApp Action (unblocked by Task 022).
-2. **Task 025:** Registration Status Page UI (unblocked by Task 014).
-3. **Task 029:** Admin PPDB Config Management (unblocked by Task 012).
+1. **Task 026:** Admin Dashboard Overview (metrik ringkasan antrean pendaftar dan navigasi admin).
+2. **Task 029:** Admin PPDB Config Management (pengaturan buka/tutup pendaftaran dan biaya transfer).
+3. **Task 027:** Admin Registrant List & Search (daftar tabel pencarian dan filter status pendaftar).
+4. **Task 028:** Admin Registrant Detail & Audit (tampilan lengkap data diri santri, berkas dokumen, dan audit log).
+5. **Task 030:** Audit Log Viewer UI (riwayat aktivitas keamanan pendaftaran).
 
 ### C. Task yang Terblokir & Penyebabnya
 - *Tidak ada task yang terblokir saat ini.* Seluruh dependency Phase 6 telah terpenuhi.
@@ -150,11 +156,11 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
    - Menggunakan skema URL murni: `https://wa.me/<nomor>?text=<pesan_terencode>`.
    - Pengguna menekan tombol kirim sendiri dari perangkat mereka.
    - Sistem mencantumkan disclaimer bahwa link WhatsApp bukan bukti konfirmasi pengiriman.
-5. **Pembayaran Manual Tanpa Payment Gateway:**
-   - Biaya Rp300.000 ditransfer ke rekening resmi sekolah.
-   - Pendaftar mengunggah file bukti transfer ke private Supabase storage.
-   - Hanya admin terautentikasi yang berhak memverifikasi status pembayaran.
-   - Formulir lengkap digembok secara backend sampai pembayaran diverifikasi (`payment_verified`).
+5. **Pembayaran Manual Tanpa Payment Gateway (Alur Langsung):**
+   - Biaya Rp300.000 ditransfer ke rekening resmi sekolah, disertai akses ke nomor WhatsApp Admin untuk bantuan dan pertanyaan.
+   - Pendaftar mengunggah foto bukti pembayaran ke private Supabase storage.
+   - Begitu bukti pembayaran diunggah (`payment_submitted`), pendaftar **langsung dapat mengakses dan mengisi formulir pendaftaran** (`status = awaiting_form`) beserta upload foto Kartu Keluarga dan Akte Kelahiran.
+   - Admin terautentikasi memverifikasi status pembayaran melalui dashboard secara paralel.
 
 ---
 
@@ -194,10 +200,23 @@ npm run preview
 
 ## 9. Log Riwayat Perubahan
 
-- **2026-10-23 (Phase 6 Selesai):**
+- **2026-10-24 (Phase 7 & Phase 11 Tuntas 100%):**
+  - Penyelesaian komprehensif 6 task berturut-turut (Task 037, Task 038, Task 039, Task 040, Task 024, Task 025):
+    - **Task 037 (Landing Page CTA & Navigation Fix):** Mengarahkan tombol CTA Hero, Navbar, dan Syarat Pendaftaran langsung ke route internal `/daftar`, mengaktifkan navbar button, dan menghapus dead code file `DocumentUploadPage.tsx`.
+    - **Task 038 (Bank Info & Contact Consistency):** Sentralisasi konfigurasi perbankan & kontak admin di `src/config/schoolInfo.ts`. Menegaskan rekening resmi tunggal BSI 7216959997 a.n. TAUD SaQu Abu Ayyub serta sinkronisasi kontak WhatsApp admin across specs and code.
+    - **Task 039 (Access Code Session Retention & Anti-Lockout):** Pembuatan helper `src/lib/sessionCredentials.ts` dengan penyimpanan aman scoped pada browser tab `sessionStorage`. Menjaga calon pendaftar agar tidak terkunci saat berpindah aplikasi m-banking atau me-reload halaman ponsel. Dilengkapi tombol recovery WhatsApp admin.
+    - **Task 040 (Full Form Wizard Simplification):** Ekstraksi komponen bersama `ParentFormSection.tsx` (Data Ayah & Data Ibu), memotong 226 baris kode duplikasi di `FullFormWizard.tsx`, serta menambahkan deteksi otomatis langkah aktif wizard dari draf tersimpan.
+    - **Task 024 (Success Page & WhatsApp Action):** Pembuatan halaman `/daftar/berhasil` (`SuccessPage.tsx`) dengan pre-filled template pesan WhatsApp `wa.me`, tautan bergabung grup resmi WhatsApp PPDB, dan tombol salin informasi pendaftaran ke clipboard.
+    - **Task 025 (Registration Status Page UI):** Pembuatan halaman `/status` (`StatusPage.tsx`) dan `StatusDisplay.tsx` terintegrasi dengan Edge Function `verify-registration-access`. Menampilkan status pendaftaran & pembayaran human-readable bahasa Indonesia, penanganan error opaque anti-timing attack, rate limit 429 friendly handling, dan tombol aksi tindak lanjut (pembayaran / formulir).
+  - Progres: 29 / 40 Task (**72.50%**). Phase 7 dan Phase 11 tuntas 100%.
+
+- **2026-10-23 (Refactor Logic Pendaftaran Simplified & Phase 6 Selesai):**
+  - Penyederhanaan alur pendaftaran di seluruh spesifikasi (`specs/`), daftar task (`task/`), Edge Functions, dan UI:
+    - Alur pembayaran menampilkan keterangan transfer ke nomor rekening, akses ke nomor WhatsApp admin untuk bantuan/pertanyaan, dan upload foto bukti pembayaran -> langsung membuka akses halaman formulir (`status = awaiting_form` saat `submit-payment-proof`, tanpa menunggu verifikasi admin).
+    - Halaman formulir lengkap (`/daftar/formulir`) memiliki tambahan upload foto **Kartu Keluarga (KK)** dan **Akte Kelahiran** (`kartu_keluarga`, `akte_kelahiran`).
   - Task 022 & 023 resmi diselesaikan (`DONE`):
-    - **Task 023 (Edge Function `document-upload` & `submit-full-form`):** Endpoint Deno untuk upload berkas dokumen persyaratan (KK, Akta Kelahiran, Pas Foto) dengan validasi magic bytes (JPEG/PNG/PDF), batas 5MB, timing-attack protection bcrypt, pencegahan mutasi status tidak valid (409), penyimpanan ke private storage bucket `registration-documents`, upsert ke tabel `registration_documents`, dan pencatatan audit log `audit_events`. Serta Edge function `submit-full-form` untuk query status draf formulir (`get`), simpan kemajuan draf (`save_draft`), dan validasi final lengkap serta perubahan status ke `submitted`.
-    - **Task 022 (Full Form UI & File Upload `/daftar/formulir`):** Halaman formulir pendaftaran lengkap dengan gating pembayaran (BSI Rp 300.000 untuk `payment_pending`, notifikasi antrean untuk `payment_submitted`, proteksi form aktif untuk `awaiting_form`, dan status `submitted` read-only). Wizard 5 langkah (Calon Santri, Data Ayah, Data Ibu, Kesehatan, Dokumen) dengan validasi Zod bertahap, auto-save draf setiap langkah, komponen upload dokumen terintegrasi badge sukses, dan tombol tautan bergabung ke grup resmi WhatsApp PPDB. Phase 6 tuntas 100%.
+    - **Task 023 (Edge Function `document-upload` & `submit-full-form`):** Endpoint Deno untuk upload berkas dokumen persyaratan (Kartu Keluarga dan Akte Kelahiran) dengan validasi magic bytes (JPEG/PNG/PDF), batas 5MB, timing-attack protection bcrypt, penyimpanan ke private storage bucket `registration-documents`, upsert ke tabel `registration_documents`, dan pencatatan audit log `audit_events`. Serta Edge function `submit-full-form` untuk query status draf formulir (`get`), simpan kemajuan draf (`save_draft`), dan validasi final lengkap serta perubahan status ke `submitted`.
+    - **Task 022 (Full Form UI & File Upload `/daftar/formulir`):** Halaman formulir pendaftaran lengkap yang langsung dapat diakses setelah upload bukti pembayaran (`payment_submitted` atau `payment_verified`). Dilengkapi gating instruksi pembayaran + bantuan admin WA + upload bukti pembayaran inline jika `payment_pending`. Wizard 5 langkah (Calon Santri, Data Ayah, Data Ibu, Kesehatan, Upload Foto KK & Akte Kelahiran) dengan validasi Zod bertahap, auto-save draf setiap langkah, dan tombol tautan bergabung ke grup resmi WhatsApp PPDB. Phase 6 tuntas 100%.
   - Progres: 23 / 36 Task (**63.89%**).
 - **2026-10-23 (Phase 6 Dimulai):**
   - Task 021 resmi diselesaikan (`DONE`):

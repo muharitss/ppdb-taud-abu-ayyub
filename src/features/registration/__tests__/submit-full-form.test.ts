@@ -89,7 +89,7 @@ function createMockSupabase(overrides?: {
           id: REG_ID,
           registration_number: TEST_REG_NUMBER,
           status: "awaiting_form",
-          payment_status: "payment_verified",
+          payment_status: "payment_submitted",
           submitted_at: null,
         };
 
@@ -104,7 +104,6 @@ function createMockSupabase(overrides?: {
       : [
           { document_type: "kartu_keluarga", file_path: `${REG_ID}/kk.jpg` },
           { document_type: "akte_kelahiran", file_path: `${REG_ID}/akte.jpg` },
-          { document_type: "pas_foto", file_path: `${REG_ID}/foto.jpg` },
         ];
 
   const mockClient = {
@@ -246,7 +245,7 @@ async function runTests() {
   assert.equal(actionGetRes.status, 200, "Action get returns 200");
   const getData = await actionGetRes.json();
   assert.equal(getData.registration_number, TEST_REG_NUMBER, "Returns registration number");
-  assert.equal(getData.documents.length, 3, "Returns 3 documents");
+  assert.equal(getData.documents.length, 2, "Returns 2 documents (KK & Akte)");
   assert.ok(getData.form_data.child, "Returns form_data");
   console.log("✓ Action 'get' verified");
 

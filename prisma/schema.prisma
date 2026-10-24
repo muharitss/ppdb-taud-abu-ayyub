@@ -36,7 +36,6 @@ enum PaymentStatus {
 enum DocumentType {
   kartu_keluarga
   akte_kelahiran
-  pas_foto
 
   @@map("document_type")
 }

@@ -150,23 +150,22 @@ CREATE TABLE payments (
 
 ### 3.4 `registration_documents`
 
-> **✅ CONFIRMED — Requirements confirmed 2026-10-21. See task-020.**
+> **✅ CONFIRMED — Simplified Document Upload (2026-10-23). See task-020.**
 
-Three document types are required: `kartu_keluarga`, `akte_kelahiran`, `pas_foto`.
+Two document types are required on the online form: `kartu_keluarga` and `akte_kelahiran`.
 
 | Column | Type | Constraints | Description |
 |---|---|---|---|
 | `id` | `uuid` | PK, `gen_random_uuid()` | Internal identifier |
 | `registration_id` | `uuid` | FK → `registrations.id`, NOT NULL | Associated registration |
-| `document_type` | `document_type` | NOT NULL | Enum: `kartu_keluarga` / `akte_kelahiran` / `pas_foto` |
+| `document_type` | `document_type` | NOT NULL | Enum: `kartu_keluarga` / `akte_kelahiran` |
 | `file_path` | `text` | NOT NULL | Path in `registration-documents` bucket, e.g. `{registration_id}/kk.pdf` |
 | `uploaded_at` | `timestamptz` | NOT NULL, DEFAULT `now()` | Upload timestamp |
 
 ```sql
 CREATE TYPE document_type AS ENUM (
   'kartu_keluarga',
-  'akte_kelahiran',
-  'pas_foto'
+  'akte_kelahiran'
 );
 
 CREATE TABLE registration_documents (
@@ -179,7 +178,7 @@ CREATE TABLE registration_documents (
 );
 ```
 
-**Accepted formats:** JPEG, PNG, PDF. Max 5 MB per file. `pas_foto` accepts only JPEG/PNG.
+**Accepted formats:** JPEG, PNG, PDF. Max 5 MB per file.
 
 **RLS summary:** Service role only for insert/update. Admin can SELECT.
 

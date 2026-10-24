@@ -151,8 +151,8 @@ These are applied directly on landing page HTML elements. Do not apply them to P
 |---|---|---|
 | `/` | Landing page (single-page scroll) | Public |
 | `/daftar` | Initial registration form | Public |
-| `/daftar/pembayaran` | Payment info + proof upload | Public (requires `registration_number` in state) |
-| `/daftar/formulir` | Full registration form | Public (requires verified payment) |
+| `/daftar/pembayaran` | Payment info + admin WA help + proof upload | Public (requires `registration_number` + `access_code`) |
+| `/daftar/formulir` | Full registration form + KK & Akte upload | Public (accessible immediately after payment proof upload) |
 | `/daftar/berhasil` | Success page + WA link | Public (requires form submitted state) |
 | `/status` | Status check entry | Public |
 | `/status/:registrationNumber` | Status check with pre-filled number | Public |

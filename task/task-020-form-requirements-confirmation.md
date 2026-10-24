@@ -19,8 +19,8 @@ The full registration form fields (child data, parent data, medical info, requir
 
 ### Biaya Pendaftaran
 - **Rp 300.000** via Bank BSI
-- No. Rek: **7327913322** a.n. TAUD Abu Ayyub
-- Konfirmasi WA: **0813 6707 4138**
+- No. Rek: **7216959997** a.n. TAUD SaQu Abu Ayyub
+- Konfirmasi WA: **0821-6959-9979** (Ummu Rumi) / **0813-6707-4138** (Admin)
 
 ### Section 1 — Data Calon Peserta Didik
 | Field | Type | Required |
@@ -72,9 +72,8 @@ The full registration form fields (child data, parent data, medical info, requir
 ### Section 5 — Upload Dokumen
 | Dokumen | Format | Required |
 |---|---|---|
-| Kartu Keluarga (KK) | JPEG, PNG, PDF ≤ 5 MB | ✅ |
-| Akta kelahiran anak | JPEG, PNG, PDF ≤ 5 MB | ✅ |
-| Pas foto 3×4 | JPEG, PNG ≤ 5 MB | ✅ |
+| Foto Kartu Keluarga (KK) | JPEG, PNG, PDF ≤ 5 MB | ✅ |
+| Foto Akte Kelahiran anak | JPEG, PNG, PDF ≤ 5 MB | ✅ |
 
 ### Section 6 — Grup WhatsApp
 Setelah semua data ter-upload, wali murid diarahkan untuk bergabung ke grup WA via link:
@@ -86,10 +85,10 @@ Setelah semua data ter-upload, wali murid diarahkan untuk bergabung ke grup WA v
 ## Draft / Save Feature
 - **Ya** — simpan per-section (step-by-step wizard); data tidak hilang jika halaman di-refresh.
 
-## Gating: Bukti Transfer
-- Wajib upload bukti TF **sebelum** mengakses formulir lengkap (Phase D).
-- Formulir tidak bisa dibuka jika `payment_status ≠ payment_submitted` atau `payment_verified`.
-- UX: tampilkan halaman perantara yang meminta upload bukti TF jika belum dilakukan.
+## Gating: Bukti Transfer (Simplified Flow)
+- Alur pendaftaran: tampilkan keterangan membayar biaya pendaftaran ke nomor rekening, akses ke nomor WhatsApp Admin untuk bantuan & pertanyaan, dan upload foto bukti pembayaran -> **langsung bisa mengakses halaman formulir** (`status = awaiting_form` begitu `payment_status = payment_submitted`).
+- Formulir tidak perlu menunggu verifikasi admin terlebih dahulu untuk diisi.
+- Jika `payment_status = payment_pending` atau `payment_rejected`, halaman formulir menampilkan instruksi pembayaran, tombol bantuan WA Admin, dan form upload bukti pembayaran yang langsung membuka formulir setelah diunggah.
 
 ## Scope
 - Gather official list of form fields for registration (child data, parent data, guardian info, medical info, etc.)

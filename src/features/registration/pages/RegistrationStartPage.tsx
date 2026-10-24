@@ -21,6 +21,7 @@ import {
   type InitialRegistrationInput,
 } from "../schemas/initial-registration.schema";
 import { createRegistration } from "../services/registration";
+import { saveSessionCredentials } from "@/lib/sessionCredentials";
 import type { CreateRegistrationResponse } from "../types";
 
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,7 @@ export const RegistrationStartPage: React.FC = () => {
     try {
       const response = await createRegistration(values);
       setSuccessData(response);
+      saveSessionCredentials(response.registration_number, response.access_code);
       toast.success("Pendaftaran awal berhasil dibuat!");
     } catch (err: unknown) {
       const msg =

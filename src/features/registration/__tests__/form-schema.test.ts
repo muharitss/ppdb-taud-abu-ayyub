@@ -152,10 +152,11 @@ const validSample: RegistrationFormData = {
 
 // 5. Document Type Enum
 {
-  const validDocs = ["kartu_keluarga", "akte_kelahiran", "pas_foto"];
+  const validDocs = ["kartu_keluarga", "akte_kelahiran"];
   for (const doc of validDocs) {
     assert.ok(documentTypeSchema.safeParse(doc).success, `Document type ${doc} should be valid`);
   }
+  assert.equal(documentTypeSchema.safeParse("pas_foto").success, false, "pas_foto should not be in documentTypeSchema");
   assert.equal(documentTypeSchema.safeParse("ijazah").success, false, "Unknown document type should fail");
 }
 

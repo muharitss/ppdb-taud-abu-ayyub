@@ -349,13 +349,17 @@ async function runAsyncTests() {
     const body: SubmitPaymentProofResponse = await res.json();
     assert.equal(body.success, true, "Success is true");
     assert.equal(body.status, "payment_submitted", "Status is payment_submitted");
+    assert.equal(body.registration_status, "awaiting_form", "Registration status advances immediately to awaiting_form");
 
     // Verify storage upload occurred
     assert.equal(mock._inspections.uploadedFiles.length, 1, "Uploaded 1 file");
     // Verify payments table insert occurred
     assert.equal(mock._inspections.insertedPayments.length, 1, "Recorded 1 payment");
-    // Verify registration table updated
+    // Verify registration table updated with awaiting_form
     assert.equal(mock._inspections.updatedRegistrations.length, 1, "Updated registration");
+    const updatedReg = mock._inspections.updatedRegistrations[0] as { values: { status: string; payment_status: string } };
+    assert.equal(updatedReg.values.status, "awaiting_form", "DB registration status updated to awaiting_form");
+    assert.equal(updatedReg.values.payment_status, "payment_submitted", "DB payment_status updated to payment_submitted");
     // Verify audit event logged
     assert.equal(mock._inspections.auditLogs.length, 1, "Logged 1 audit event");
 

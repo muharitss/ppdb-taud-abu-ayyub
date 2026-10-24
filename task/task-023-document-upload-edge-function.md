@@ -18,9 +18,9 @@ When registrants submit the full registration form (task 022), their required do
 
 ## Scope
 - Create `supabase/functions/document-upload/index.ts`
-- Input: `registration_number`, `access_code`, `document_type` (`kartu_keluarga`, `akte_kelahiran`, `pas_foto`), `file` (multipart)
+- Input: `registration_number`, `access_code`, `document_type` (`kartu_keluarga`, `akte_kelahiran`), `file` (multipart)
 - Verify access code with timing attack protection (dummy bcrypt hash)
-- Verify registration is in `awaiting_form` status
+- Verify registration has uploaded payment proof (`payment_submitted` or `payment_verified`) and is not yet `submitted`
 - Validate file server-side (magic bytes MIME check: JPEG, PNG, PDF; size max 5 MB)
 - Upload to private `registration-documents` bucket with path: `{registration_id}/{document_type}-{timestamp}.{ext}`
 - Upsert `registration_documents` record (cleans up previous file in storage if re-uploading same document type)
@@ -30,13 +30,13 @@ When registrants submit the full registration form (task 022), their required do
 1. Created `supabase/functions/document-upload/index.ts`:
    - Validasi multipart form data, deteksi MIME header bytes (`image/jpeg`, `image/png`, `application/pdf`).
    - Mitigasi timing attack (dummy hash bcrypt).
-   - Validasi status pendaftaran (`awaiting_form`).
+   - Validasi status pembayaran (`payment_submitted` atau `payment_verified`) dan belum `submitted`.
    - Penggantian berkas lama di bucket privat `registration-documents`.
-   - Upsert ke tabel `registration_documents` dengan trigger update dan audit log.
+   - Upsert ke tabel `registration_documents` (`kartu_keluarga`, `akte_kelahiran`) dan audit log.
 2. Created `supabase/functions/submit-full-form/index.ts`:
    - Penanganan `action: 'get'` untuk me-restore draf formulir dan daftar dokumen terunggah.
    - Penanganan `action: 'save_draft'` untuk menyimpan kemajuan per-step ke tabel `registration_form_data`.
-   - Penanganan `action: 'submit'` yang memvalidasi Zod `registrationFormSchema`, kelengkapan 3 berkas dokumen wajib, update status `submitted`, dan audit log.
+   - Penanganan `action: 'submit'` yang memvalidasi Zod `registrationFormSchema`, kelengkapan 2 berkas dokumen wajib (Kartu Keluarga & Akte Kelahiran), update status `submitted`, dan audit log.
 3. Created test suites:
    - `src/features/registration/__tests__/document-upload.test.ts`
    - `src/features/registration/__tests__/submit-full-form.test.ts`
