@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   return (
@@ -27,14 +28,12 @@ const Hero: React.FC = () => {
 
         {/* Tombol CTA */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <a 
-            href="https://bit.ly/PPDB-TAUDSaqu-A4"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link 
+            to="/daftar"
             className="bg-white hover:bg-[var(--color-light)] text-[var(--color-primary)] px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center shadow-lg hover-lift z-10"
           >
             Daftar Sekarang
-          </a>
+          </Link>
           <a 
             href="https://wa.me/6282169599979"
             target="_blank"

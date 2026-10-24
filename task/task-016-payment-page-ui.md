@@ -18,11 +18,12 @@ After completing the initial registration step, users must pay the registration 
 ## Scope
 1. Show bank account info (bank name, account number, account holder — BSI 7216959997 a.n. TAUD SaQu Abu Ayyub)
 2. Show amount: **Rp300.000**
-3. Upload field for payment proof with drag & drop and file picker
-4. File validation: JPEG/PNG/PDF only, max 5MB (client-side pre-check)
-5. Submit → call Edge Function `submit-payment-proof`
-6. On success: show status (`payment_submitted`), instructions to wait for admin verification
-7. Error handling with Sonner toast and alert banner
+3. Provide direct WhatsApp link to Admin (`6282169599979`) for help and questions on the payment page
+4. Upload field for payment proof photo with drag & drop and file picker
+5. File validation: JPEG/PNG/PDF only, max 5MB (client-side pre-check)
+6. Submit → call Edge Function `submit-payment-proof`
+7. On success: immediately allow user to access the full registration form (`/daftar/formulir`) with credentials passed in router state
+8. Error handling with Sonner toast and alert banner
 
 ## Out of Scope
 - Payment gateway integration

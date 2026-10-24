@@ -3,7 +3,7 @@
 -- Specs: specs/04-data-model.md (Sections 3.4, 3.5, 7, 8, 9), task/task-020-form-requirements-confirmation.md
 
 -- 1. Create document_type enum
-CREATE TYPE "document_type" AS ENUM ('kartu_keluarga', 'akte_kelahiran', 'pas_foto');
+CREATE TYPE "document_type" AS ENUM ('kartu_keluarga', 'akte_kelahiran');
 
 -- 2. Create registration_documents table
 CREATE TABLE "registration_documents" (

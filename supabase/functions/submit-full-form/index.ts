@@ -203,31 +203,39 @@ export async function handleSubmitFullForm(
   }
 
   // For write actions (save_draft and submit), check permissions
-  if (registration.status !== "awaiting_form") {
-    if (registration.payment_status !== "payment_verified") {
-      return new Response(
-        JSON.stringify({
-          error: "Pembayaran belum diverifikasi. Formulir belum dapat diisi.",
-        }),
-        {
-          status: 409,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
+  if (
+    registration.status === "submitted" ||
+    registration.status === "under_review" ||
+    registration.status === "accepted" ||
+    registration.status === "rejected"
+  ) {
+    return new Response(
+      JSON.stringify({
+        error: "Formulir pendaftaran telah dikirim dan tidak dapat diubah.",
+      }),
+      {
+        status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
 
-    if (registration.status === "submitted" || registration.status === "accepted" || registration.status === "rejected") {
-      return new Response(
-        JSON.stringify({
-          error: "Formulir pendaftaran telah dikirim dan tidak dapat diubah.",
-        }),
-        {
-          status: 409,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
+  if (
+    registration.payment_status !== "payment_submitted" &&
+    registration.payment_status !== "payment_verified"
+  ) {
+    return new Response(
+      JSON.stringify({
+        error: "Bukti pembayaran belum diunggah. Silakan unggah bukti pembayaran terlebih dahulu.",
+      }),
+      {
+        status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
 
+  if (registration.status !== "awaiting_form" && registration.status !== "awaiting_payment") {
     return new Response(
       JSON.stringify({
         error: "Status pendaftaran saat ini tidak mengizinkan pengisian formulir.",
@@ -290,20 +298,20 @@ export async function handleSubmitFullForm(
       );
     }
 
-    // 2. Validate all 3 documents uploaded
+    // 2. Validate required documents uploaded (Kartu Keluarga & Akte Kelahiran)
     const { data: uploadedDocs } = await supabase
       .from("registration_documents")
       .select("document_type")
       .eq("registration_id", registration.id);
 
     const docTypes = new Set(uploadedDocs?.map((d) => d.document_type) || []);
-    const requiredTypes = ["kartu_keluarga", "akte_kelahiran", "pas_foto"];
+    const requiredTypes = ["kartu_keluarga", "akte_kelahiran"];
     const missingDocs = requiredTypes.filter((t) => !docTypes.has(t));
 
     if (missingDocs.length > 0) {
       return new Response(
         JSON.stringify({
-          error: "Dokumen persyaratan belum lengkap (wajib mengunggah KK, Akta Kelahiran, dan Pas Foto).",
+          error: "Dokumen persyaratan belum lengkap (wajib mengunggah Kartu Keluarga dan Akte Kelahiran).",
           missing_documents: missingDocs,
         }),
         {

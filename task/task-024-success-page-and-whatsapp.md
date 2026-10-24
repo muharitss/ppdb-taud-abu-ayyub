@@ -1,7 +1,7 @@
 # Task 024 — Success Page and WhatsApp Link
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1
@@ -56,12 +56,12 @@ After completing the full registration form, registrants are directed to a succe
 - No API calls to WhatsApp
 
 ## Acceptance Criteria
-- [ ] `wa.me` link opens WhatsApp with correct pre-filled message mentioning TP.2027/2028
-- [ ] Message contains correct `child_name`, `registration_number`, and status URL
-- [ ] "Gabung Grup WhatsApp PPDB" button links to `https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh` (new tab)
-- [ ] "Salin Informasi" button copies correct text to clipboard
-- [ ] Disclaimer about manual send is clearly visible
-- [ ] Link to `/status` page works
+- [x] `wa.me` link opens WhatsApp with correct pre-filled message mentioning TP.2027/2028
+- [x] Message contains correct `child_name`, `registration_number`, and status URL
+- [x] "Gabung Grup WhatsApp PPDB" button links to `https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh` (new tab)
+- [x] "Salin Informasi" button copies correct text to clipboard
+- [x] Disclaimer about manual send is clearly visible
+- [x] Link to `/status` page works
 
 ## Verification
 ```bash

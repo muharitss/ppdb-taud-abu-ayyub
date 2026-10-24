@@ -1,16 +1,12 @@
 import { supabase } from "@/lib/supabase/client";
+import { SCHOOL_BANK_INFO } from "@/config/schoolInfo";
 import type {
   BankAccountInfo,
   SubmitPaymentProofParams,
   SubmitPaymentProofResponse,
 } from "../types";
 
-export const DEFAULT_BANK_INFO: BankAccountInfo = {
-  bankName: "Bank Syariah Indonesia (BSI)",
-  accountNumber: "7216959997",
-  accountHolder: "TAUD SaQu Abu Ayyub",
-  amount: 300000,
-};
+export const DEFAULT_BANK_INFO: BankAccountInfo = SCHOOL_BANK_INFO;
 
 export async function submitPaymentProof({
   registrationNumber,

@@ -35,34 +35,34 @@
 | ID | Requirement |
 |---|---|
 | C-01 | Display bank account details and registration fee (Rp300.000) clearly |
-| C-02 | Display the parent's registration number for reference |
+| C-02 | Display the parent's registration number for reference and provide direct WhatsApp access to Admin for help & questions |
 | C-03 | Allow parent to upload a photo/screenshot of payment proof (JPEG, PNG, PDF; max 5 MB) |
 | C-04 | File is uploaded to the private `payment-proofs` Supabase Storage bucket via Edge Function |
 | C-05 | After upload, registration `payment_status` is set to `payment_submitted` |
-| C-06 | After upload, registration `status` advances to `awaiting_form` |
-| C-07 | Show a success message and a pre-filled wa.me link directing the parent to inform admin |
-| C-08 | If a payment proof has already been uploaded, allow re-upload (replaces previous file) unless payment is already `payment_verified` |
+| C-06 | After upload, registration `status` advances immediately to `awaiting_form` (no waiting for admin verification to fill form) |
+| C-07 | Immediately allow the parent to proceed to the Full Registration Form (`/daftar/formulir`), plus provide a WhatsApp help/confirmation link |
+| C-08 | If a payment proof is rejected (`payment_rejected`), allow re-upload unless payment is already `payment_verified` |
 
 ### Phase D — Full Registration Form
 
-> **✅ CONFIRMED — Requirements confirmed by school administration (2026-10-21). See task-020 for full field list.**
+> **✅ CONFIRMED — Simplified Registration Flow (Updated 2026-10-23). See task-020 for full field list.**
 
 | ID | Requirement |
 |---|---|
-| D-01 | Full form is only accessible after payment proof is uploaded (`payment_status = payment_submitted` or `payment_verified`) |
-| D-02 | Form is accessed by entering registration number + access code (same as status page) |
-| D-03 | **Gating page:** if `payment_status = payment_pending`, show payment instruction page (bank BSI 7327913322 a.n. TAUD Abu Ayyub, Rp 300.000) with upload field — form cannot be opened until proof is uploaded |
-| D-04 | Form is a 4-section wizard: (1) Data Calon Peserta Didik, (2) Data Ayah, (3) Data Ibu, (4) Data Kesehatan Anak |
+| D-01 | Full form is immediately accessible once payment proof is uploaded (`payment_status = payment_submitted` or `payment_verified`, `status = awaiting_form`) |
+| D-02 | Form is accessed via router state after payment upload or by entering registration number + access code |
+| D-03 | **Gating page:** if `payment_status = payment_pending` or `payment_rejected`, show payment instruction card, admin WhatsApp help contact, and inline proof upload — once uploaded, form opens immediately |
+| D-04 | Form is a 5-step wizard: (1) Data Calon Peserta Didik, (2) Data Ayah, (3) Data Ibu, (4) Data Kesehatan Anak, (5) Upload Dokumen |
 | D-05 | **Section 1 — Data Calon Peserta Didik:** nama lengkap, nama panggilan, NIK (16 digit), tempat lahir, tanggal lahir, jenis kelamin (enum), anak ke-, jumlah saudara kandung, alamat lengkap, program pembelajaran (1 tahun / 2 tahun) |
 | D-06 | **Section 2 — Data Ayah:** nama lengkap, NIK (16 digit), tempat/tanggal lahir, pendidikan terakhir, pekerjaan, penghasilan per bulan (opsional), nomor HP/WA, alamat |
 | D-07 | **Section 3 — Data Ibu:** sama dengan Data Ayah |
 | D-08 | **Section 4 — Data Kesehatan:** berat badan (kg), tinggi badan (cm), golongan darah (opsional), riwayat alergi (opsional), riwayat penyakit (opsional) |
-| D-09 | **Section 5 — Upload Dokumen:** KK (JPEG/PNG/PDF ≤ 5 MB), akta kelahiran (JPEG/PNG/PDF ≤ 5 MB), pas foto 3×4 (JPEG/PNG ≤ 5 MB) — semua wajib |
+| D-09 | **Section 5 — Upload Dokumen:** Foto/Scan Kartu Keluarga / KK (JPEG/PNG/PDF ≤ 5 MB) dan Foto/Scan Akte Kelahiran (JPEG/PNG/PDF ≤ 5 MB) — keduanya wajib |
 | D-10 | All uploads go to private `registration-documents` bucket via Edge Function |
 | D-11 | On final submission, status advances to `submitted` |
 | D-12 | Form data is saved per-section (wizard step saves to DB before proceeding to next step) |
 | D-13 | Once `submitted`, form fields become read-only |
-| D-14 | After all documents uploaded, show button/link to join WA group: `https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh` |
+| D-14 | After form is submitted, show button/link to join WA group: `https://chat.whatsapp.com/LfyeZ98q1PZ1TCQrkTOPzh` |
 
 ### Phase E — Success + WhatsApp Notification
 

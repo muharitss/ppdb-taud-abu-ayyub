@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   return (
@@ -16,14 +17,12 @@ const Navbar: React.FC = () => {
             </span>
           </div>
           
-          {/* <a 
-            href="https://bit.ly/PPDB-TAUDSaqu-A4"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-[var(--color-accent)] hover:opacity-90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md"
+          <Link 
+            to="/daftar"
+            className="bg-[var(--color-accent)] hover:opacity-90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 shadow-md text-sm md:text-base"
           >
             Daftar Sekarang
-          </a> */}
+          </Link>
         </div>
       </div>
     </nav>

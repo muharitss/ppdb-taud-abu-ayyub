@@ -24,8 +24,8 @@ When a registrant uploads their bank transfer proof, this Edge Function securely
 5. Validate file server-side: MIME type magic bytes (JPEG: FF D8 FF, PNG: 89 50 4E 47, PDF: 25 50 44 46), size ≤ 5MB
 6. Upload to private Supabase Storage bucket `payment-proofs` with path: `{registration_id}/{timestamp}-proof.{ext}`
 7. Insert into `payments` table: `status=payment_submitted`, `proof_file_path`
-8. Update registration `payment_status` to `payment_submitted`
-9. Return success response with status
+8. Update registration `payment_status` to `payment_submitted` AND `status` to `awaiting_form` so user can immediately fill the registration form
+9. Return success response with `status: 'payment_submitted'` and `registration_status: 'awaiting_form'`
 10. Log audit event: `action=payment_proof_submitted`, `entity_type=registration`, `entity_id=registration_id`
 
 ## Out of Scope

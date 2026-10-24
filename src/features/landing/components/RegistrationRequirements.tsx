@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const RegistrationRequirements: React.FC = () => {
   const administrative = [
@@ -60,14 +61,12 @@ const RegistrationRequirements: React.FC = () => {
         </div>
         
         <div className="text-center mt-12">
-          <a 
-            href="https://bit.ly/PPDB-TAUDSaqu-A4"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link 
+            to="/daftar"
             className="inline-block bg-[var(--color-primary)] hover:opacity-90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 shadow-md hover-lift"
           >
             Daftar Sekarang
-          </a>
+          </Link>
         </div>
       </div>
     </section>

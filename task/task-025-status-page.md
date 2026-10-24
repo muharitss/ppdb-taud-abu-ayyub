@@ -1,7 +1,7 @@
 # Task 025 — Status Page
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1
@@ -58,12 +58,12 @@ Registrants receive their `registration_number` and `access_code` after initial 
 - Page is public (no auth required) but shows only data for verified credentials
 
 ## Acceptance Criteria
-- [ ] Valid credentials show correct registration status, payment status, and submitted_at
-- [ ] Invalid credentials (wrong number or wrong code) show opaque error message
-- [ ] Rate limit (429) shows friendly error in Indonesian
-- [ ] No other registrant's data is shown under any circumstances
-- [ ] All status labels displayed in Indonesian
-- [ ] WhatsApp admin link present and opens correctly
+- [x] Valid credentials show correct registration status, payment status, and submitted_at
+- [x] Invalid credentials (wrong number or wrong code) show opaque error message
+- [x] Rate limit (429) shows friendly error in Indonesian
+- [x] No other registrant's data is shown under any circumstances
+- [x] All status labels displayed in Indonesian
+- [x] WhatsApp admin link present and opens correctly
 
 ## Verification
 ```bash

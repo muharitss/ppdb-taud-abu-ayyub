@@ -20,7 +20,7 @@ export const OPAQUE_ERROR_MESSAGE = "Nomor pendaftaran atau kode akses tidak ses
 export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 const DUMMY_HASH = "$2a$10$e8k6m78Xz77J3/7Kqg/dLeX.Q.r9Kz8G3gXlqgD9n/2XyU5e7F9yK";
 
-export const ALLOWED_DOC_TYPES = ["kartu_keluarga", "akte_kelahiran", "pas_foto"] as const;
+export const ALLOWED_DOC_TYPES = ["kartu_keluarga", "akte_kelahiran"] as const;
 export type AllowedDocumentType = (typeof ALLOWED_DOC_TYPES)[number];
 
 export interface MimeCheckResult {
@@ -226,31 +226,39 @@ export async function handleDocumentUpload(
   }
 
   // Verify status allows document upload
-  if (registration.status !== "awaiting_form") {
-    if (registration.payment_status !== "payment_verified") {
-      return new Response(
-        JSON.stringify({
-          error: "Pembayaran belum diverifikasi. Formulir dan dokumen belum dapat diakses.",
-        }),
-        {
-          status: 409,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
+  if (
+    registration.status === "submitted" ||
+    registration.status === "under_review" ||
+    registration.status === "accepted" ||
+    registration.status === "rejected"
+  ) {
+    return new Response(
+      JSON.stringify({
+        error: "Formulir pendaftaran telah dikirim dan tidak dapat diubah.",
+      }),
+      {
+        status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
 
-    if (registration.status === "submitted" || registration.status === "accepted" || registration.status === "rejected") {
-      return new Response(
-        JSON.stringify({
-          error: "Formulir pendaftaran telah dikirim dan tidak dapat diubah.",
-        }),
-        {
-          status: 409,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
-    }
+  if (
+    registration.payment_status !== "payment_submitted" &&
+    registration.payment_status !== "payment_verified"
+  ) {
+    return new Response(
+      JSON.stringify({
+        error: "Bukti pembayaran belum diunggah. Formulir dan dokumen belum dapat diakses.",
+      }),
+      {
+        status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
 
+  if (registration.status !== "awaiting_form" && registration.status !== "awaiting_payment") {
     return new Response(
       JSON.stringify({
         error: "Status pendaftaran saat ini tidak mengizinkan pengunggahan dokumen.",

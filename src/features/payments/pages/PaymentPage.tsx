@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import {
   CreditCard,
   KeyRound,
@@ -10,6 +10,7 @@ import {
   ArrowRight,
   Home,
   MessageCircle,
+  HelpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,16 +22,31 @@ import { Label } from "@/components/ui/label";
 import { BankInfoCard } from "../components/BankInfoCard";
 import { PaymentProofUpload } from "../components/PaymentProofUpload";
 import { submitPaymentProof, DEFAULT_BANK_INFO } from "../services/payment";
+import { ADMIN_CONTACTS } from "@/config/schoolInfo";
+import { saveSessionCredentials, getSessionCredentials } from "@/lib/sessionCredentials";
 
 export const PaymentPage: React.FC = () => {
   const { registrationNumber: paramRegNumber } = useParams<{ registrationNumber?: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // In-memory accessCode from registration step navigation
-  const stateAccessCode = (location.state as { accessCode?: string } | undefined)?.accessCode || "";
+  // In-memory accessCode and registrationNumber from router navigation or safe sessionStorage fallback
+  const locationState = location.state as { registrationNumber?: string; accessCode?: string } | undefined;
+  const sessionCreds = getSessionCredentials();
 
-  const [registrationNumber, setRegistrationNumber] = useState(paramRegNumber || "");
-  const [accessCode, setAccessCode] = useState(stateAccessCode);
+  const initialRegNumber =
+    paramRegNumber ||
+    locationState?.registrationNumber ||
+    (sessionCreds ? sessionCreds.registrationNumber : "");
+
+  const initialAccessCode =
+    locationState?.accessCode ||
+    (sessionCreds && (!initialRegNumber || sessionCreds.registrationNumber === initialRegNumber)
+      ? sessionCreds.accessCode
+      : "");
+
+  const [registrationNumber, setRegistrationNumber] = useState(initialRegNumber);
+  const [accessCode, setAccessCode] = useState(initialAccessCode);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
 
@@ -86,7 +102,8 @@ export const PaymentPage: React.FC = () => {
       });
 
       setIsSubmitted(true);
-      toast.success("Bukti transfer berhasil diunggah!");
+      saveSessionCredentials(cleanReg, cleanCode);
+      toast.success("Bukti pembayaran berhasil diunggah! Anda dapat langsung mengisi formulir pendaftaran.");
     } catch (err: unknown) {
       const msg =
         err instanceof Error
@@ -99,10 +116,21 @@ export const PaymentPage: React.FC = () => {
     }
   };
 
-  // WhatsApp CS contact link
-  const waContactUrl = `https://wa.me/6282169599979?text=${encodeURIComponent(
-    `Bismillah, saya ingin konfirmasi pembayaran PPDB TAUD Abu Ayyub dengan nomor pendaftaran ${registrationNumber || ""}`
+  // WhatsApp Admin Help & Pertanyaan link
+  const waHelpUrl = `https://wa.me/${ADMIN_CONTACTS.primary.whatsappNumber}?text=${encodeURIComponent(
+    `Assalamu'alaikum Admin PPDB TAUD Abu Ayyub, saya ingin bertanya / meminta bantuan terkait pendaftaran${
+      registrationNumber ? ` (Nomor Pendaftaran: ${registrationNumber})` : ""
+    }.`
   )}`;
+
+  const handleProceedToForm = () => {
+    navigate("/daftar/formulir", {
+      state: {
+        registrationNumber: registrationNumber.trim().toUpperCase(),
+        accessCode: accessCode.trim().toUpperCase(),
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[var(--color-light)] py-10 px-4 sm:px-6 lg:px-8">
@@ -124,16 +152,16 @@ export const PaymentPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Success View */}
+        {/* Success View: Directly Proceed to Form */}
         {isSubmitted ? (
           <Card className="border-emerald-200 shadow-md overflow-hidden bg-white">
             <div className="bg-emerald-600 p-6 text-white text-center space-y-2">
               <div className="inline-flex p-3 bg-white/20 rounded-full mb-1">
                 <CheckCircle2 className="w-10 h-10 text-white" />
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold">Bukti Transfer Berhasil Dikirim!</h1>
+              <h1 className="text-xl sm:text-2xl font-bold">Bukti Pembayaran Berhasil Diunggah!</h1>
               <p className="text-xs sm:text-sm text-emerald-100 max-w-md mx-auto">
-                Terima kasih, data dan berkas bukti pembayaran Anda telah berhasil kami terima.
+                Terima kasih, bukti pembayaran Anda telah diterima. Anda sekarang dapat langsung mengisi formulir pendaftaran lengkap.
               </p>
             </div>
 
@@ -144,9 +172,9 @@ export const PaymentPage: React.FC = () => {
                   <span className="font-mono font-bold text-gray-900">{registrationNumber}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Status Pembayaran:</span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
-                    Menunggu Verifikasi Admin
+                  <span className="text-gray-600">Status Formulir:</span>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                    Siap Diisi Sekarang
                   </span>
                 </div>
               </div>
@@ -157,21 +185,20 @@ export const PaymentPage: React.FC = () => {
                   Langkah Selanjutnya:
                 </h2>
                 <ol className="list-decimal list-inside space-y-2 text-xs sm:text-sm text-gray-600 pl-1">
-                  <li>Admin sekolah akan memverifikasi mutasi rekening dalam <strong>1x24 jam kerja</strong>.</li>
-                  <li>Setelah diverifikasi, Anda dapat mengakses <strong>Formulir Lengkap Santri</strong> melalui halaman status.</li>
-                  <li>Pastikan Anda menyimpan <strong>Nomor Pendaftaran</strong> dan <strong>Kode Akses</strong> untuk masuk ke formulir.</li>
+                  <li>Klik tombol <strong>Isi Formulir Pendaftaran</strong> di bawah untuk langsung melengkapi data santri & orang tua.</li>
+                  <li>Siapkan foto/scan <strong>Kartu Keluarga (KK)</strong> dan <strong>Akte Kelahiran</strong> untuk diunggah pada halaman formulir.</li>
+                  <li>Pastikan Anda tetap menyimpan <strong>Nomor Pendaftaran</strong> dan <strong>Kode Akses</strong> Anda.</li>
                 </ol>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <Button
-                  asChild
-                  className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white"
+                  type="button"
+                  onClick={handleProceedToForm}
+                  className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-semibold"
                 >
-                  <Link to="/status" className="flex items-center justify-center gap-2">
-                    Lihat Status Pendaftaran
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  Isi Formulir Pendaftaran
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
 
                 <Button
@@ -180,28 +207,63 @@ export const PaymentPage: React.FC = () => {
                   className="w-full border-emerald-300 text-emerald-800 hover:bg-emerald-50"
                 >
                   <a
-                    href={waContactUrl}
+                    href={waHelpUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2"
                   >
                     <MessageCircle className="w-4 h-4 text-emerald-600" />
-                    Konfirmasi via WhatsApp
+                    Bantuan & Pertanyaan Admin
                   </a>
                 </Button>
               </div>
             </CardContent>
           </Card>
         ) : (
-          /* Payment & Upload Form View */
+          /* Payment, Help Contact & Upload Form View */
           <div className="space-y-6">
-            {/* Bank Info Card */}
+            {/* 1. Keterangan Membayar Biaya Pendaftaran ke Nomor Rekening */}
             <BankInfoCard
               bankInfo={DEFAULT_BANK_INFO}
               registrationNumber={registrationNumber}
             />
 
-            {/* Upload Proof Card */}
+            {/* 2. Akses ke Nomor Admin untuk Help & Pertanyaan */}
+            <Card className="border-emerald-200 bg-emerald-50/40 shadow-xs">
+              <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-lg bg-emerald-100 text-emerald-700 shrink-0 mt-0.5">
+                    <HelpCircle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-emerald-950">
+                      Butuh Bantuan atau Ada Pertanyaan?
+                    </h3>
+                    <p className="text-xs text-emerald-800 mt-0.5">
+                      Hubungi Admin PPDB (Ummu Rumi: 0821-6959-9979) melalui WhatsApp jika mengalami kendala pembayaran atau pendaftaran.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto shrink-0 border-emerald-300 bg-white text-emerald-800 hover:bg-emerald-100"
+                >
+                  <a
+                    href={waHelpUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5"
+                  >
+                    <MessageCircle className="w-4 h-4 text-emerald-600" />
+                    Hubungi Admin (WA)
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* 3. Upload Foto Bukti Pembayaran */}
             <Card className="border-slate-200 shadow-sm bg-white">
               <CardHeader className="pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -210,10 +272,10 @@ export const PaymentPage: React.FC = () => {
                   </div>
                   <div>
                     <CardTitle className="text-lg sm:text-xl text-gray-900">
-                      Unggah Bukti Transfer
+                      Unggah Foto Bukti Pembayaran
                     </CardTitle>
                     <CardDescription className="text-xs sm:text-sm">
-                      Kirimkan tangkapan layar atau foto struk bukti pembayaran pendaftaran.
+                      Setelah mengunggah bukti pembayaran, Anda langsung dapat mengisi formulir pendaftaran.
                     </CardDescription>
                   </div>
                 </div>
@@ -252,7 +314,7 @@ export const PaymentPage: React.FC = () => {
                         <KeyRound className="w-3.5 h-3.5 text-gray-500" />
                         Kode Akses <span className="text-red-500">*</span>
                       </Label>
-                      {stateAccessCode && (
+                      {initialAccessCode && (
                         <span className="text-[11px] text-emerald-700 font-medium">
                           Otomatis terisi dari pendaftaran
                         </span>

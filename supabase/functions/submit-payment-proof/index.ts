@@ -54,6 +54,7 @@ export function detectMimeType(bytes: Uint8Array): MimeCheckResult | null {
 export interface SubmitPaymentProofResponse {
   success: boolean;
   status: "payment_submitted";
+  registration_status: "awaiting_form";
   message: string;
 }
 
@@ -241,7 +242,7 @@ export async function handleSubmitPaymentProof(
     );
   }
 
-  if (registration.status !== "awaiting_payment") {
+  if (registration.status !== "awaiting_payment" && registration.payment_status !== "payment_rejected") {
     return new Response(
       JSON.stringify({
         error: "Status pendaftaran saat ini tidak mengizinkan pengunggahan bukti pembayaran.",
@@ -291,11 +292,12 @@ export async function handleSubmitPaymentProof(
     );
   }
 
-  // 11. Update registration payment_status
+  // 11. Update registration payment_status AND advance status to awaiting_form immediately
   const { error: regUpdateError } = await supabase
     .from("registrations")
     .update({
       payment_status: "payment_submitted",
+      status: "awaiting_form",
       updated_at: new Date().toISOString(),
     })
     .eq("id", registration.id);
@@ -331,7 +333,8 @@ export async function handleSubmitPaymentProof(
   const responseBody: SubmitPaymentProofResponse = {
     success: true,
     status: "payment_submitted",
-    message: "Bukti pembayaran berhasil diunggah. Silakan menunggu proses verifikasi admin.",
+    registration_status: "awaiting_form",
+    message: "Bukti pembayaran berhasil diunggah. Anda sekarang dapat langsung mengisi formulir pendaftaran.",
   };
 
   return new Response(JSON.stringify(responseBody), {

@@ -14,7 +14,6 @@ export const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 export const documentTypeSchema = z.enum([
   "kartu_keluarga",
   "akte_kelahiran",
-  "pas_foto",
 ]);
 export type DocumentType = z.infer<typeof documentTypeSchema>;
 

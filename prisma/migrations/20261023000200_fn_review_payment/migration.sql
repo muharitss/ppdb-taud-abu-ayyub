@@ -57,11 +57,15 @@ BEGIN
     review_notes = p_review_notes
   WHERE id = p_payment_id;
 
-  -- 5. Update registrations
+  -- 5. Update registrations (do not overwrite status if already submitted/reviewed)
   UPDATE registrations
   SET
     payment_status = v_new_payment_status,
-    status = CASE WHEN p_approved THEN v_new_reg_status ELSE status END,
+    status = CASE
+      WHEN p_approved AND status = 'awaiting_payment' THEN v_new_reg_status
+      WHEN NOT p_approved AND status = 'awaiting_form' THEN 'awaiting_payment'::registration_status
+      ELSE status
+    END,
     review_notes = CASE WHEN NOT p_approved THEN p_review_notes ELSE review_notes END,
     updated_at = now()
   WHERE id = v_payment.registration_id;

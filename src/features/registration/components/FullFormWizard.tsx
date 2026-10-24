@@ -30,6 +30,17 @@ import {
   type RegistrationFormData,
 } from "../schemas/formSchema";
 import { saveFormDraft, submitFullForm, uploadRegistrationDocument } from "../services/formService";
+import { clearSessionCredentials } from "@/lib/sessionCredentials";
+import { ParentFormSection } from "./ParentFormSection";
+
+function detectInitialStep(data?: Partial<RegistrationFormData>): number {
+  if (!data) return 1;
+  if (!childSchema.safeParse(data.child).success) return 1;
+  if (!fatherSchema.safeParse(data.father).success) return 2;
+  if (!motherSchema.safeParse(data.mother).success) return 3;
+  if (!healthSchema.safeParse(data.health).success) return 4;
+  return 5;
+}
 
 interface FullFormWizardProps {
   registrationNumber: string;
@@ -56,7 +67,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
   isReadOnly = false,
   onSubmitted,
 }) => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(() => detectInitialStep(initialData));
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -226,7 +237,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
     }
   };
 
-  const handleDocUpload = async (docType: "kartu_keluarga" | "akte_kelahiran" | "pas_foto", file: File) => {
+  const handleDocUpload = async (docType: "kartu_keluarga" | "akte_kelahiran", file: File) => {
     if (isReadOnly) return;
     // Client-side quick check
     if (file.size > 5 * 1024 * 1024) {
@@ -261,17 +272,18 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
       return;
     }
 
-    // 2. Check all 3 documents uploaded
-    const requiredTypes = ["kartu_keluarga", "akte_kelahiran", "pas_foto"];
+    // 2. Check Kartu Keluarga and Akte Kelahiran uploaded
+    const requiredTypes = ["kartu_keluarga", "akte_kelahiran"];
     const missing = requiredTypes.filter((t) => !uploadedDocs[t]);
     if (missing.length > 0) {
-      toast.error("Wajib mengunggah seluruh dokumen (KK, Akta Kelahiran, dan Pas Foto)");
+      toast.error("Wajib mengunggah foto Kartu Keluarga (KK) dan Akte Kelahiran");
       return;
     }
 
     try {
       setIsSubmitting(true);
       await submitFullForm(registrationNumber, accessCode, fullValidation.data);
+      clearSessionCredentials();
       toast.success("Formulir pendaftaran dan dokumen berhasil dikirim!");
       if (onSubmitted) {
         onSubmitted();
@@ -361,7 +373,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 {currentStep === 2 && "Lengkapi data identitas, pendidikan, dan kontak ayah kandung/wali."}
                 {currentStep === 3 && "Lengkapi data identitas, pendidikan, dan kontak ibu kandung."}
                 {currentStep === 4 && "Informasi riwayat kesehatan, fisik, dan golongan darah santri."}
-                {currentStep === 5 && "Unggah berkas persyaratan wajib (Kartu Keluarga, Akta, Pas Foto)."}
+                {currentStep === 5 && "Unggah foto/berkas Kartu Keluarga (KK) dan Akte Kelahiran."}
               </CardDescription>
             </div>
             {!isReadOnly && currentStep < 5 && (
@@ -531,262 +543,26 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
 
           {/* STEP 2: DATA AYAH */}
           {currentStep === 2 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="father_name">Nama Lengkap Ayah *</Label>
-                <Input
-                  id="father_name"
-                  placeholder="Nama lengkap ayah kandung"
-                  value={formData.father?.full_name || ""}
-                  onChange={(e) => updateField("father", "full_name", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["father.full_name"] && (
-                  <p className="text-xs text-destructive">{errors["father.full_name"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="father_nik">NIK Ayah (16 Digit) *</Label>
-                <Input
-                  id="father_nik"
-                  maxLength={16}
-                  placeholder="16 digit NIK ayah"
-                  value={formData.father?.nik || ""}
-                  onChange={(e) => updateField("father", "nik", e.target.value.replace(/\D/g, ""))}
-                  disabled={isReadOnly}
-                />
-                {errors["father.nik"] && (
-                  <p className="text-xs text-destructive">{errors["father.nik"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="father_wa">Nomor WhatsApp Ayah *</Label>
-                <Input
-                  id="father_wa"
-                  placeholder="08xxxxxxxxxx"
-                  value={formData.father?.whatsapp_number || ""}
-                  onChange={(e) => updateField("father", "whatsapp_number", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["father.whatsapp_number"] && (
-                  <p className="text-xs text-destructive">{errors["father.whatsapp_number"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="father_birth_place">Tempat Lahir Ayah *</Label>
-                <Input
-                  id="father_birth_place"
-                  placeholder="Kota / Tempat Lahir"
-                  value={formData.father?.birth_place || ""}
-                  onChange={(e) => updateField("father", "birth_place", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["father.birth_place"] && (
-                  <p className="text-xs text-destructive">{errors["father.birth_place"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="father_birth_date">Tanggal Lahir Ayah *</Label>
-                <Input
-                  id="father_birth_date"
-                  type="date"
-                  value={formData.father?.birth_date || ""}
-                  onChange={(e) => updateField("father", "birth_date", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["father.birth_date"] && (
-                  <p className="text-xs text-destructive">{errors["father.birth_date"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="father_education">Pendidikan Terakhir *</Label>
-                <Input
-                  id="father_education"
-                  placeholder="SMA / D3 / S1 / S2 / lainnya"
-                  value={formData.father?.last_education || ""}
-                  onChange={(e) => updateField("father", "last_education", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["father.last_education"] && (
-                  <p className="text-xs text-destructive">{errors["father.last_education"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="father_occupation">Pekerjaan Ayah *</Label>
-                <Input
-                  id="father_occupation"
-                  placeholder="PNS / Swasta / Wiraswasta / lainnya"
-                  value={formData.father?.occupation || ""}
-                  onChange={(e) => updateField("father", "occupation", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["father.occupation"] && (
-                  <p className="text-xs text-destructive">{errors["father.occupation"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="father_income">Penghasilan Bulanan (Opsional)</Label>
-                <Input
-                  id="father_income"
-                  placeholder="Contoh: 3.000.000 - 5.000.000"
-                  value={formData.father?.monthly_income || ""}
-                  onChange={(e) => updateField("father", "monthly_income", e.target.value)}
-                  disabled={isReadOnly}
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="father_address">Alamat Domisili Ayah *</Label>
-                <Textarea
-                  id="father_address"
-                  rows={3}
-                  placeholder="Alamat lengkap tempat tinggal ayah saat ini"
-                  value={formData.father?.address || ""}
-                  onChange={(e) => updateField("father", "address", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["father.address"] && (
-                  <p className="text-xs text-destructive">{errors["father.address"]}</p>
-                )}
-              </div>
-            </div>
+            <ParentFormSection
+              role="father"
+              label="Ayah"
+              data={formData.father}
+              errors={errors}
+              isReadOnly={isReadOnly}
+              onChange={(field, val) => updateField("father", field, val)}
+            />
           )}
 
           {/* STEP 3: DATA IBU */}
           {currentStep === 3 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="mother_name">Nama Lengkap Ibu *</Label>
-                <Input
-                  id="mother_name"
-                  placeholder="Nama lengkap ibu kandung"
-                  value={formData.mother?.full_name || ""}
-                  onChange={(e) => updateField("mother", "full_name", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.full_name"] && (
-                  <p className="text-xs text-destructive">{errors["mother.full_name"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mother_nik">NIK Ibu (16 Digit) *</Label>
-                <Input
-                  id="mother_nik"
-                  maxLength={16}
-                  placeholder="16 digit NIK ibu"
-                  value={formData.mother?.nik || ""}
-                  onChange={(e) => updateField("mother", "nik", e.target.value.replace(/\D/g, ""))}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.nik"] && (
-                  <p className="text-xs text-destructive">{errors["mother.nik"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mother_wa">Nomor WhatsApp Ibu *</Label>
-                <Input
-                  id="mother_wa"
-                  placeholder="08xxxxxxxxxx"
-                  value={formData.mother?.whatsapp_number || ""}
-                  onChange={(e) => updateField("mother", "whatsapp_number", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.whatsapp_number"] && (
-                  <p className="text-xs text-destructive">{errors["mother.whatsapp_number"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mother_birth_place">Tempat Lahir Ibu *</Label>
-                <Input
-                  id="mother_birth_place"
-                  placeholder="Kota / Tempat Lahir"
-                  value={formData.mother?.birth_place || ""}
-                  onChange={(e) => updateField("mother", "birth_place", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.birth_place"] && (
-                  <p className="text-xs text-destructive">{errors["mother.birth_place"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mother_birth_date">Tanggal Lahir Ibu *</Label>
-                <Input
-                  id="mother_birth_date"
-                  type="date"
-                  value={formData.mother?.birth_date || ""}
-                  onChange={(e) => updateField("mother", "birth_date", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.birth_date"] && (
-                  <p className="text-xs text-destructive">{errors["mother.birth_date"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mother_education">Pendidikan Terakhir *</Label>
-                <Input
-                  id="mother_education"
-                  placeholder="SMA / D3 / S1 / S2 / lainnya"
-                  value={formData.mother?.last_education || ""}
-                  onChange={(e) => updateField("mother", "last_education", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.last_education"] && (
-                  <p className="text-xs text-destructive">{errors["mother.last_education"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="mother_occupation">Pekerjaan Ibu *</Label>
-                <Input
-                  id="mother_occupation"
-                  placeholder="Ibu Rumah Tangga / PNS / Swasta / dll"
-                  value={formData.mother?.occupation || ""}
-                  onChange={(e) => updateField("mother", "occupation", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.occupation"] && (
-                  <p className="text-xs text-destructive">{errors["mother.occupation"]}</p>
-                )}
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="mother_income">Penghasilan Bulanan (Opsional)</Label>
-                <Input
-                  id="mother_income"
-                  placeholder="Contoh: 1.000.000 - 3.000.000"
-                  value={formData.mother?.monthly_income || ""}
-                  onChange={(e) => updateField("mother", "monthly_income", e.target.value)}
-                  disabled={isReadOnly}
-                />
-              </div>
-
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="mother_address">Alamat Domisili Ibu *</Label>
-                <Textarea
-                  id="mother_address"
-                  rows={3}
-                  placeholder="Alamat lengkap tempat tinggal ibu saat ini"
-                  value={formData.mother?.address || ""}
-                  onChange={(e) => updateField("mother", "address", e.target.value)}
-                  disabled={isReadOnly}
-                />
-                {errors["mother.address"] && (
-                  <p className="text-xs text-destructive">{errors["mother.address"]}</p>
-                )}
-              </div>
-            </div>
+            <ParentFormSection
+              role="mother"
+              label="Ibu"
+              data={formData.mother}
+              errors={errors}
+              isReadOnly={isReadOnly}
+              onChange={(field, val) => updateField("mother", field, val)}
+            />
           )}
 
           {/* STEP 4: KESEHATAN */}
@@ -875,17 +651,16 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
               <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-primary shrink-0" />
                 <span>
-                  Format yang didukung: <strong>JPEG, PNG, atau PDF</strong>. Ukuran masing-masing berkas maksimal{" "}
-                  <strong>5 MB</strong>.
+                  Unggah foto atau berkas <strong>Kartu Keluarga (KK)</strong> dan <strong>Akte Kelahiran</strong>. Format yang didukung: <strong>JPEG, PNG, atau PDF</strong> (maksimal <strong>5 MB</strong> per berkas).
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* 1. Kartu Keluarga */}
                 <Card className={`border ${uploadedDocs["kartu_keluarga"] ? "border-emerald-500/50 bg-emerald-50/20" : ""}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm font-semibold">1. Kartu Keluarga (KK)</CardTitle>
+                      <CardTitle className="text-sm font-semibold">1. Foto Kartu Keluarga (KK)</CardTitle>
                       {uploadedDocs["kartu_keluarga"] ? (
                         <Badge variant="outline" className="text-emerald-700 bg-emerald-100 border-emerald-300">
                           <CheckCircle2 className="w-3 h-3 mr-1" /> Terunggah
@@ -926,7 +701,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 <Card className={`border ${uploadedDocs["akte_kelahiran"] ? "border-emerald-500/50 bg-emerald-50/20" : ""}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm font-semibold">2. Akte Kelahiran</CardTitle>
+                      <CardTitle className="text-sm font-semibold">2. Foto Akte Kelahiran</CardTitle>
                       {uploadedDocs["akte_kelahiran"] ? (
                         <Badge variant="outline" className="text-emerald-700 bg-emerald-100 border-emerald-300">
                           <CheckCircle2 className="w-3 h-3 mr-1" /> Terunggah
@@ -938,7 +713,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                       )}
                     </div>
                     <CardDescription className="text-xs">
-                      Foto/scan Akta Kelahiran resmi dari Disdukcapil.
+                      Foto/scan Akte Kelahiran resmi dari Disdukcapil.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
@@ -954,47 +729,6 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                           }}
                         />
                         {uploadingDoc === "akte_kelahiran" && (
-                          <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-md text-xs gap-1.5">
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Mengunggah...
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* 3. Pas Foto 3x4 */}
-                <Card className={`border ${uploadedDocs["pas_foto"] ? "border-emerald-500/50 bg-emerald-50/20" : ""}`}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm font-semibold">3. Pas Foto 3×4</CardTitle>
-                      {uploadedDocs["pas_foto"] ? (
-                        <Badge variant="outline" className="text-emerald-700 bg-emerald-100 border-emerald-300">
-                          <CheckCircle2 className="w-3 h-3 mr-1" /> Terunggah
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-amber-700 bg-amber-100 border-amber-300">
-                          Wajib
-                        </Badge>
-                      )}
-                    </div>
-                    <CardDescription className="text-xs">
-                      Foto santri berbusana muslim/muslimah rapi dengan latar bebas.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {!isReadOnly && (
-                      <div className="relative">
-                        <Input
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.pdf"
-                          disabled={uploadingDoc === "pas_foto"}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleDocUpload("pas_foto", file);
-                          }}
-                        />
-                        {uploadingDoc === "pas_foto" && (
                           <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-md text-xs gap-1.5">
                             <Loader2 className="w-3.5 h-3.5 animate-spin" /> Mengunggah...
                           </div>

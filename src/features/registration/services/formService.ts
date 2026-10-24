@@ -122,7 +122,7 @@ export async function submitFullForm(
 export async function uploadRegistrationDocument(
   registrationNumber: string,
   accessCode: string,
-  documentType: "kartu_keluarga" | "akte_kelahiran" | "pas_foto",
+  documentType: "kartu_keluarga" | "akte_kelahiran",
   file: File
 ): Promise<{ success: boolean; file_path: string; message: string }> {
   const formData = new FormData();

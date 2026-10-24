@@ -26,7 +26,7 @@ After task 020 confirms the official form fields and document requirements from 
 ## Implementation Plan
 1. Create `src/features/registration/schemas/formSchema.ts` — define `registrationFormSchema` (4 sub-schemas: `childSchema`, `fatherSchema`, `motherSchema`, `healthSchema`) using field list in task-020
 2. Export `RegistrationFormData` TypeScript type from Zod inference
-3. Create migration `supabase/migrations/YYYYMMDD_document_type_enum.sql` — `CREATE TYPE document_type AS ENUM ('kartu_keluarga','akte_kelahiran','pas_foto')`
+3. Create migration `supabase/migrations/YYYYMMDD_document_type_enum.sql` — `CREATE TYPE document_type AS ENUM ('kartu_keluarga','akte_kelahiran')`
 4. Create migration `supabase/migrations/YYYYMMDD_registration_form_data.sql` — table + `updated_at` trigger
 5. Create migration `supabase/migrations/YYYYMMDD_registration_documents.sql` — table with UNIQUE(registration_id, document_type)
 6. Add RLS policies: service role only insert/update; admin SELECT

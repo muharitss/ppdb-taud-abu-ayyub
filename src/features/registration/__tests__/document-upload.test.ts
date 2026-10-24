@@ -71,7 +71,7 @@ function createMockSupabase(overrides?: {
           id: REG_ID,
           registration_number: TEST_REG_NUMBER,
           status: "awaiting_form",
-          payment_status: "payment_verified",
+          payment_status: "payment_submitted",
         };
 
   const accessData =
