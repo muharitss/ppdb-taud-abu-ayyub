@@ -3,14 +3,14 @@ import { useLocation, useParams, Link, useNavigate } from "react-router-dom";
 import {
   FileText,
   KeyRound,
-  CreditCard,
   AlertTriangle,
   Loader2,
   ArrowRight,
   Home,
-  HelpCircle,
   MessageCircle,
-  FileCheck2,
+  Copy,
+  Check,
+  LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,11 +21,12 @@ import { Label } from "@/components/ui/label";
 
 import { FullFormWizard } from "../components/FullFormWizard";
 import { fetchFormDetails, type FormGetResult } from "../services/formService";
-import { BankInfoCard } from "@/features/payments/components/BankInfoCard";
-import { PaymentProofUpload } from "@/features/payments/components/PaymentProofUpload";
-import { DEFAULT_BANK_INFO, submitPaymentProof } from "@/features/payments/services/payment";
 import { ADMIN_CONTACTS } from "@/config/schoolInfo";
-import { getSessionCredentials, saveSessionCredentials } from "@/lib/sessionCredentials";
+import {
+  getSessionCredentials,
+  saveSessionCredentials,
+  clearSessionCredentials,
+} from "@/lib/sessionCredentials";
 
 export const FullFormPage: React.FC = () => {
   const navigate = useNavigate();
@@ -53,11 +54,7 @@ export const FullFormPage: React.FC = () => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [formDetails, setFormDetails] = useState<FormGetResult | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
-
-  // Inline payment proof upload state when payment_pending / payment_rejected
-  const [selectedProofFile, setSelectedProofFile] = useState<File | null>(null);
-  const [proofFileError, setProofFileError] = useState<string | null>(null);
-  const [isUploadingProof, setIsUploadingProof] = useState(false);
+  const [copiedCreds, setCopiedCreds] = useState(false);
 
   const loadData = useCallback(async (reg: string, code: string) => {
     if (!reg.trim() || !code.trim()) return;
@@ -65,9 +62,22 @@ export const FullFormPage: React.FC = () => {
       setIsLoading(true);
       setAuthError(null);
       const res = await fetchFormDetails(reg, code);
+      saveSessionCredentials(reg, code, res.form_data?.child?.full_name);
+
+      if (res.payment_status === "payment_pending" || res.payment_status === "payment_rejected") {
+        navigate(`/bayar/${encodeURIComponent(res.registration_number)}`, {
+          replace: true,
+          state: {
+            registrationNumber: res.registration_number,
+            accessCode: code.trim().toUpperCase(),
+            childName: res.form_data?.child?.full_name,
+          },
+        });
+        return;
+      }
+
       setFormDetails(res);
       setHasLoaded(true);
-      saveSessionCredentials(reg, code);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Gagal memverifikasi akses formulir";
       setAuthError(msg);
@@ -75,7 +85,28 @@ export const FullFormPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [navigate]);
+
+  const handleCopyCredentials = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `Nomor Pendaftaran: ${registrationNumber}\nKode Akses: ${accessCode}`
+      );
+      setCopiedCreds(true);
+      toast.success("Nomor Pendaftaran & Kode Akses berhasil disalin");
+      setTimeout(() => setCopiedCreds(false), 2000);
+    } catch {
+      toast.error("Gagal menyalin kredensial");
+    }
+  };
+
+  const handleSwitchSession = () => {
+    clearSessionCredentials();
+    setHasLoaded(false);
+    setFormDetails(null);
+    setRegistrationNumber("");
+    setAccessCode("");
+  };
 
   useEffect(() => {
     if (registrationNumber && accessCode && !hasLoaded) {
@@ -87,38 +118,6 @@ export const FullFormPage: React.FC = () => {
     e.preventDefault();
     loadData(registrationNumber, accessCode);
   };
-
-  const handleProofUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedProofFile || proofFileError) {
-      toast.error(proofFileError || "Silakan pilih foto/berkas bukti pembayaran");
-      return;
-    }
-    try {
-      setIsUploadingProof(true);
-      await submitPaymentProof({
-        registrationNumber,
-        accessCode,
-        file: selectedProofFile,
-      });
-      toast.success("Bukti pembayaran berhasil diunggah! Membuka formulir pendaftaran...");
-      await loadData(registrationNumber, accessCode);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Gagal mengunggah bukti pembayaran");
-    } finally {
-      setIsUploadingProof(false);
-    }
-  };
-
-  const waHelpUrl = `https://wa.me/${ADMIN_CONTACTS.primary.whatsappNumber}?text=${encodeURIComponent(
-    `Assalamu'alaikum Admin PPDB TAUD Abu Ayyub, saya ingin bertanya / meminta bantuan terkait pendaftaran${
-      registrationNumber ? ` (Nomor Pendaftaran: ${registrationNumber})` : ""
-    }.`
-  )}`;
-
-  const needsPaymentUpload =
-    formDetails?.payment_status === "payment_pending" ||
-    formDetails?.payment_status === "payment_rejected";
 
   const isReadOnlyForm =
     formDetails?.status === "submitted" ||
@@ -142,11 +141,63 @@ export const FullFormPage: React.FC = () => {
               </p>
             </div>
           </div>
-          <Link to="/" className="hidden sm:inline-flex items-center text-xs text-muted-foreground hover:text-foreground">
+          <Link to="/" className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground">
             <Home className="w-3.5 h-3.5 mr-1" />
             Kembali ke Beranda
           </Link>
         </div>
+
+        {/* Active Credential Bar so user never loses Access Code */}
+        {hasLoaded && formDetails && (
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <div>
+                <span className="text-slate-500 mr-1.5">No. Pendaftaran:</span>
+                <span className="font-mono font-bold text-emerald-900">
+                  {formDetails.registration_number}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-500 mr-1.5">Kode Akses:</span>
+                <span className="font-mono font-bold text-amber-900 tracking-wider">
+                  {accessCode}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleCopyCredentials}
+                className="h-7 px-2.5 text-xs bg-white border-emerald-200 text-emerald-800 hover:bg-emerald-100"
+              >
+                {copiedCreds ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+                    Tersalin
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 mr-1" />
+                    Salin Kredensial
+                  </>
+                )}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleSwitchSession}
+                className="h-7 px-2 text-xs text-slate-500 hover:text-slate-800"
+                title="Ganti nomor pendaftaran lain"
+              >
+                <LogOut className="w-3.5 h-3.5 mr-1" />
+                Ganti Sesi
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* 1. Credential Input Form if not authenticated */}
         {!hasLoaded && (
@@ -222,133 +273,24 @@ export const FullFormPage: React.FC = () => {
           </Card>
         )}
 
-        {/* 2. Authenticated: Evaluate State */}
+        {/* 2. Authenticated: Directly Show FullFormWizard (unpaid registrations redirect to /bayar/:reg) */}
         {hasLoaded && formDetails && (
-          <div>
-            {/* GATING: Payment Pending or Rejected -> Show Bank Info + Admin Help + Upload Proof */}
-            {needsPaymentUpload ? (
-              <div className="space-y-6">
-                <div className="p-4 rounded-xl border border-amber-300 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-                  <div className="space-y-1">
-                    <p className="font-semibold text-sm">
-                      {formDetails.payment_status === "payment_rejected"
-                        ? "Bukti Pembayaran Perlu Diunggah Ulang"
-                        : "Unggah Bukti Pembayaran untuk Membuka Formulir"}
-                    </p>
-                    <p className="text-xs text-amber-800 dark:text-amber-300">
-                      Silakan lakukan pembayaran biaya pendaftaran (Rp 300.000) dan unggah foto bukti pembayaran di bawah ini. Begitu bukti pembayaran diunggah, Anda dapat langsung mengisi formulir pendaftaran.
-                    </p>
-                  </div>
-                </div>
-
-                {/* 1. Keterangan Membayar Biaya Pendaftaran ke Nomor Rekening */}
-                <BankInfoCard bankInfo={DEFAULT_BANK_INFO} registrationNumber={registrationNumber} />
-
-                {/* 2. Akses ke Nomor Admin untuk Help & Pertanyaan */}
-                <Card className="border-emerald-200 bg-emerald-50/40 shadow-xs">
-                  <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 rounded-lg bg-emerald-100 text-emerald-700 shrink-0 mt-0.5">
-                        <HelpCircle className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-emerald-950">
-                          Butuh Bantuan atau Ada Pertanyaan?
-                        </h3>
-                        <p className="text-xs text-emerald-800 mt-0.5">
-                          Hubungi Admin PPDB (Ummu Rumi: 0821-6959-9979) melalui WhatsApp untuk bantuan pendaftaran dan pembayaran.
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="w-full sm:w-auto shrink-0 border-emerald-300 bg-white text-emerald-800 hover:bg-emerald-100"
-                    >
-                      <a
-                        href={waHelpUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5"
-                      >
-                        <MessageCircle className="w-4 h-4 text-emerald-600" />
-                        Hubungi Admin (WA)
-                      </a>
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* 3. Upload Foto Bukti Pembayaran -> Langsung Buka Formulir */}
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-primary" />
-                      <div>
-                        <CardTitle className="text-base">Unggah Foto Bukti Pembayaran</CardTitle>
-                        <CardDescription className="text-xs">
-                          Unggah foto/struk transfer untuk langsung membuka halaman formulir pendaftaran.
-                        </CardDescription>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <form onSubmit={handleProofUpload}>
-                    <CardContent className="space-y-3">
-                      <PaymentProofUpload
-                        selectedFile={selectedProofFile}
-                        onFileSelect={(file, err) => {
-                          setSelectedProofFile(file);
-                          setProofFileError(err || null);
-                        }}
-                        disabled={isUploadingProof}
-                      />
-                      {proofFileError && (
-                        <p className="text-xs text-destructive font-medium">{proofFileError}</p>
-                      )}
-                    </CardContent>
-                    <CardFooter>
-                      <Button
-                        type="submit"
-                        disabled={isUploadingProof || !selectedProofFile}
-                        className="w-full sm:w-auto"
-                      >
-                        {isUploadingProof ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Mengunggah Bukti Pembayaran...
-                          </>
-                        ) : (
-                          <>
-                            <FileCheck2 className="w-4 h-4 mr-2" />
-                            Unggah & Buka Formulir Pendaftaran
-                          </>
-                        )}
-                      </Button>
-                    </CardFooter>
-                  </form>
-                </Card>
-              </div>
-            ) : (
-              /* Payment Proof Uploaded (payment_submitted or payment_verified) -> Directly Show FullFormWizard */
-              <FullFormWizard
-                registrationNumber={formDetails.registration_number}
-                accessCode={accessCode}
-                initialData={formDetails.form_data}
-                initialDocs={formDetails.documents}
-                isReadOnly={isReadOnlyForm}
-                onSubmitted={(submittedChildName) => {
-                  navigate("/daftar/berhasil", {
-                    state: {
-                      registrationNumber,
-                      accessCode,
-                      childName: submittedChildName || formDetails?.form_data?.child?.full_name,
-                    },
-                  });
-                }}
-              />
-            )}
-          </div>
+          <FullFormWizard
+            registrationNumber={formDetails.registration_number}
+            accessCode={accessCode}
+            initialData={formDetails.form_data}
+            initialDocs={formDetails.documents}
+            isReadOnly={isReadOnlyForm}
+            onSubmitted={(submittedChildName) => {
+              navigate("/daftar/berhasil", {
+                state: {
+                  registrationNumber,
+                  accessCode,
+                  childName: submittedChildName || formDetails?.form_data?.child?.full_name,
+                },
+              });
+            }}
+          />
         )}
       </div>
     </div>

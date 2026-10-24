@@ -17,7 +17,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ADMIN_CONTACTS } from "@/config/schoolInfo";
-import { getSessionCredentials } from "@/lib/sessionCredentials";
+import {
+  getSessionCredentials,
+  saveSessionCredentials,
+  clearSessionCredentials,
+} from "@/lib/sessionCredentials";
 import { verifyRegistrationAccess, type VerifyAccessData } from "@/lib/api/status";
 import { StatusDisplay } from "../components/StatusDisplay";
 
@@ -56,6 +60,7 @@ export const StatusPage: React.FC = () => {
         registrationNumber: cleanReg,
         accessCode: cleanCode,
       });
+      saveSessionCredentials(cleanReg, cleanCode);
       setStatusData(res);
       toast.success("Status pendaftaran berhasil ditemukan!");
     } catch (err) {
@@ -81,6 +86,7 @@ export const StatusPage: React.FC = () => {
   };
 
   const handleReset = () => {
+    clearSessionCredentials();
     setStatusData(null);
     setErrorMessage(null);
     setRegistrationNumber("");

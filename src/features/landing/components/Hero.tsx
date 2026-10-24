@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getSessionCredentials } from '@/lib/sessionCredentials';
 
 const Hero: React.FC = () => {
+  const sessionCreds = getSessionCredentials();
+
   return (
     <section className="relative bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] py-16 md:py-24 overflow-hidden">
       {/* Ornament Background dengan opacity rendah - FIXED */}
@@ -28,12 +31,37 @@ const Hero: React.FC = () => {
 
         {/* Tombol CTA */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-          <Link 
-            to="/daftar"
-            className="bg-white hover:bg-[var(--color-light)] text-[var(--color-primary)] px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center shadow-lg hover-lift z-10"
-          >
-            Daftar Sekarang
-          </Link>
+          {sessionCreds ? (
+            <>
+              <Link 
+                to={`/daftar/formulir/${encodeURIComponent(sessionCreds.registrationNumber)}`}
+                className="bg-white hover:bg-[var(--color-light)] text-[var(--color-primary)] px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center shadow-lg hover-lift z-10"
+              >
+                Lanjutkan Pendaftaran ({sessionCreds.registrationNumber})
+              </Link>
+              <Link 
+                to="/daftar"
+                className="bg-[var(--color-accent)] hover:opacity-90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center shadow-lg hover-lift z-10"
+              >
+                Cek / Daftar Santri Lain
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link 
+                to="/daftar"
+                className="bg-white hover:bg-[var(--color-light)] text-[var(--color-primary)] px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center shadow-lg hover-lift z-10"
+              >
+                Daftar Sekarang
+              </Link>
+              <Link 
+                to="/status"
+                className="bg-white/15 hover:bg-white/25 border border-white/40 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 w-full sm:w-auto text-center shadow-lg hover-lift z-10"
+              >
+                Cek Status / Lanjutkan
+              </Link>
+            </>
+          )}
           <a 
             href="https://wa.me/6282169599979"
             target="_blank"

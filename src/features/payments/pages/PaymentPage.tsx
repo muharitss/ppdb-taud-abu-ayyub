@@ -53,6 +53,7 @@ export const PaymentPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copiedAcc, setCopiedAcc] = useState(false);
+  const [copiedCreds, setCopiedCreds] = useState(false);
 
   const handleCopyAccount = async () => {
     try {
@@ -62,6 +63,19 @@ export const PaymentPage: React.FC = () => {
       setTimeout(() => setCopiedAcc(false), 2000);
     } catch {
       toast.error("Gagal menyalin nomor rekening");
+    }
+  };
+
+  const handleCopyCredentials = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `Nomor Pendaftaran: ${registrationNumber}\nKode Akses: ${accessCode}`
+      );
+      setCopiedCreds(true);
+      toast.success("Nomor Pendaftaran & Kode Akses berhasil disalin");
+      setTimeout(() => setCopiedCreds(false), 2000);
+    } catch {
+      toast.error("Gagal menyalin kredensial");
     }
   };
 
@@ -118,13 +132,18 @@ export const PaymentPage: React.FC = () => {
         file: selectedFile,
       });
 
-      saveSessionCredentials(cleanReg, cleanCode);
+      saveSessionCredentials(
+        cleanReg,
+        cleanCode,
+        locationState?.childName || sessionCreds?.childName
+      );
       toast.success("Bukti pembayaran berhasil diunggah! Silakan lengkapi formulir pendaftaran.");
       navigate("/daftar/formulir", {
+        replace: true,
         state: {
           registrationNumber: cleanReg,
           accessCode: cleanCode,
-          childName: locationState?.childName,
+          childName: locationState?.childName || sessionCreds?.childName,
         },
       });
     } catch (err: unknown) {
@@ -149,13 +168,13 @@ export const PaymentPage: React.FC = () => {
     <div className="min-h-screen bg-slate-50 islamic-pattern py-10 px-4 flex items-center justify-center">
       <div className="w-full max-w-md space-y-4">
         {/* Navigation Breadcrumb */}
-        {/* <div className="flex justify-between items-center text-xs text-muted-foreground px-1">
+        <div className="flex justify-between items-center text-xs text-muted-foreground px-1">
           <span className="font-semibold text-emerald-800">TAUD SaQu Abu Ayyub</span>
           <Link to="/" className="inline-flex items-center hover:text-foreground transition-colors">
             <Home className="w-3.5 h-3.5 mr-1" />
             Kembali ke Beranda
           </Link>
-        </div> */}
+        </div>
 
         {/* Judul Halaman di luar Card */}
         <div className="text-center space-y-1">
@@ -224,7 +243,42 @@ export const PaymentPage: React.FC = () => {
                 </div>
               )}
 
-              {!hasAutoCredentials && (
+              {hasAutoCredentials ? (
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-emerald-950">
+                      Simpan Kredensial Pendaftaran Anda
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleCopyCredentials}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded bg-white border border-emerald-200 text-emerald-800 hover:bg-emerald-100 font-medium transition-colors"
+                    >
+                      {copiedCreds ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-600" />
+                          Disalin
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3 h-3" />
+                          Salin
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 bg-white rounded-lg p-2 border border-emerald-100">
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">No. Pendaftaran</span>
+                      <span className="font-mono font-bold text-slate-800">{registrationNumber}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">Kode Akses</span>
+                      <span className="font-mono font-bold text-amber-800 tracking-wider">{accessCode}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
                 <div className="space-y-3">
                   <div className="space-y-1">
                     <Label htmlFor="registration_number" className="text-xs font-medium text-slate-700">

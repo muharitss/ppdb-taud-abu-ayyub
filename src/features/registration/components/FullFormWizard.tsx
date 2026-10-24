@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   User,
   Users,
@@ -29,7 +29,28 @@ import {
 } from "../schemas/formSchema";
 import { saveFormDraft, submitFullForm, uploadRegistrationDocument } from "../services/formService";
 import { validateUploadFile } from "@/lib/cloudinary";
+import {
+  saveLocalFormDraft,
+  getLocalFormDraft,
+  clearLocalFormDraft,
+} from "@/lib/sessionCredentials";
 import { ParentFormSection } from "./ParentFormSection";
+
+function mergeSection<T extends Record<string, unknown>>(
+  base: T,
+  server?: Partial<T>,
+  local?: Partial<T>
+): T {
+  const result = { ...base, ...(server || {}) };
+  if (local) {
+    for (const [k, v] of Object.entries(local)) {
+      if (v !== undefined && v !== "") {
+        (result as Record<string, unknown>)[k] = v;
+      }
+    }
+  }
+  return result;
+}
 
 function detectInitialStep(data?: Partial<RegistrationFormData>): number {
   if (!data) return 1;
@@ -65,54 +86,89 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
   isReadOnly = false,
   onSubmitted,
 }) => {
-  const [currentStep, setCurrentStep] = useState(() => detectInitialStep(initialData));
+  const localDraft = !isReadOnly
+    ? getLocalFormDraft<Partial<RegistrationFormData>>(registrationNumber)
+    : null;
+
+  // Form State (merges DB draft + real-time localStorage draft so refreshes never lose keystrokes)
+  const [formData, setFormData] = useState<Partial<RegistrationFormData>>(() => {
+    const localData = localDraft?.formData;
+    return {
+      child: mergeSection<RegistrationFormData["child"]>(
+        {
+          full_name: "",
+          nickname: "",
+          nik: "",
+          birth_place: "",
+          birth_date: "",
+          gender: "laki_laki",
+          child_order: 1,
+          sibling_count: 0,
+          address: "",
+          program: "2_tahun",
+        },
+        initialData?.child,
+        localData?.child
+      ),
+      father: mergeSection(
+        {
+          full_name: "",
+          nik: "",
+          birth_place: "",
+          birth_date: "",
+          last_education: "",
+          occupation: "",
+          monthly_income: "",
+          whatsapp_number: "",
+          address: "",
+        },
+        initialData?.father,
+        localData?.father
+      ),
+      mother: mergeSection(
+        {
+          full_name: "",
+          nik: "",
+          birth_place: "",
+          birth_date: "",
+          last_education: "",
+          occupation: "",
+          monthly_income: "",
+          whatsapp_number: "",
+          address: "",
+        },
+        initialData?.mother,
+        localData?.mother
+      ),
+      health: mergeSection<RegistrationFormData["health"]>(
+        {
+          weight_kg: "" as unknown as number,
+          height_cm: "" as unknown as number,
+          blood_type: "tidak_diketahui",
+          allergy_history: "",
+          disease_history: "",
+        },
+        initialData?.health,
+        localData?.health
+      ),
+    };
+  });
+
+  const [currentStep, setCurrentStep] = useState(() => {
+    const detected = detectInitialStep(formData);
+    if (localDraft?.currentStep && localDraft.currentStep >= 1 && localDraft.currentStep <= 5) {
+      return Math.min(localDraft.currentStep, detected);
+    }
+    return detected;
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Form State
-  const [formData, setFormData] = useState<Partial<RegistrationFormData>>({
-    child: {
-      full_name: initialData?.child?.full_name || "",
-      nickname: initialData?.child?.nickname || "",
-      nik: initialData?.child?.nik || "",
-      birth_place: initialData?.child?.birth_place || "",
-      birth_date: initialData?.child?.birth_date || "",
-      gender: initialData?.child?.gender || "laki_laki",
-      child_order: initialData?.child?.child_order || 1,
-      sibling_count: initialData?.child?.sibling_count || 0,
-      address: initialData?.child?.address || "",
-      program: initialData?.child?.program || "2_tahun",
-    },
-    father: {
-      full_name: initialData?.father?.full_name || "",
-      nik: initialData?.father?.nik || "",
-      birth_place: initialData?.father?.birth_place || "",
-      birth_date: initialData?.father?.birth_date || "",
-      last_education: initialData?.father?.last_education || "",
-      occupation: initialData?.father?.occupation || "",
-      monthly_income: initialData?.father?.monthly_income || "",
-      whatsapp_number: initialData?.father?.whatsapp_number || "",
-      address: initialData?.father?.address || "",
-    },
-    mother: {
-      full_name: initialData?.mother?.full_name || "",
-      nik: initialData?.mother?.nik || "",
-      birth_place: initialData?.mother?.birth_place || "",
-      birth_date: initialData?.mother?.birth_date || "",
-      last_education: initialData?.mother?.last_education || "",
-      occupation: initialData?.mother?.occupation || "",
-      monthly_income: initialData?.mother?.monthly_income || "",
-      whatsapp_number: initialData?.mother?.whatsapp_number || "",
-      address: initialData?.mother?.address || "",
-    },
-    health: {
-      weight_kg: initialData?.health?.weight_kg || ("" as unknown as number),
-      height_cm: initialData?.health?.height_cm || ("" as unknown as number),
-      blood_type: initialData?.health?.blood_type || "tidak_diketahui",
-      allergy_history: initialData?.health?.allergy_history || "",
-      disease_history: initialData?.health?.disease_history || "",
-    },
-  });
+  useEffect(() => {
+    if (!isReadOnly && registrationNumber) {
+      saveLocalFormDraft(registrationNumber, formData, currentStep);
+    }
+  }, [formData, currentStep, isReadOnly, registrationNumber]);
 
   // Uploaded docs tracker (by document_type)
   const [uploadedDocs, setUploadedDocs] = useState<Record<string, string>>(() => {
@@ -282,6 +338,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
     try {
       setIsSubmitting(true);
       await submitFullForm(registrationNumber, accessCode, fullValidation.data);
+      clearLocalFormDraft(registrationNumber);
       toast.success("Formulir pendaftaran dan dokumen berhasil dikirim!");
       if (onSubmitted) {
         onSubmitted(fullValidation.data.child.full_name);
@@ -380,7 +437,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                 size="sm"
                 onClick={handleManualSaveDraft}
                 disabled={isSaving}
-                className="hidden sm:inline-flex items-center gap-2"
+                className="inline-flex shrink-0 items-center gap-2"
               >
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 Simpan Draf
