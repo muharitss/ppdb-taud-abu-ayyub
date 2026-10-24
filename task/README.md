@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 6, Phase 7, & Phase 11 Selesai 100% (Form Schema, DB Migration, Edge Functions, Wizard Refactor, Success & Status Pages Tuntas), Phase 8 (Admin Suite) Siap Aktif  
-> **Progres Akurat:** 29 / 40 Task Selesai (**72.50%**)
+> **Status:** Phase 6, Phase 7, Phase 8, & Phase 11 Selesai 100% (Form Schema, DB Migration, Edge Functions, Wizard Refactor, Success & Status Pages, Admin Suite Tuntas), Phase 9 (Testing) Siap Aktif  
+> **Progres Akurat:** 34 / 40 Task Selesai (**85.00%**)
 
 ---
 
@@ -97,11 +97,11 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **023** | [Edge Fn: document-upload](task-023-document-upload-edge-function.md) | Phase 6 | P0 | **DONE** | Task 021, 010 |
 | **024** | [Success Page & WhatsApp Action](task-024-success-page-and-whatsapp.md) | Phase 7 | P1 | **DONE** | Task 022 |
 | **025** | [Registration Status Page UI](task-025-status-page.md) | Phase 7 | P1 | **DONE** | Task 014 |
-| **026** | [Admin Dashboard Overview](task-026-admin-dashboard-overview.md) | Phase 8 | P2 | `NOT_STARTED` | Task 012, 018 |
-| **027** | [Admin Registrant List & Search](task-027-admin-registrant-list.md) | Phase 8 | P2 | `NOT_STARTED` | Task 026 |
-| **028** | [Admin Registrant Detail & Audit](task-028-admin-registrant-detail.md) | Phase 8 | P2 | `NOT_STARTED` | Task 027, 022 |
-| **029** | [Admin PPDB Config Management](task-029-admin-ppdb-config.md) | Phase 8 | P2 | `NOT_STARTED` | Task 012 |
-| **030** | [Audit Log Viewer UI](task-030-audit-log-ui.md) | Phase 8 | P2 | `NOT_STARTED` | Task 026 |
+| **026** | [Admin Dashboard Overview](task-026-admin-dashboard-overview.md) | Phase 8 | P2 | **DONE** | Task 012, 018 |
+| **027** | [Admin Registrant List & Search](task-027-admin-registrant-list.md) | Phase 8 | P2 | **DONE** | Task 026 |
+| **028** | [Admin Registrant Detail & Audit](task-028-admin-registrant-detail.md) | Phase 8 | P2 | **DONE** | Task 027, 022 |
+| **029** | [Admin PPDB Config Management](task-029-admin-ppdb-config.md) | Phase 8 | P2 | **DONE** | Task 012 |
+| **030** | [Audit Log Viewer UI](task-030-audit-log-ui.md) | Phase 8 | P2 | **DONE** | Task 026 |
 | **031** | [Unit Testing Setup & Logic Tests](task-031-unit-tests.md) | Phase 9 | P1 | `NOT_STARTED` | Task 013, 014, 022 |
 | **032** | [RLS Security Policy Tests](task-032-rls-tests.md) | Phase 9 | P0 | `NOT_STARTED` | Task 011 |
 | **033** | [End-to-End Flow Tests](task-033-e2e-tests.md) | Phase 9 | P1 | `NOT_STARTED` | Task 018, 025 |
@@ -119,18 +119,16 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 40
-- **Selesai (`DONE`):** 29 (Task 001–025, Task 037–040)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 026, Task 027, Task 028, Task 029, Task 030
+- **Selesai (`DONE`):** 34 (Task 001–030, Task 037–040)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 031, Task 032, Task 033
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 0
-- **Persentase Selesai Nyata:** **72.50%**
+- **Persentase Selesai Nyata:** **85.00%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 026:** Admin Dashboard Overview (metrik ringkasan antrean pendaftar dan navigasi admin).
-2. **Task 029:** Admin PPDB Config Management (pengaturan buka/tutup pendaftaran dan biaya transfer).
-3. **Task 027:** Admin Registrant List & Search (daftar tabel pencarian dan filter status pendaftar).
-4. **Task 028:** Admin Registrant Detail & Audit (tampilan lengkap data diri santri, berkas dokumen, dan audit log).
-5. **Task 030:** Audit Log Viewer UI (riwayat aktivitas keamanan pendaftaran).
+1. **Task 031:** Unit Testing Setup & Logic Tests (Vitest untuk Edge Functions & Form Schemas).
+2. **Task 032:** RLS Security Policy Tests (verifikasi RLS database PostgreSQL).
+3. **Task 033:** End-to-End Flow Tests (pengujian alur pendaftaran s.d. dashboard admin).
 
 ### C. Task yang Terblokir & Penyebabnya
 - *Tidak ada task yang terblokir saat ini.* Seluruh dependency Phase 6 telah terpenuhi.
@@ -199,6 +197,15 @@ npm run preview
 ---
 
 ## 9. Log Riwayat Perubahan
+
+- **2026-10-24 (Phase 8 — Admin Suite Tuntas 100%):**
+  - Penyelesaian komprehensif seluruh 5 task Phase 8 (Task 026, Task 027, Task 028, Task 029, Task 030):
+    - **Task 026 (Admin Dashboard Overview `/admin`):** Metrik ringkasan kartu statistik (total pendaftar, antrean pembayaran, menunggu formulir, formulir masuk, diterima, ditolak), banner peringatan verifikasi pembayaran aktif, auto-refresh 30 detik tanpa dependensi eksternal berlebih, 10 aktivitas jejak audit terkini, dan top navigation bar portal admin.
+    - **Task 027 (Admin Registrant List & Search `/admin/pendaftar`):** Tabel daftar seluruh pendaftar dengan debounced search, filter status pendaftaran (tersinkronisasi query params URL), database-level pagination, badge status, tautan kontak WhatsApp, dan tombol navigasi detail pendaftar.
+    - **Task 028 (Admin Registrant Detail & Audit `/admin/pendaftar/:id`):** Tampilan lengkap data formulir santri & orang tua (read-only), berkas persyaratan (Kartu Keluarga & Akte Kelahiran) dengan short-lived signed URLs (gambar & PDF), alur verifikasi keputusan status (Terima, Tolak dengan catatan wajib, Tandai Sedang Ditinjau), riwayat pembayaran, serta jejak audit spesifik pendaftar.
+    - **Task 029 (Admin PPDB Config Management `/admin/pengaturan`):** Pengelolaan terintegrasi status buka/tutup pendaftaran, tahun ajaran, rentang tanggal pendaftaran, biaya registrasi, rekening bank resmi, dan kontak WhatsApp admin dengan audit logging.
+    - **Task 030 (Audit Log Viewer UI `/admin/audit`):** Tabel pencatatan audit keamanan sistem komprehensif dengan filter tipe aksi (12 jenis event), filter rentang tanggal kalender, tautan entitas ke detail pendaftar, dan database-level pagination.
+  - Progres: 34 / 40 Task (**85.00%**). Phase 8 resmi tuntas 100%.
 
 - **2026-10-24 (Phase 7 & Phase 11 Tuntas 100%):**
   - Penyelesaian komprehensif 6 task berturut-turut (Task 037, Task 038, Task 039, Task 040, Task 024, Task 025):

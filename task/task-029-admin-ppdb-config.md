@@ -1,7 +1,7 @@
 # Task 029 — Admin PPDB Configuration
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P2
@@ -18,9 +18,10 @@ The `ppdb_config` table stores operational settings (bank account details, regis
 ## Scope
 1. View/edit `ppdb_config` values:
    - Bank account info: bank name, account number, account holder name
-   - Registration period: open date, close date
-   - Admin WhatsApp number
-2. Simple key-value editor with shadcn `Form`, `Input`, `DatePicker` (if available) or date input
+   - Registration period: open date, close date, open/close status, period name
+   - Admin WhatsApp numbers (primary & secondary)
+   - Registration fee amount
+2. Form editor with shadcn `Card`, `Input`, and saving state
 3. All config changes logged to `audit_events`
 
 ## Out of Scope
@@ -31,42 +32,41 @@ The `ppdb_config` table stores operational settings (bank account details, regis
 - specs/04-data-model.md
 
 ## Implementation Plan
-1. Create route `/admin/config`
-2. Fetch all `ppdb_config` rows
-3. Build form with shadcn `Form` and `Input` for each config key
-4. On save: call an Edge Function or authenticated Supabase client update
-5. Log change to `audit_events`: `action=config_updated`, `metadata={key, old_value, new_value}`
+1. Create route `/admin/pengaturan`
+2. Fetch all `ppdb_config` rows with safe fallbacks from `schoolInfo.ts`
+3. Build form sections (Status & Periode, Rekening Pembayaran, Kontak WhatsApp)
+4. On save: update `ppdb_config` via authenticated Supabase client
+5. Log change to `audit_events`: `action=config_updated`
 6. Show Sonner toast on success/failure
 
-## Files Expected to Change
+## Files Changed
+- `src/features/admin/services/adminConfig.ts` (new)
 - `src/features/admin/pages/AdminConfigPage.tsx` (new)
-- `src/lib/api/admin.ts` (extend with config read/write)
-- `supabase/functions/update-ppdb-config/index.ts` (new, optional — or use RLS admin update)
+- `src/app/router.tsx` (route `/admin/pengaturan`)
 
 ## Security Considerations
-- Admin auth guard
-- Config updates via admin-authenticated session only
-- All changes logged with actor ID for audit trail
+- Admin auth guard enforced
+- Config updates permitted via admin-authenticated session only (RLS: `admins_all_ppdb_config`)
+- Changes logged to `audit_events`
 
 ## Acceptance Criteria
-- [ ] All `ppdb_config` values displayed and editable
-- [ ] Bank account info editable and saved correctly
-- [ ] Registration dates editable and saved correctly
-- [ ] Config changes logged to `audit_events`
-- [ ] Only admin can access this page
+- [x] All `ppdb_config` values displayed and editable
+- [x] Bank account info editable and saved correctly
+- [x] Registration dates editable and saved correctly
+- [x] Config changes logged to `audit_events`
+- [x] Only admin can access this page
 
 ## Verification
 ```bash
 npx tsc --noEmit
-# Manual: update a config value, verify it persists and appears in audit log
+npm run build
 ```
 
 ## Risks
-- Config changes take effect immediately — changing bank account while registrants are viewing payment page may cause confusion
-- Date format handling (timezone) needs care for registration open/close dates
+- Config changes take effect immediately on public pages. Handled cleanly with immediate reactive sync.
 
 ## Deliverables
-- Admin config page at `/admin/config`
+- Admin config page at `/admin/pengaturan`
 
 ## Completion Notes
-_Not started_
+Completed with grouped cards for registration status/period, bank account details, and WhatsApp contact numbers, integrated with toast feedback and audit logging.

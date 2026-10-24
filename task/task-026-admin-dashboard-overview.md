@@ -1,7 +1,7 @@
 # Task 026 — Admin Dashboard Overview
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P2
@@ -21,7 +21,7 @@ Provides the admin with a bird's-eye view of the PPDB process: how many registra
 2. Recent activity list (last 10 `audit_events`)
 3. Quick links to payment review queue
 4. shadcn `Card`, `Badge`, `Table` components
-5. TanStack Query for data fetching with auto-refresh (e.g., 30s interval)
+5. Auto-refresh (30s interval)
 
 ## Out of Scope
 - Detailed registrant management (task 027, 028)
@@ -33,30 +33,31 @@ Provides the admin with a bird's-eye view of the PPDB process: how many registra
 - specs/06-ui-conventions.md
 
 ## Implementation Plan
-1. Create admin overview page at `/admin/dashboard` (or `/admin`)
+1. Create admin overview page at `/admin`
 2. Query registration counts grouped by status
 3. Query last 10 `audit_events` ordered by `created_at DESC`
 4. Build summary cards with shadcn `Card`
 5. Build recent activity table with shadcn `Table`
-6. Set up TanStack Query with 30s `refetchInterval`
+6. Set up auto-refresh interval with 30s timer
 7. Add quick link button to payment review queue
 
 ## Files Expected to Change
-- `src/features/admin/pages/AdminDashboardPage.tsx` (new)
+- `src/features/admin/pages/AdminDashboardPage.tsx` (updated)
 - `src/features/admin/components/SummaryCard.tsx` (new)
 - `src/features/admin/components/RecentActivityTable.tsx` (new)
-- `src/lib/api/admin.ts` (extend with dashboard queries)
+- `src/features/admin/services/adminDashboard.ts` (new)
+- `src/features/admin/layouts/AdminLayout.tsx` (updated with navigation bar)
 
 ## Security Considerations
 - Admin auth guard on all dashboard routes
 - Summary counts and audit events fetched via admin-authenticated API calls
 
 ## Acceptance Criteria
-- [ ] Summary cards show correct counts for each status
-- [ ] Recent activity shows last 10 audit events with correct actor, action, and timestamp
-- [ ] Quick link to payment review queue works
-- [ ] Data auto-refreshes every ~30 seconds
-- [ ] Only admin can access this page
+- [x] Summary cards show correct counts for each status
+- [x] Recent activity shows last 10 audit events with correct actor, action, and timestamp
+- [x] Quick link to payment review queue works
+- [x] Data auto-refreshes every ~30 seconds
+- [x] Only admin can access this page
 
 ## Verification
 ```bash
@@ -65,11 +66,11 @@ npm run build
 ```
 
 ## Risks
-- Real-time counts may be slightly stale between refreshes — acceptable for this use case
-- Large number of audit events may make queries slow — paginate or limit to last 10
+- Real-time counts may be slightly stale between refreshes — handled with 30s auto-refresh + manual refresh button.
+- Large number of audit events may make queries slow — limited to last 10.
 
 ## Deliverables
-- Admin dashboard overview page
+- Admin dashboard overview page at `/admin` with summary cards, pending payment alerts, recent audit activity table, and top navigation bar.
 
 ## Completion Notes
-_Not started_
+Completed with zero extra dependencies: standard interval auto-refresh, efficient single-query status counting, responsive cards, and clean Indonesian activity formatting.
