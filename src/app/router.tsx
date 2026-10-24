@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from '@/features/landing/pages/LandingPage';
 import RegistrationStartPage from '@/features/registration/pages/RegistrationStartPage';
 import PaymentPage from '@/features/payments/pages/PaymentPage';
@@ -9,11 +9,8 @@ import StatusPage from '@/features/status/pages/StatusPage';
 import AdminLoginPage from '@/features/admin/pages/AdminLoginPage';
 import AdminLayout from '@/features/admin/layouts/AdminLayout';
 import AdminDashboardPage from '@/features/admin/pages/AdminDashboardPage';
-import AdminPaymentListPage from '@/features/admin/pages/AdminPaymentListPage';
-import AdminRegistrantListPage from '@/features/admin/pages/AdminRegistrantListPage';
 import AdminRegistrantDetailPage from '@/features/admin/pages/AdminRegistrantDetailPage';
 import AdminConfigPage from '@/features/admin/pages/AdminConfigPage';
-import AdminAuditLogPage from '@/features/admin/pages/AdminAuditLogPage';
 import NotFoundPage from './NotFoundPage';
 
 export const AppRouter: React.FC = () => {
@@ -30,11 +27,9 @@ export const AppRouter: React.FC = () => {
       <Route path="/admin/login" element={<AdminLoginPage />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboardPage />} />
-        <Route path="pembayaran" element={<AdminPaymentListPage />} />
-        <Route path="pendaftar" element={<AdminRegistrantListPage />} />
+        <Route path="pendaftar" element={<Navigate to="/admin" replace />} />
         <Route path="pendaftar/:id" element={<AdminRegistrantDetailPage />} />
         <Route path="pengaturan" element={<AdminConfigPage />} />
-        <Route path="audit" element={<AdminAuditLogPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />

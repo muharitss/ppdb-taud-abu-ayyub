@@ -5,15 +5,12 @@ import {
   HeartPulse,
   UploadCloud,
   CheckCircle2,
-  AlertCircle,
   FileCheck2,
   Loader2,
   ArrowRight,
   ArrowLeft,
   Save,
   MessageCircle,
-  ExternalLink,
-  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -21,7 +18,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 
 import {
   childSchema,
@@ -33,7 +29,6 @@ import {
 } from "../schemas/formSchema";
 import { saveFormDraft, submitFullForm, uploadRegistrationDocument } from "../services/formService";
 import { validateUploadFile } from "@/lib/cloudinary";
-import { clearSessionCredentials } from "@/lib/sessionCredentials";
 import { ParentFormSection } from "./ParentFormSection";
 
 function detectInitialStep(data?: Partial<RegistrationFormData>): number {
@@ -51,7 +46,7 @@ interface FullFormWizardProps {
   initialData?: Partial<RegistrationFormData>;
   initialDocs?: Array<{ document_type: string; file_path: string }>;
   isReadOnly?: boolean;
-  onSubmitted?: () => void;
+  onSubmitted?: (childName?: string) => void;
 }
 
 const STEPS = [
@@ -287,10 +282,9 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
     try {
       setIsSubmitting(true);
       await submitFullForm(registrationNumber, accessCode, fullValidation.data);
-      clearSessionCredentials();
       toast.success("Formulir pendaftaran dan dokumen berhasil dikirim!");
       if (onSubmitted) {
-        onSubmitted();
+        onSubmitted(fullValidation.data.child.full_name);
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Gagal mengirim formulir");
@@ -301,8 +295,8 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Step Indicator */}
-      <div className="bg-card border rounded-xl p-4 shadow-xs">
+      {/* Step Indicator - hidden on mobile */}
+      <div className="hidden sm:block bg-card border rounded-xl p-4 shadow-xs">
         <div className="flex items-center justify-between max-w-3xl mx-auto overflow-x-auto gap-2">
           {STEPS.map((step) => {
             const Icon = step.icon;
@@ -651,131 +645,47 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
 
           {/* STEP 5: UPLOAD DOKUMEN */}
           {currentStep === 5 && (
-            <div className="space-y-6">
-              <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-primary shrink-0" />
-                <span>
-                  Unggah foto atau berkas <strong>Kartu Keluarga (KK)</strong> dan <strong>Akte Kelahiran</strong>. Format yang didukung: <strong>JPEG, PNG, atau PDF</strong> (maksimal <strong>5 MB</strong> per berkas).
-                </span>
-              </div>
+            <div className="space-y-4">
+              {(
+                [
+                  { type: "kartu_keluarga", label: "Kartu Keluarga (KK)" },
+                  { type: "akte_kelahiran", label: "Akte Kelahiran" },
+                ] as const
+              ).map((doc) => {
+                const isUploaded = Boolean(uploadedDocs[doc.type]);
+                const isUploading = uploadingDoc === doc.type;
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* 1. Kartu Keluarga */}
-                <Card className={`border ${uploadedDocs["kartu_keluarga"] ? "border-emerald-500/50 bg-emerald-50/20" : ""}`}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm font-semibold">1. Foto Kartu Keluarga (KK)</CardTitle>
-                      {uploadedDocs["kartu_keluarga"] ? (
-                        <Badge variant="outline" className="text-emerald-700 bg-emerald-100 border-emerald-300">
-                          <CheckCircle2 className="w-3 h-3 mr-1" /> Terunggah
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-amber-700 bg-amber-100 border-amber-300">
-                          Wajib
-                        </Badge>
-                      )}
-                    </div>
-                    <CardDescription className="text-xs">
-                      Foto/scan Kartu Keluarga terbaru yang memuat data calon santri.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {uploadedDocs["kartu_keluarga"] && (
-                      <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-xs">
-                        <span className="truncate max-w-[200px] text-emerald-900 font-medium">
-                          Kartu Keluarga (KK)
-                        </span>
-                        <a
-                          href={uploadedDocs["kartu_keluarga"]}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-emerald-700 hover:text-emerald-800 font-semibold inline-flex items-center gap-1"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          Lihat Berkas
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                    )}
-                    {!isReadOnly && (
-                      <div className="relative">
-                        <Input
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.pdf"
-                          disabled={uploadingDoc === "kartu_keluarga"}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleDocUpload("kartu_keluarga", file, e.target);
-                          }}
-                        />
-                        {uploadingDoc === "kartu_keluarga" && (
-                          <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-md text-xs gap-1.5">
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Mengunggah...
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                return (
+                  <div
+                    key={doc.type}
+                    className="flex items-center justify-between gap-4 p-4 rounded-xl border bg-card"
+                  >
+                    <span className="text-sm font-medium">{doc.label}</span>
 
-                {/* 2. Akte Kelahiran */}
-                <Card className={`border ${uploadedDocs["akte_kelahiran"] ? "border-emerald-500/50 bg-emerald-50/20" : ""}`}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm font-semibold">2. Foto Akte Kelahiran</CardTitle>
-                      {uploadedDocs["akte_kelahiran"] ? (
-                        <Badge variant="outline" className="text-emerald-700 bg-emerald-100 border-emerald-300">
-                          <CheckCircle2 className="w-3 h-3 mr-1" /> Terunggah
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-amber-700 bg-amber-100 border-amber-300">
-                          Wajib
-                        </Badge>
-                      )}
-                    </div>
-                    <CardDescription className="text-xs">
-                      Foto/scan Akte Kelahiran resmi dari Disdukcapil.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {uploadedDocs["akte_kelahiran"] && (
-                      <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-xs">
-                        <span className="truncate max-w-[200px] text-emerald-900 font-medium">
-                          Akte Kelahiran
-                        </span>
-                        <a
-                          href={uploadedDocs["akte_kelahiran"]}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-emerald-700 hover:text-emerald-800 font-semibold inline-flex items-center gap-1"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          Lihat Berkas
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
+                    {isUploading ? (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
+                        <span>Mengunggah...</span>
                       </div>
-                    )}
-                    {!isReadOnly && (
-                      <div className="relative">
-                        <Input
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.pdf"
-                          disabled={uploadingDoc === "akte_kelahiran"}
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleDocUpload("akte_kelahiran", file, e.target);
-                          }}
-                        />
-                        {uploadingDoc === "akte_kelahiran" && (
-                          <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-md text-xs gap-1.5">
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Mengunggah...
-                          </div>
-                        )}
+                    ) : isUploaded ? (
+                      <div className="flex items-center gap-1.5 text-emerald-600 text-sm font-medium">
+                        <CheckCircle2 className="w-5 h-5" />
+                        <span>Terunggah</span>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
+                    ) : !isReadOnly ? (
+                      <Input
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.pdf"
+                        className="max-w-[220px] text-xs cursor-pointer"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleDocUpload(doc.type, file, e.target);
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
           )}
         </CardContent>

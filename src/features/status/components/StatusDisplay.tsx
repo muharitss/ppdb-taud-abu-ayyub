@@ -4,7 +4,6 @@ import {
   FileText,
   CreditCard,
   Calendar,
-  CheckCircle2,
   Clock,
   ArrowRight,
   MessageCircle,
@@ -157,26 +156,17 @@ export const StatusDisplay: React.FC<StatusDisplayProps> = ({ data, accessCode }
           )}
 
           {data.registration_status === "accepted" && (
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 space-y-3">
-              <div className="flex items-center gap-2 font-bold text-sm text-emerald-800">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                Selamat! Santri Dinyatakan Diterima
-              </div>
-              <p className="text-xs text-emerald-900 leading-relaxed">
-                Baarakallahu fiikum. Calon santri telah resmi diterima sebagai santri baru TAUD SaQu Abu Ayyub. Pastikan Anda telah bergabung di grup WhatsApp resmi sekolah untuk koordinasi jadwal seragam dan orientasi.
-              </p>
-              <Button asChild className="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-800 text-white">
-                <a
-                  href={ADMIN_CONTACTS.waGroupLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2"
-                >
-                  <Users className="w-4 h-4" />
-                  Gabung Grup WhatsApp Resmi
-                </a>
-              </Button>
-            </div>
+            <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
+              <a
+                href={ADMIN_CONTACTS.waGroupLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                Silahkan Gabung Grup
+              </a>
+            </Button>
           )}
 
           {/* Admin WhatsApp Help Link */}

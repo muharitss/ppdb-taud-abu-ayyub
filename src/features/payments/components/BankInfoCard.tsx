@@ -15,20 +15,13 @@ export const BankInfoCard: React.FC<BankInfoCardProps> = ({
   registrationNumber,
 }) => {
   const [copiedAcc, setCopiedAcc] = useState(false);
-  const [copiedNominal, setCopiedNominal] = useState(false);
 
-  const handleCopy = async (text: string, type: "account" | "nominal") => {
+  const handleCopyAccount = async () => {
     try {
-      await navigator.clipboard.writeText(text);
-      if (type === "account") {
-        setCopiedAcc(true);
-        toast.success("Nomor rekening berhasil disalin");
-        setTimeout(() => setCopiedAcc(false), 2000);
-      } else {
-        setCopiedNominal(true);
-        toast.success("Nominal transfer berhasil disalin");
-        setTimeout(() => setCopiedNominal(false), 2000);
-      }
+      await navigator.clipboard.writeText(bankInfo.accountNumber);
+      setCopiedAcc(true);
+      toast.success("Nomor rekening berhasil disalin");
+      setTimeout(() => setCopiedAcc(false), 2000);
     } catch {
       toast.error("Gagal menyalin teks");
     }
@@ -60,34 +53,13 @@ export const BankInfoCard: React.FC<BankInfoCardProps> = ({
 
       <CardContent className="pt-4 space-y-4">
         {/* Nominal Transfer */}
-        <div className="p-3.5 rounded-xl bg-white border border-emerald-200/80 flex items-center justify-between">
-          <div>
-            <span className="text-xs font-medium text-emerald-800 uppercase tracking-wide">
-              Biaya Pendaftaran
-            </span>
-            <div className="text-xl sm:text-2xl font-bold text-emerald-700 tracking-tight">
-              {formattedAmount}
-            </div>
+        <div className="p-3.5 rounded-xl bg-white border border-emerald-200/80">
+          <span className="text-xs font-medium text-emerald-800 uppercase tracking-wide">
+            Biaya Pendaftaran
+          </span>
+          <div className="text-xl sm:text-2xl font-bold text-emerald-700 tracking-tight">
+            {formattedAmount}
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => handleCopy(bankInfo.amount.toString(), "nominal")}
-            className="text-xs h-8 border-emerald-200 text-emerald-800 hover:bg-emerald-50"
-          >
-            {copiedNominal ? (
-              <>
-                <Check className="w-3.5 h-3.5 mr-1 text-emerald-600" />
-                Tersalin
-              </>
-            ) : (
-              <>
-                <Copy className="w-3.5 h-3.5 mr-1" />
-                Salin
-              </>
-            )}
-          </Button>
         </div>
 
         {/* Bank & Rekening Detail */}
@@ -113,7 +85,7 @@ export const BankInfoCard: React.FC<BankInfoCardProps> = ({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => handleCopy(bankInfo.accountNumber, "account")}
+              onClick={handleCopyAccount}
               className="text-xs h-8 border-emerald-200 text-emerald-800 hover:bg-emerald-50"
             >
               {copiedAcc ? (

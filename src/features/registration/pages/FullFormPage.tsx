@@ -142,7 +142,7 @@ export const FullFormPage: React.FC = () => {
               </p>
             </div>
           </div>
-          <Link to="/" className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground">
+          <Link to="/" className="hidden sm:inline-flex items-center text-xs text-muted-foreground hover:text-foreground">
             <Home className="w-3.5 h-3.5 mr-1" />
             Kembali ke Beranda
           </Link>
@@ -337,12 +337,12 @@ export const FullFormPage: React.FC = () => {
                 initialData={formDetails.form_data}
                 initialDocs={formDetails.documents}
                 isReadOnly={isReadOnlyForm}
-                onSubmitted={() => {
+                onSubmitted={(submittedChildName) => {
                   navigate("/daftar/berhasil", {
                     state: {
                       registrationNumber,
                       accessCode,
-                      childName: formDetails?.form_data?.child?.full_name,
+                      childName: submittedChildName || formDetails?.form_data?.child?.full_name,
                     },
                   });
                 }}
