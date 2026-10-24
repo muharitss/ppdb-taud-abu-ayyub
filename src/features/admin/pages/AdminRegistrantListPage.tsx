@@ -12,8 +12,26 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
+import {
   getRegistrants,
+  deleteRegistrant,
   type RegistrantsResult,
+  type RegistrantListItem,
 } from "../services/adminRegistrants";
 import {
   Users,
@@ -26,6 +44,8 @@ import {
   Loader2,
   AlertCircle,
   Phone,
+  MoreHorizontal,
+  Trash2,
 } from "lucide-react";
 
 const STATUS_OPTIONS = [
@@ -95,6 +115,8 @@ export const AdminRegistrantListPage: React.FC = () => {
   const [data, setData] = useState<RegistrantsResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingItem, setDeletingItem] = useState<RegistrantListItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   // Sync state if URL searchParams change
   useEffect(() => {
@@ -147,6 +169,25 @@ export const AdminRegistrantListPage: React.FC = () => {
       searchParams.set("status", val);
     }
     setSearchParams(searchParams);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingItem) return;
+    setIsDeleting(true);
+    try {
+      await deleteRegistrant(deletingItem.id);
+      toast.success(
+        `Pendaftar ${deletingItem.registration_number} berhasil dihapus`,
+      );
+      setDeletingItem(null);
+      fetchData();
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "Gagal menghapus pendaftar",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -338,16 +379,37 @@ export const AdminRegistrantListPage: React.FC = () => {
                         {formattedDate}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Link to={`/admin/pendaftar/${item.id}`}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="gap-1.5 text-xs"
-                          >
-                            <Eye className="w-3.5 h-3.5" />
-                            Detail
-                          </Button>
-                        </Link>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="h-8 w-8 p-0 text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+                            >
+                              <span className="sr-only">Buka menu aksi</span>
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-44">
+                            <DropdownMenuItem asChild>
+                              <Link
+                                to={`/admin/pendaftar/${item.id}`}
+                                className="flex items-center gap-2 w-full text-slate-700 cursor-pointer"
+                              >
+                                <Eye className="w-4 h-4 text-slate-500" />
+                                <span>Lihat Detail</span>
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => setDeletingItem(item)}
+                              className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 cursor-pointer flex items-center gap-2"
+                            >
+                              <Trash2 className="w-4 h-4 text-rose-600" />
+                              <span>Hapus Pendaftar</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   );
@@ -394,6 +456,61 @@ export const AdminRegistrantListPage: React.FC = () => {
           </>
         )}
       </div>
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={!!deletingItem}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) setDeletingItem(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-rose-600">
+              <AlertCircle className="w-5 h-5 shrink-0" />
+              Hapus Pendaftar
+            </DialogTitle>
+            <DialogDescription className="text-slate-600 pt-2 space-y-2">
+              <span>
+                Apakah Anda yakin ingin menghapus data calon siswa{" "}
+                <strong className="text-slate-900">{deletingItem?.child_name}</strong> (No. Reg:{" "}
+                <strong className="text-slate-900">{deletingItem?.registration_number}</strong>)?
+              </span>
+              <span className="text-xs text-rose-600 font-medium block">
+                Peringatan: Tindakan ini permanen. Semua berkas, pembayaran, dan formulir pendaftar ini akan dihapus dari sistem.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0 mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeletingItem(null)}
+              disabled={isDeleting}
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+              className="gap-2"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Menghapus...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4" />
+                  Ya, Hapus
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

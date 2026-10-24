@@ -89,3 +89,26 @@ export async function getRegistrants({
     totalPages,
   };
 }
+
+export async function deleteRegistrant(id: string): Promise<void> {
+  const { error } = await supabase.from('registrations').delete().eq('id', id);
+
+  if (error) {
+    throw new Error('Gagal menghapus pendaftar: ' + error.message);
+  }
+
+  // Attempt to record audit event
+  try {
+    const { data: userData } = await supabase.auth.getUser();
+    await supabase.from('audit_events').insert({
+      actor_id: userData.user?.id || null,
+      actor_type: 'admin',
+      action: 'registrant_deleted',
+      entity_type: 'registration',
+      entity_id: id,
+    });
+  } catch {
+    // Audit logging is non-blocking on frontend client
+  }
+}
+
