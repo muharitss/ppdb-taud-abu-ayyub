@@ -35,7 +35,7 @@ export async function getPpdbConfigs(): Promise<PpdbConfigValues> {
 
   return {
     registration_open: configs.registration_open !== undefined ? Boolean(configs.registration_open) : true,
-    ppdb_period: (configs.ppdb_period as string) || '2026/2027',
+    ppdb_period: (configs.ppdb_period as string) || '2027/2028',
     registration_fee: Number(configs.registration_fee) || SCHOOL_BANK_INFO.amount,
     bank_name: bankObj.bankName || (configs.bank_name as string) || SCHOOL_BANK_INFO.bankName,
     bank_account_number: bankObj.accountNumber || (configs.bank_account_number as string) || SCHOOL_BANK_INFO.accountNumber,

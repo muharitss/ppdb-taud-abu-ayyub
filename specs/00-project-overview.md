@@ -14,7 +14,7 @@ The goal is to replace the current paper-and-external-form process with a self-c
 |---|---|
 | School name | TAUD SaQu Abu Ayyub |
 | Location | Jl. Sakura Gg. Mufakat 3 RT 002/RW 013, Kel. Duri Barat, Kec. Mandau, Kab. Bengkalis, Riau |
-| Academic year | TP.2026-2027 |
+| Academic year | TP.2027-2028 |
 | Admin WhatsApp | 6282169599979 (Ummu Rumi), 6281367074138 (Admin) |
 
 ---

@@ -1,12 +1,12 @@
 export const content = {
   header: {
-    title: "PPDB TAUD SaQu Abu Ayyub TP.2026-2027",
+    title: "PPDB TAUD SaQu Abu Ayyub TP.2027-2028",
     logo: "/images/logo/logo-taud.png"
   },
 
   hero: {
     openingText: `Bismillah,,
-Telah dibuka PPDB TAUD SaQu Abu Ayyub TP.2026-2027
+Telah dibuka PPDB TAUD SaQu Abu Ayyub TP.2027-2028
 Mencetak generasi beriman, beradab, dan mandiri sejak usia dini!`,
     cta: {
       register: "https://bit.ly/PPDB-TAUDSaqu-A4",

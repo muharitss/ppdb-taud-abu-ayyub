@@ -114,7 +114,7 @@ export const RegistrationStartPage: React.FC = () => {
               Pendaftaran Berhasil Dibuat
             </CardTitle>
             <CardDescription className="text-slate-600">
-              TAUD SaQu Abu Ayyub — TP 2026/2027
+              TAUD SaQu Abu Ayyub — TP 2027/2028
             </CardDescription>
           </CardHeader>
 
@@ -206,7 +206,7 @@ export const RegistrationStartPage: React.FC = () => {
             Formulir Pendaftaran Awal
           </CardTitle>
           <CardDescription className="text-slate-600">
-            Penerimaan Peserta Didik Baru (PPDB) TAUD SaQu Abu Ayyub TP 2026/2027
+            Penerimaan Peserta Didik Baru (PPDB) TAUD SaQu Abu Ayyub TP 2027/2028
           </CardDescription>
         </CardHeader>
 

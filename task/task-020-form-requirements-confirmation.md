@@ -13,7 +13,7 @@ P0
 Confirm official full registration form fields and required documents with the school before implementation begins.
 
 ## Context
-The full registration form fields (child data, parent data, medical info, required documents, etc.) must follow the official school requirements for TAUD SaQu Abu Ayyub TP.2026-2027. Requirements were confirmed by the school (TP.2027/2028 form, received 2026-10-21). Tasks 021–024 are now unblocked.
+The full registration form fields (child data, parent data, medical info, required documents, etc.) must follow the official school requirements for TAUD SaQu Abu Ayyub TP.2027-2028. Requirements were confirmed by the school (TP.2027/2028 form, received 2026-10-21). Tasks 021–024 are now unblocked.
 
 ## Confirmed Fields
 

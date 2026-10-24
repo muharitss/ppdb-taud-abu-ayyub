@@ -19,7 +19,7 @@ const Hero: React.FC = () => {
             بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-            Telah dibuka PPDB TAUD SaQu Abu Ayyub TP.2026-2027
+            Telah dibuka PPDB TAUD SaQu Abu Ayyub TP.2027-2028
           </h1>
           <p className="text-xl md:text-2xl font-light mb-8 max-w-3xl mx-auto text-white/90">
             Mencetak generasi beriman, beradab, dan mandiri sejak usia dini!

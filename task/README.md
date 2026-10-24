@@ -8,7 +8,7 @@
 
 ## 1. Ringkasan Proyek & Tujuan Aplikasi
 
-Aplikasi **PPDB TAUD Abu Ayyub** adalah sistem Penerimaan Peserta Didik Baru berbasis web untuk **TAUD SaQu Abu Ayyub** (Tahun Pelajaran 2026/2027) di Duri, Mandau, Bengkalis, Riau.
+Aplikasi **PPDB TAUD Abu Ayyub** adalah sistem Penerimaan Peserta Didik Baru berbasis web untuk **TAUD SaQu Abu Ayyub** (Tahun Pelajaran 2027/2028) di Duri, Mandau, Bengkalis, Riau.
 
 Sistem bertransformasi dari landing page statis menjadi aplikasi web terintegrasi yang mencakup:
 1. **Landing Page Publik:** Mempertahankan branding, kurikulum, dan informasi sekolah yang sudah ada.

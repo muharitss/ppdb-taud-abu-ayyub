@@ -1,6 +1,6 @@
 # 🏫 Website PPDB TAUD SaQu Abu Ayyub
 
-Website resmi Penerimaan Peserta Didik Baru (PPDB) TAUD SaQu Abu Ayyub Tahun Pelajaran 2026-2027. Dibangun dengan teknologi modern untuk memberikan pengalaman terbaik bagi calon orang tua siswa.
+Website resmi Penerimaan Peserta Didik Baru (PPDB) TAUD SaQu Abu Ayyub Tahun Pelajaran 2027-2028. Dibangun dengan teknologi modern untuk memberikan pengalaman terbaik bagi calon orang tua siswa.
 
 ## ✨ Fitur Utama
 

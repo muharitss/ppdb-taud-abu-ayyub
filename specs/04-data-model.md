@@ -344,7 +344,7 @@ CREATE TABLE ppdb_config (
 ```sql
 INSERT INTO ppdb_config (key, value) VALUES
   ('registration_open', 'true'),
-  ('ppdb_period', '"2026-2027"'),
+  ('ppdb_period', '"2027-2028"'),
   ('registration_fee', '300000'),
   ('admin_whatsapp', '["6282169599979", "6281367074138"]');
 ```

@@ -71,7 +71,7 @@ export const AdminDashboardPage: React.FC = () => {
             Selamat Datang, {adminName} 👋
           </h1>
           <p className="text-slate-600 mt-1 text-sm">
-            Panel ringkasan dan status operasional PPDB TAUD SaQu Abu Ayyub TP 2026/2027.
+            Panel ringkasan dan status operasional PPDB TAUD SaQu Abu Ayyub TP 2027/2028.
           </p>
         </div>
 

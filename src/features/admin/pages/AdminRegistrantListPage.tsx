@@ -128,7 +128,7 @@ export const AdminRegistrantListPage: React.FC = () => {
             Daftar Seluruh Pendaftar
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Kelola, telusuri, dan periksa data calon santri PPDB TAUD Abu Ayyub TP 2026/2027.
+            Kelola, telusuri, dan periksa data calon santri PPDB TAUD Abu Ayyub TP 2027/2028.
           </p>
         </div>
 

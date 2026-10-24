@@ -33,7 +33,7 @@ export const AdminConfigPage: React.FC = () => {
 
   const [form, setForm] = useState<PpdbConfigValues>({
     registration_open: true,
-    ppdb_period: '2026/2027',
+    ppdb_period: '2027/2028',
     registration_fee: 300000,
     bank_name: 'Bank Syariah Indonesia (BSI)',
     bank_account_number: '7216959997',
@@ -171,7 +171,7 @@ export const AdminConfigPage: React.FC = () => {
                   className="mt-1.5 text-sm"
                   value={form.ppdb_period}
                   onChange={(e) => handleChange('ppdb_period', e.target.value)}
-                  placeholder="Contoh: 2026/2027"
+                  placeholder="Contoh: 2027/2028"
                 />
               </div>
 
