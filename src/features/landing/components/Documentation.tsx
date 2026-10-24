@@ -84,11 +84,11 @@ const Documentation: React.FC = () => {
               {mediaItems.map((item, index) => (
                 <CarouselItem
                   key={item.id || index}
-                  className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                  className="basis-1/2 md:basis-1/3 lg:basis-1/4"
                 >
                   <div className="p-1 h-full">
                     <Card
-                      className="group/card relative aspect-square sm:aspect-auto sm:h-60 w-full overflow-hidden rounded-xl border border-[var(--color-light)] p-0 gap-0 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer hover-lift bg-gray-100"
+                      className="group/card relative aspect-square sm:aspect-auto sm:h-60 w-full overflow-hidden rounded-xl border border-[var(--color-light)] p-0 gap-0 shadow-md "
                       onClick={() => handleMediaClick(item)}
                     >
                       <img
@@ -110,11 +110,11 @@ const Documentation: React.FC = () => {
                       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
 
                       {/* Content */}
-                      <div className="absolute inset-0 top-auto flex flex-col justify-end bg-black/20 p-4">
-                        <h3 className="text-lg font-bold text-white truncate">
+                      <div className="absolute inset-0 top-auto flex flex-col justify-end bg-black/20 p-2.5 sm:p-4">
+                        <h3 className="text-xs sm:text-lg font-bold text-white truncate">
                           {item.title.trim() || 'Dokumentasi Kegiatan'}
                         </h3>
-                        <p className="text-sm text-white/90">
+                        <p className="text-[10px] sm:text-sm text-white/90">
                           {item.type === 'foto' ? 'Dokumentasi Kegiatan' : 'Video Dokumentasi'}
                         </p>
                       </div>

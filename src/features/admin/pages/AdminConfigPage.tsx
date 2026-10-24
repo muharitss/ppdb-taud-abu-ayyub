@@ -38,7 +38,7 @@ export const AdminConfigPage: React.FC = () => {
     bank_name: 'Bank Syariah Indonesia (BSI)',
     bank_account_number: '7216959997',
     bank_account_holder: 'TAUD SaQu Abu Ayyub',
-    admin_whatsapp_primary: '6282169599979',
+    admin_whatsapp_primary: '6281367074138',
     admin_whatsapp_secondary: '6281367074138',
     open_date: '2026-11-01',
     close_date: '2026-12-31',
@@ -268,7 +268,7 @@ export const AdminConfigPage: React.FC = () => {
                 <label className="text-xs font-semibold text-slate-700">WhatsApp Admin Utama (Primary)</label>
                 <Input
                   className="mt-1.5 text-sm font-mono"
-                  placeholder="Contoh: 6282169599979"
+                  placeholder="Contoh: 6281367074138"
                   value={form.admin_whatsapp_primary}
                   onChange={(e) => handleChange('admin_whatsapp_primary', e.target.value)}
                 />

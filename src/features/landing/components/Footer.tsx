@@ -22,33 +22,6 @@ const Footer: React.FC = () => {
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <a 
-            href="https://bit.ly/PPDB-TAUDSaqu-A4"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-[var(--color-accent)] hover:opacity-90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center shadow-md"
-          >
-            Daftar Sekarang
-          </a>
-          <a 
-            href="https://bit.ly/PPDB-TAUDSaqu-A4"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-[var(--color-primary)] hover:opacity-90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center shadow-md"
-          >
-            📝 Formulir Online
-          </a>
-          <a 
-            href="https://wa.me/6282169599979"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 w-full sm:w-auto text-center shadow-md"
-          >
-            WhatsApp Admin
-          </a>
-        </div>
-        
         <div className="text-center border-t border-white/20 pt-6">
           <p className="text-white/60 text-sm">
             © {new Date().getFullYear()} TAUD SaQu Abu Ayyub. All rights reserved.
@@ -62,7 +35,7 @@ const Footer: React.FC = () => {
               rel="noopener noreferrer"
               className="hover:text-white/60 transition-colors duration-300"
             >
-              Muhammad Harits
+              Muharitss
             </a>
           </p>
         </div>

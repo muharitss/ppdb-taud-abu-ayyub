@@ -31,7 +31,7 @@ const link = buildWaLink({
   statusUrl: "https://example.com/status",
 });
 
-assert.ok(link.startsWith("https://wa.me/6282169599979?text="), "Link must start with https://wa.me/<number>?text=");
+assert.ok(link.startsWith("https://wa.me/6281367074138?text="), "Link must start with https://wa.me/<number>?text=");
 assert.ok(!link.includes("+"), "Link number should not contain '+'");
 assert.ok(link.includes(encodeURIComponent("PPDB-2027-0001")), "Link should contain encoded registration number");
 console.log("✓ buildWaLink URL construction verified");

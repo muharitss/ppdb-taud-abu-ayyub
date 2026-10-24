@@ -25,7 +25,6 @@ import {
   ChevronRight,
   Loader2,
   AlertCircle,
-  RefreshCw,
   X,
   Clock,
   CheckCircle2,
@@ -151,7 +150,6 @@ export const AdminDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [data, setData] = useState<RegistrantsResult | null>(null);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Debounce search input
@@ -175,12 +173,8 @@ export const AdminDashboardPage: React.FC = () => {
   }, []);
 
   const fetchData = useCallback(
-    async (isManualRefresh = false) => {
-      if (isManualRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
+    async () => {
+      setLoading(true);
       setError(null);
 
       try {
@@ -200,7 +194,6 @@ export const AdminDashboardPage: React.FC = () => {
         );
       } finally {
         setLoading(false);
-        setRefreshing(false);
       }
     },
     [statusFilter, activeSearch, page, loadStats]

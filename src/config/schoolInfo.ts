@@ -14,10 +14,10 @@ export const SCHOOL_BANK_INFO: SchoolBankInfo = {
 
 export const ADMIN_CONTACTS = {
   primary: {
-    name: "Ummu Rumi",
-    phone: "0821-6959-9979",
-    whatsappNumber: "6282169599979",
-    whatsappUrl: "https://wa.me/6282169599979",
+    name: "Admin PPDB",
+    phone: "0813-6707-4138",
+    whatsappNumber: "6281367074138",
+    whatsappUrl: "https://wa.me/6281367074138",
   },
   secondary: {
     name: "Admin PPDB",

@@ -11,8 +11,8 @@ Mencetak generasi beriman, beradab, dan mandiri sejak usia dini!`,
     cta: {
       register: "https://bit.ly/PPDB-TAUDSaqu-A4",
       whatsapp: {
-        url: "https://wa.me/6282169599979",
-        name: "Ummu Rumi"
+        url: "https://wa.me/6281367074138",
+        name: "Admin PPDB"
       }
     },
     image: "/images/hero/hero-children.jpg"
@@ -87,9 +87,9 @@ Mencetak generasi beriman, beradab, dan mandiri sejak usia dini!`,
   },
 
   contact: {
-    name: "Ummu Rumi",
-    phone: "0821-6959-9979",
-    whatsappUrl: "https://wa.me/6282169599979"
+    name: "Admin PPDB",
+    phone: "0813-6707-4138",
+    whatsappUrl: "https://wa.me/6281367074138"
   },
 
   location: {

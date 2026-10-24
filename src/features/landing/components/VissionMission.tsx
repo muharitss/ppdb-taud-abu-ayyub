@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const VisionMission: React.FC = () => {
-  const [expanded, setExpanded] = useState(false);
 
   const vision = "Lembaga Pendidikan Tahfizh Anak Usia Dini yang mampu mencetak generasi penghafal Al-Qur'an dan berakhlak Qur'an";
 
@@ -42,22 +41,14 @@ const VisionMission: React.FC = () => {
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/30 relative z-10">
             <h3 className="text-2xl font-bold text-white mb-4">Misi</h3>
             <ul className="text-white/90 space-y-3">
-              {missions.slice(0, expanded ? missions.length : 3).map((mission, index) => (
+              {missions.map((mission, index) => (
                 <li key={index} className="flex items-start">
                   <span className="text-white font-bold mr-3">•</span>
                   <span className="flex-1">{mission}</span>
                 </li>
               ))}
             </ul>
-            
-            {missions.length > 3 && (
-              <button 
-                onClick={() => setExpanded(!expanded)}
-                className="mt-6 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 border border-white/30 hover-lift"
-              >
-                {expanded ? 'Tutup' : 'Lihat Selengkapnya'}
-              </button>
-            )}
+          
           </div>
         </div>
       </div>
