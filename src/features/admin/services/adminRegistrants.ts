@@ -13,6 +13,7 @@ export interface RegistrantListItem {
 
 export interface RegistrantQueryOptions {
   status?: string;
+  paymentStatus?: string;
   search?: string;
   page?: number;
   pageSize?: number;
@@ -28,6 +29,7 @@ export interface RegistrantsResult {
 
 export async function getRegistrants({
   status,
+  paymentStatus,
   search,
   page = 1,
   pageSize = 15,
@@ -39,8 +41,23 @@ export async function getRegistrants({
       { count: 'exact' }
     );
 
+  if (paymentStatus && paymentStatus !== 'all') {
+    query = query.eq('payment_status', paymentStatus);
+  }
+
   if (status && status !== 'all') {
-    query = query.eq('status', status);
+    if (status === 'needs_action') {
+      query = query.or('payment_status.eq.payment_submitted,status.eq.submitted,status.eq.under_review');
+    } else if (
+      status === 'payment_submitted' ||
+      status === 'payment_pending' ||
+      status === 'payment_verified' ||
+      status === 'payment_rejected'
+    ) {
+      query = query.eq('payment_status', status);
+    } else {
+      query = query.eq('status', status);
+    }
   }
 
   if (search && search.trim()) {
