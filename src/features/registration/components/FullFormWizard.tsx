@@ -12,6 +12,8 @@ import {
   ArrowLeft,
   Save,
   MessageCircle,
+  ExternalLink,
+  Eye,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -30,6 +32,7 @@ import {
   type RegistrationFormData,
 } from "../schemas/formSchema";
 import { saveFormDraft, submitFullForm, uploadRegistrationDocument } from "../services/formService";
+import { validateUploadFile } from "@/lib/cloudinary";
 import { clearSessionCredentials } from "@/lib/sessionCredentials";
 import { ParentFormSection } from "./ParentFormSection";
 
@@ -237,16 +240,16 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
     }
   };
 
-  const handleDocUpload = async (docType: "kartu_keluarga" | "akte_kelahiran", file: File) => {
+  const handleDocUpload = async (
+    docType: "kartu_keluarga" | "akte_kelahiran",
+    file: File,
+    inputEl?: HTMLInputElement | null
+  ) => {
     if (isReadOnly) return;
-    // Client-side quick check
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Ukuran berkas melebihi batas maksimal 5MB");
-      return;
-    }
-    const allowedMime = ["image/jpeg", "image/png", "application/pdf"];
-    if (!allowedMime.includes(file.type)) {
-      toast.error("Format berkas harus JPEG, PNG, atau PDF");
+    const check = validateUploadFile(file);
+    if (!check.valid) {
+      toast.error(check.error || "Format berkas tidak valid");
+      if (inputEl) inputEl.value = "";
       return;
     }
 
@@ -256,6 +259,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
       setUploadedDocs((prev) => ({ ...prev, [docType]: res.file_path }));
       toast.success("Dokumen berhasil diunggah!");
     } catch (err) {
+      if (inputEl) inputEl.value = "";
       toast.error(err instanceof Error ? err.message : "Gagal mengunggah dokumen");
     } finally {
       setUploadingDoc(null);
@@ -676,6 +680,23 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
+                    {uploadedDocs["kartu_keluarga"] && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-xs">
+                        <span className="truncate max-w-[200px] text-emerald-900 font-medium">
+                          Kartu Keluarga (KK)
+                        </span>
+                        <a
+                          href={uploadedDocs["kartu_keluarga"]}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-emerald-700 hover:text-emerald-800 font-semibold inline-flex items-center gap-1"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          Lihat Berkas
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
                     {!isReadOnly && (
                       <div className="relative">
                         <Input
@@ -684,7 +705,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                           disabled={uploadingDoc === "kartu_keluarga"}
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) handleDocUpload("kartu_keluarga", file);
+                            if (file) handleDocUpload("kartu_keluarga", file, e.target);
                           }}
                         />
                         {uploadingDoc === "kartu_keluarga" && (
@@ -717,6 +738,23 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
+                    {uploadedDocs["akte_kelahiran"] && (
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-xs">
+                        <span className="truncate max-w-[200px] text-emerald-900 font-medium">
+                          Akte Kelahiran
+                        </span>
+                        <a
+                          href={uploadedDocs["akte_kelahiran"]}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-emerald-700 hover:text-emerald-800 font-semibold inline-flex items-center gap-1"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          Lihat Berkas
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    )}
                     {!isReadOnly && (
                       <div className="relative">
                         <Input
@@ -725,7 +763,7 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                           disabled={uploadingDoc === "akte_kelahiran"}
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) handleDocUpload("akte_kelahiran", file);
+                            if (file) handleDocUpload("akte_kelahiran", file, e.target);
                           }}
                         />
                         {uploadingDoc === "akte_kelahiran" && (

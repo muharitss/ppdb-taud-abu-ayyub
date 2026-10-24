@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase/client";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import type { RegistrationFormData } from "../schemas/formSchema";
 
 export interface FormGetResult {
@@ -18,36 +19,23 @@ export async function fetchFormDetails(
   registrationNumber: string,
   accessCode: string
 ): Promise<FormGetResult> {
-  const { data, error } = await supabase.functions.invoke<FormGetResult>(
-    "submit-full-form",
+  const normReg = registrationNumber.trim().toUpperCase();
+  const normCode = accessCode.trim().toUpperCase();
+
+  const { data, error } = await supabase.rpc(
+    "fn_get_registration_full_form",
     {
-      body: {
-        action: "get",
-        registration_number: registrationNumber.trim().toUpperCase(),
-        access_code: accessCode.trim().toUpperCase(),
-      },
+      p_registration_number: normReg,
+      p_access_code: normCode,
     }
   );
 
-  if (error) {
-    let msg = error.message || "Gagal mengambil data formulir";
-    try {
-      const ctx = (error as { context?: Response }).context;
-      if (ctx && typeof ctx.json === "function") {
-        const body = await ctx.json();
-        if (body?.error) msg = body.error;
-      }
-    } catch {
-      // ignore JSON parse
-    }
-    throw new Error(msg);
+  const res = data as unknown as FormGetResult | null;
+  if (error || !res) {
+    throw new Error(error?.message || "Gagal mengambil data formulir");
   }
 
-  if (!data) {
-    throw new Error("Respon server tidak valid");
-  }
-
-  return data;
+  return res;
 }
 
 export async function saveFormDraft(
@@ -55,33 +43,24 @@ export async function saveFormDraft(
   accessCode: string,
   formData: Partial<RegistrationFormData>
 ): Promise<{ success: boolean; message: string }> {
-  const { data, error } = await supabase.functions.invoke<{ success: boolean; message: string }>(
-    "submit-full-form",
+  const normReg = registrationNumber.trim().toUpperCase();
+  const normCode = accessCode.trim().toUpperCase();
+
+  const { data, error } = await supabase.rpc(
+    "fn_save_registration_draft",
     {
-      body: {
-        action: "save_draft",
-        registration_number: registrationNumber.trim().toUpperCase(),
-        access_code: accessCode.trim().toUpperCase(),
-        form_data: formData,
-      },
+      p_registration_number: normReg,
+      p_access_code: normCode,
+      p_form_data: formData,
     }
   );
 
-  if (error) {
-    let msg = error.message || "Gagal menyimpan draf";
-    try {
-      const ctx = (error as { context?: Response }).context;
-      if (ctx && typeof ctx.json === "function") {
-        const body = await ctx.json();
-        if (body?.error) msg = body.error;
-      }
-    } catch {
-      // ignore
-    }
-    throw new Error(msg);
+  const res = data as unknown as { success: boolean; message: string } | null;
+  if (error || !res || res.success === false) {
+    throw new Error(error?.message || "Gagal menyimpan draf");
   }
 
-  return data || { success: true, message: "Draf berhasil disimpan" };
+  return res;
 }
 
 export async function submitFullForm(
@@ -89,34 +68,26 @@ export async function submitFullForm(
   accessCode: string,
   formData: RegistrationFormData
 ): Promise<{ success: boolean; status: string; message: string }> {
-  const { data, error } = await supabase.functions.invoke<{
+  const normReg = registrationNumber.trim().toUpperCase();
+  const normCode = accessCode.trim().toUpperCase();
+
+  const { data, error } = await supabase.rpc("fn_submit_registration_final", {
+    p_registration_number: normReg,
+    p_access_code: normCode,
+    p_form_data: formData,
+  });
+
+  const res = data as unknown as {
     success: boolean;
     status: string;
     message: string;
-  }>("submit-full-form", {
-    body: {
-      action: "submit",
-      registration_number: registrationNumber.trim().toUpperCase(),
-      access_code: accessCode.trim().toUpperCase(),
-      form_data: formData,
-    },
-  });
+  } | null;
 
-  if (error) {
-    let msg = error.message || "Gagal mengirim formulir pendaftaran";
-    try {
-      const ctx = (error as { context?: Response }).context;
-      if (ctx && typeof ctx.json === "function") {
-        const body = await ctx.json();
-        if (body?.error) msg = body.error;
-      }
-    } catch {
-      // ignore
-    }
-    throw new Error(msg);
+  if (error || !res || res.success === false) {
+    throw new Error(error?.message || "Gagal mengirim formulir pendaftaran");
   }
 
-  return data || { success: true, status: "submitted", message: "Formulir pendaftaran berhasil dikirim" };
+  return res;
 }
 
 export async function uploadRegistrationDocument(
@@ -125,38 +96,34 @@ export async function uploadRegistrationDocument(
   documentType: "kartu_keluarga" | "akte_kelahiran",
   file: File
 ): Promise<{ success: boolean; file_path: string; message: string }> {
-  const formData = new FormData();
-  formData.append("registration_number", registrationNumber.trim().toUpperCase());
-  formData.append("access_code", accessCode.trim().toUpperCase());
-  formData.append("document_type", documentType);
-  formData.append("file", file);
+  const normReg = registrationNumber.trim().toUpperCase();
+  const normCode = accessCode.trim().toUpperCase();
 
-  const { data, error } = await supabase.functions.invoke<{
+  // 1. Upload file directly to Cloudinary
+  const uploadRes = await uploadToCloudinary(file, "ppdb-taud/dokumen");
+
+  // 2. Upsert document record in DB
+  const { data, error } = await supabase.rpc("fn_upload_registration_document", {
+    p_registration_number: normReg,
+    p_access_code: normCode,
+    p_document_type: documentType,
+    p_file_url: uploadRes.secure_url,
+  });
+
+  const res = data as unknown as {
     success: boolean;
     document_type: string;
     file_path: string;
     message: string;
-  }>("document-upload", {
-    body: formData,
-  });
+  } | null;
 
-  if (error) {
-    let msg = error.message || "Gagal mengunggah dokumen";
-    try {
-      const ctx = (error as { context?: Response }).context;
-      if (ctx && typeof ctx.json === "function") {
-        const body = await ctx.json();
-        if (body?.error) msg = body.error;
-      }
-    } catch {
-      // ignore
-    }
-    throw new Error(msg);
+  if (error || !res || res.success === false) {
+    throw new Error(error?.message || "Gagal mencatat dokumen di server");
   }
 
-  if (!data || !data.success) {
-    throw new Error("Respon server tidak valid");
-  }
-
-  return data;
+  return {
+    success: res.success,
+    file_path: res.file_path,
+    message: res.message,
+  };
 }

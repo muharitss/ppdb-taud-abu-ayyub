@@ -27,7 +27,11 @@ export const PaymentProofUpload: React.FC<PaymentProofUploadProps> = ({
       return;
     }
 
-    if (selectedFile.type.startsWith("image/")) {
+    const isImage =
+      selectedFile.type.startsWith("image/") ||
+      /\.(jpg|jpeg|png)$/i.test(selectedFile.name);
+
+    if (isImage) {
       const url = URL.createObjectURL(selectedFile);
       setPreviewUrl(url);
       return () => {

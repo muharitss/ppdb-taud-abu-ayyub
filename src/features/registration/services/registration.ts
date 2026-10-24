@@ -4,31 +4,23 @@ import type { CreateRegistrationRequest, CreateRegistrationResponse } from "../t
 export async function createRegistration(
   payload: CreateRegistrationRequest
 ): Promise<CreateRegistrationResponse> {
-  const { data, error } = await supabase.functions.invoke<CreateRegistrationResponse>(
-    "create-registration",
-    { body: payload }
+  const { data, error } = await supabase.rpc(
+    "fn_create_registration",
+    {
+      p_child_name: payload.child_name,
+      p_parent_name: payload.parent_name,
+      p_whatsapp_number: payload.whatsapp_number,
+    }
   );
 
   if (error) {
-    let message = error.message || "Gagal membuat pendaftaran";
-    try {
-      // Extract specific error message from Edge Function response body if available
-      const ctx = (error as { context?: Response }).context;
-      if (ctx && typeof ctx.json === "function") {
-        const body = await ctx.json();
-        if (body?.error && typeof body.error === "string") {
-          message = body.error;
-        }
-      }
-    } catch {
-      // Ignore body parsing failure, use default error message
-    }
-    throw new Error(message);
+    throw new Error(error.message || "Gagal membuat pendaftaran");
   }
 
-  if (!data || !data.registration_number || !data.access_code) {
+  const res = data as unknown as CreateRegistrationResponse;
+  if (!res || !res.registration_number || !res.access_code) {
     throw new Error("Respon server tidak valid");
   }
 
-  return data;
+  return res;
 }

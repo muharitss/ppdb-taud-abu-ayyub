@@ -71,6 +71,9 @@ export async function getRegistrantDetail(id: string): Promise<RegistrantDetail>
 }
 
 export async function createPaymentProofSignedUrl(filePath: string): Promise<string> {
+  if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
+    return filePath;
+  }
   const { data, error } = await supabase.storage
     .from("payment-proofs")
     .createSignedUrl(filePath, 3600);
@@ -87,36 +90,25 @@ export async function reviewPayment({
   approved,
   review_notes,
 }: ReviewPaymentParams): Promise<ReviewPaymentResult> {
-  const { data, error } = await supabase.functions.invoke<ReviewPaymentResult>(
-    "admin-review-payment",
-    {
-      body: {
-        payment_id,
-        approved,
-        review_notes: review_notes?.trim() || undefined,
-      },
-    }
-  );
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  const { data, error } = await supabase.rpc("fn_review_payment", {
+    p_payment_id: payment_id,
+    p_approved: approved,
+    p_admin_id: user?.id,
+    p_review_notes: review_notes?.trim() || null,
+  });
+
+  const res = data as unknown as ReviewPaymentResult | null;
   if (error) {
-    let message = error.message || "Gagal memproses review pembayaran";
-    try {
-      const ctx = (error as { context?: Response }).context;
-      if (ctx && typeof ctx.json === "function") {
-        const body = await ctx.json();
-        if (body?.error && typeof body.error === "string") {
-          message = body.error;
-        }
-      }
-    } catch {
-      // keep fallback message
-    }
-    throw new Error(message);
+    throw new Error(error.message || "Gagal memproses review pembayaran");
   }
 
-  if (!data?.success) {
+  if (!res?.success) {
     throw new Error("Respon server tidak valid saat meninjau pembayaran");
   }
 
-  return data;
+  return res;
 }

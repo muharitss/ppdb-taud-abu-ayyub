@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase/client";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { SCHOOL_BANK_INFO } from "@/config/schoolInfo";
 import type {
   BankAccountInfo,
@@ -13,35 +14,26 @@ export async function submitPaymentProof({
   accessCode,
   file,
 }: SubmitPaymentProofParams): Promise<SubmitPaymentProofResponse> {
-  const formData = new FormData();
-  formData.append("registration_number", registrationNumber.trim().toUpperCase());
-  formData.append("access_code", accessCode.trim().toUpperCase());
-  formData.append("file", file);
+  const normReg = registrationNumber.trim().toUpperCase();
+  const normCode = accessCode.trim().toUpperCase();
 
-  const { data, error } = await supabase.functions.invoke<SubmitPaymentProofResponse>(
-    "submit-payment-proof",
-    { body: formData }
+  // 1. Upload proof photo directly to Cloudinary
+  const uploadRes = await uploadToCloudinary(file, "ppdb-taud/bukti-bayar");
+
+  // 2. Record payment submission atomically in DB
+  const { data, error } = await supabase.rpc(
+    "fn_submit_payment_proof",
+    {
+      p_registration_number: normReg,
+      p_access_code: normCode,
+      p_proof_url: uploadRes.secure_url,
+    }
   );
 
-  if (error) {
-    let message = error.message || "Gagal mengunggah bukti pembayaran";
-    try {
-      const ctx = (error as { context?: Response }).context;
-      if (ctx && typeof ctx.json === "function") {
-        const body = await ctx.json();
-        if (body?.error && typeof body.error === "string") {
-          message = body.error;
-        }
-      }
-    } catch {
-      // Ignore body parse errors and keep fallback message
-    }
-    throw new Error(message);
+  const res = data as unknown as SubmitPaymentProofResponse | null;
+  if (error || !res || res.success === false) {
+    throw new Error(error?.message || "Gagal mencatat bukti pembayaran");
   }
 
-  if (!data || !data.success) {
-    throw new Error("Respon server tidak valid");
-  }
-
-  return data;
+  return res;
 }

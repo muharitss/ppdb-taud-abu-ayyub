@@ -61,10 +61,13 @@ export async function getRegistrantFullDetail(id: string): Promise<RegistrantFul
     throw new Error('Data pendaftar tidak ditemukan: ' + (regRes.error?.message || ''));
   }
 
-  // Generate signed URLs for documents
+  // Generate signed URLs for documents (or direct Cloudinary URL)
   const docs = (docsRes.data || []) as DocumentItem[];
   const docsWithUrls = await Promise.all(
     docs.map(async (doc) => {
+      if (doc.file_path.startsWith('http://') || doc.file_path.startsWith('https://')) {
+        return { ...doc, signed_url: doc.file_path };
+      }
       try {
         const { data } = await supabase.storage
           .from('registration-documents')
@@ -76,10 +79,13 @@ export async function getRegistrantFullDetail(id: string): Promise<RegistrantFul
     })
   );
 
-  // Generate signed URLs for payment proofs
+  // Generate signed URLs for payment proofs (or direct Cloudinary URL)
   const payments = (paymentsRes.data || []) as PaymentItem[];
   const paymentsWithUrls = await Promise.all(
     payments.map(async (pmt) => {
+      if (pmt.proof_file_path.startsWith('http://') || pmt.proof_file_path.startsWith('https://')) {
+        return { ...pmt, signed_url: pmt.proof_file_path };
+      }
       try {
         const { data } = await supabase.storage
           .from('payment-proofs')
