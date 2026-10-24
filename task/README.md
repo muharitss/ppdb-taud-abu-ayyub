@@ -1,8 +1,8 @@
 # PPDB TAUD Abu Ayyub — Task Dashboard & Project Tracker
 
 > **Pendekatan:** Spec-Driven Development (SDD)  
-> **Status:** Phase 6, Phase 7, Phase 8, & Phase 11 Selesai 100% (Form Schema, DB Migration, Edge Functions, Wizard Refactor, Success & Status Pages, Admin Suite Tuntas), Phase 9 (Testing) Siap Aktif  
-> **Progres Akurat:** 34 / 40 Task Selesai (**85.00%**)
+> **Status:** Phase 6, Phase 7, Phase 8, & Phase 11 Selesai 100%, Phase 9 (Testing) Berjalan (Task 031 Selesai)  
+> **Progres Akurat:** 35 / 40 Task Selesai (**87.50%**)
 
 ---
 
@@ -102,7 +102,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **028** | [Admin Registrant Detail & Audit](task-028-admin-registrant-detail.md) | Phase 8 | P2 | **DONE** | Task 027, 022 |
 | **029** | [Admin PPDB Config Management](task-029-admin-ppdb-config.md) | Phase 8 | P2 | **DONE** | Task 012 |
 | **030** | [Audit Log Viewer UI](task-030-audit-log-ui.md) | Phase 8 | P2 | **DONE** | Task 026 |
-| **031** | [Unit Testing Setup & Logic Tests](task-031-unit-tests.md) | Phase 9 | P1 | `NOT_STARTED` | Task 013, 014, 022 |
+| **031** | [Unit Testing Setup & Logic Tests](task-031-unit-tests.md) | Phase 9 | P1 | **DONE** | Task 013, 014, 022 |
 | **032** | [RLS Security Policy Tests](task-032-rls-tests.md) | Phase 9 | P0 | `NOT_STARTED` | Task 011 |
 | **033** | [End-to-End Flow Tests](task-033-e2e-tests.md) | Phase 9 | P1 | `NOT_STARTED` | Task 018, 025 |
 | **034** | [Production Supabase Setup](task-034-production-supabase.md) | Phase 10 | P0 | `NOT_STARTED` | Task 010–019 |
@@ -119,16 +119,15 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 - **Total Task:** 40
-- **Selesai (`DONE`):** 34 (Task 001–030, Task 037–040)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 031, Task 032, Task 033
+- **Selesai (`DONE`):** 35 (Task 001–031, Task 037–040)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 032, Task 033
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 0
-- **Persentase Selesai Nyata:** **85.00%**
+- **Persentase Selesai Nyata:** **87.50%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
-1. **Task 031:** Unit Testing Setup & Logic Tests (Vitest untuk Edge Functions & Form Schemas).
-2. **Task 032:** RLS Security Policy Tests (verifikasi RLS database PostgreSQL).
-3. **Task 033:** End-to-End Flow Tests (pengujian alur pendaftaran s.d. dashboard admin).
+1. **Task 032:** RLS Security Policy Tests (verifikasi RLS database PostgreSQL).
+2. **Task 033:** End-to-End Flow Tests (pengujian alur pendaftaran s.d. dashboard admin).
 
 ### C. Task yang Terblokir & Penyebabnya
 - *Tidak ada task yang terblokir saat ini.* Seluruh dependency Phase 6 telah terpenuhi.
@@ -197,6 +196,17 @@ npm run preview
 ---
 
 ## 9. Log Riwayat Perubahan
+
+- **2026-10-24 (Phase 9 — Task 031 Unit Testing Setup & Logic Tests Selesai):**
+  - Implementasi setup pengujian otomatis berbasis Vitest 5.x & jsdom untuk memverifikasi logika inti, skema validasi, dan utilitas:
+    - **Vitest Setup:** Konfigurasi environment jsdom dan scoping include test pada `vite.config.ts`, serta script `"test": "vitest run"` dan `"test:watch": "vitest"` pada `package.json`.
+    - **`registrationSchema.test.ts`:** Validasi Zod skema awal pendaftaran (`initialRegistrationSchema`), sanitasi trim whitespace, format WhatsApp Indonesia (08xx, +628xx, 628xx), dan pengujian pesan kegagalan humanis bahasa Indonesia.
+    - **`whatsapp.test.ts`:** Pengujian builder pesan `buildWaMessage` (variabel interpolasi, nomor pendaftaran, kode akses, status URL) dan builder tautan `buildWaLink` (URL `wa.me`, normalisasi sanitasi nomor admin tanpa tanda `+`, dan URI encoding).
+    - **`registrationNumber.test.ts`:** Pengujian format nomor pendaftaran `PPDB-YYYY-XXXXX` (5 digit) dan backward-compatible 4-digit sequence, penolakan format tidak valid (prefix salah, huruf kecil, spasi liar, angka di luar format).
+    - **`formSchema.test.ts`:** Pengujian komprehensif validasi skema formulir lengkap (`childSchema`, `fatherSchema`, `motherSchema`, `healthSchema`, `documentTypeSchema`, `registrationFormSchema`), NIK 16-digit, tanggal ISO YYYY-MM-DD, batas min/max, dan nilai opsional/nullable.
+    - **Prisma Config Robustness:** Penambahan fallback datasource URL `process.env.DIRECT_URL ? env('DIRECT_URL') : env('DATABASE_URL')` pada `prisma.config.ts`.
+  - Seluruh 4 test suite (30 test case) lulus 100%. TypeScript typecheck dan build produksi lulus 0 error.
+  - Progres: 35 / 40 Task (**87.50%**).
 
 - **2026-10-24 (Phase 8 — Admin Suite Tuntas 100%):**
   - Penyelesaian komprehensif seluruh 5 task Phase 8 (Task 026, Task 027, Task 028, Task 029, Task 030):

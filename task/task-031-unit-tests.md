@@ -1,7 +1,7 @@
 # Task 031 — Unit Tests
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1
@@ -61,12 +61,12 @@ Core business logic — schema validation, WhatsApp message construction, regist
 N/A — test files should not contain real credentials or production data.
 
 ## Acceptance Criteria
-- [ ] Vitest installed and configured
-- [ ] `npm test` runs successfully
-- [ ] Zod schema tests: valid input passes, invalid input fails with correct error
-- [ ] `buildWaMessage()` test: correct interpolation and encoding
-- [ ] `buildWaLink()` test: correct `wa.me` URL format
-- [ ] `registration_number` format test: valid format passes, invalid fails
+- [x] Vitest installed and configured
+- [x] `npm test` runs successfully
+- [x] Zod schema tests: valid input passes, invalid input fails with correct error
+- [x] `buildWaMessage()` test: correct interpolation and encoding
+- [x] `buildWaLink()` test: correct `wa.me` URL format
+- [x] `registration_number` format test: valid format passes, invalid fails
 
 ## Verification
 ```bash
@@ -83,4 +83,14 @@ npm test
 - Unit tests for schemas and utilities
 
 ## Completion Notes
-_Not started_
+Completed 2026-10-24.
+1. Installed `vitest` and `jsdom` as devDependencies.
+2. Configured Vitest in `vite.config.ts` with `environment: 'jsdom'`, `globals: true`, and `include: ['src/__tests__/**/*.test.ts']`.
+3. Added `"test": "vitest run"` and `"test:watch": "vitest"` scripts to `package.json`.
+4. Created unit tests in `src/__tests__/`:
+   - `registrationSchema.test.ts`: Tests `initialRegistrationSchema` for child name, parent name, Indonesian WhatsApp number regex validation and trimming.
+   - `whatsapp.test.ts`: Tests `buildWaMessage` and `buildWaLink` URL construction and encoding.
+   - `registrationNumber.test.ts`: Tests standard format `PPDB-YYYY-XXXXX` and flexible 4-digit sequence, rejecting invalid prefixes and characters.
+   - `formSchema.test.ts`: Tests complete registration schemas (`childSchema`, `fatherSchema`, `motherSchema`, `healthSchema`, `documentTypeSchema`, `registrationFormSchema`).
+5. Updated `prisma.config.ts` datasource URL fallback (`process.env.DIRECT_URL ? env('DIRECT_URL') : env('DATABASE_URL')`).
+6. All 4 test files (30 tests) pass via `npm test`. Typecheck (`npx tsc -b --noEmit`) and production build (`npm run build`) pass cleanly.

@@ -8,6 +8,8 @@
     "build": "prisma generate && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -50,13 +52,15 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
+    "jsdom": "^30.1.3",
     "pg": "^8.23.1",
     "prisma": "^7.10.1",
     "supabase": "^2.121.0",
     "tw-animate-css": "^1.4.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.45.0",
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "vitest": "^5.0.5"
   },
   "allowScripts": {
     "@prisma/engines@7.10.1": true,
