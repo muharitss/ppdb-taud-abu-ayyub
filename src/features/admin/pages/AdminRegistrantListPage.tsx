@@ -463,29 +463,64 @@ export const AdminRegistrantListPage: React.FC = () => {
           if (!open && !isDeleting) setDeletingItem(null);
         }}
       >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-rose-600">
-              <AlertCircle className="w-5 h-5 shrink-0" />
-              Hapus Pendaftar
-            </DialogTitle>
-            <DialogDescription className="text-slate-600 pt-2 space-y-2">
-              <span>
-                Apakah Anda yakin ingin menghapus data calon siswa{" "}
-                <strong className="text-slate-900">{deletingItem?.child_name}</strong> (No. Reg:{" "}
-                <strong className="text-slate-900">{deletingItem?.registration_number}</strong>)?
-              </span>
-              <span className="text-xs text-rose-600 font-medium block">
-                Peringatan: Tindakan ini permanen. Semua berkas, pembayaran, dan formulir pendaftar ini akan dihapus dari sistem.
-              </span>
-            </DialogDescription>
+        <DialogContent className="sm:max-w-md p-6 gap-5 bg-white border border-slate-200 shadow-2xl rounded-2xl">
+          <DialogHeader className="gap-2 sm:text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0 text-rose-600">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-base sm:text-lg font-bold text-slate-900">
+                  Hapus Data Pendaftar
+                </DialogTitle>
+                <DialogDescription className="text-xs text-slate-500 mt-0.5">
+                  Tindakan ini permanen dan tidak dapat dibatalkan.
+                </DialogDescription>
+              </div>
+            </div>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 mt-4">
+
+          {/* Registrant detail preview */}
+          {deletingItem && (
+            <div className="bg-slate-50/80 border border-slate-200/90 rounded-xl p-3.5 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">Calon Siswa:</span>
+                <span className="font-semibold text-slate-900">
+                  {deletingItem.child_name || "Tanpa Nama"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">No. Registrasi:</span>
+                <span className="font-mono font-medium text-slate-700 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                  {deletingItem.registration_number}
+                </span>
+              </div>
+              {deletingItem.parent_name && (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500 font-medium">Wali / Orang Tua:</span>
+                  <span className="text-slate-700 font-medium">
+                    {deletingItem.parent_name}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Warning banner */}
+          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-800 text-xs leading-relaxed">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+            <span>
+              Semua berkas dokumen, bukti pembayaran, dan formulir pendaftaran milik siswa ini akan dihapus seluruhnya dari database.
+            </span>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2 pt-2 border-t border-slate-100">
             <Button
               type="button"
               variant="outline"
               onClick={() => setDeletingItem(null)}
               disabled={isDeleting}
+              className="text-xs sm:text-sm h-9 px-4 font-medium"
             >
               Batal
             </Button>
@@ -494,7 +529,7 @@ export const AdminRegistrantListPage: React.FC = () => {
               variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={isDeleting}
-              className="gap-2"
+              className="text-xs sm:text-sm h-9 px-4 font-medium"
             >
               {isDeleting ? (
                 <>
@@ -504,7 +539,7 @@ export const AdminRegistrantListPage: React.FC = () => {
               ) : (
                 <>
                   <Trash2 className="w-4 h-4" />
-                  Ya, Hapus
+                  Ya, Hapus Pendaftar
                 </>
               )}
             </Button>

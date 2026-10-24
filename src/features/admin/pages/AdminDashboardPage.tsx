@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useTransition } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -11,7 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  deleteRegistrant,
   getRegistrants,
+  type RegistrantListItem,
   type RegistrantsResult,
 } from "../services/adminRegistrants";
 import {
@@ -30,7 +32,26 @@ import {
   CheckCircle2,
   Phone,
   Filter,
+  MoreHorizontal,
+  Eye,
+  Trash2,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 const REG_STATUS_CONFIG: Record<
   string,
@@ -151,6 +172,10 @@ export const AdminDashboardPage: React.FC = () => {
   const [data, setData] = useState<RegistrantsResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingItem, setDeletingItem] = useState<RegistrantListItem | null>(
+    null,
+  );
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   // Debounce search input
   useEffect(() => {
@@ -213,6 +238,29 @@ export const AdminDashboardPage: React.FC = () => {
 
   const pendingVerificationCount =
     (stats?.paymentSubmitted ?? 0) + (stats?.submitted ?? 0);
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingItem) return;
+    setIsDeleting(true);
+    try {
+      await deleteRegistrant(deletingItem.id);
+      toast.success(
+        `Pendaftar ${deletingItem.registration_number} berhasil dihapus`,
+      );
+      setDeletingItem(null);
+      if (data && data.items.length === 1 && page > 1) {
+        setPage((p) => p - 1);
+      } else {
+        fetchData();
+      }
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "Gagal menghapus pendaftar",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -583,19 +631,42 @@ export const AdminDashboardPage: React.FC = () => {
                         </TableCell>
 
                         {/* Aksi */}
-                        <TableCell className="py-3.5 px-4 text-right">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 w-7 p-0 rounded text-slate-400 group-hover:text-slate-900 group-hover:bg-slate-200/60 transition-colors"
-                            title="Buka Detail Pendaftar"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/admin/pendaftar/${item.id}`);
-                            }}
-                          >
-                            <ChevronRight className="w-4 h-4" />
-                          </Button>
+                        <TableCell
+                          className="text-right"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                className="h-8 w-8 p-0 text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+                              >
+                                <span className="sr-only">Buka menu aksi</span>
+                                <MoreHorizontal className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-44">
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  to={`/admin/pendaftar/${item.id}`}
+                                  className="flex items-center gap-2 w-full text-slate-700 cursor-pointer"
+                                >
+                                  <Eye className="w-4 h-4 text-slate-500" />
+                                  <span>Lihat Detail</span>
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onSelect={() => setDeletingItem(item)}
+                                onClick={() => setDeletingItem(item)}
+                                className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 cursor-pointer flex items-center gap-2"
+                              >
+                                <Trash2 className="w-4 h-4 text-rose-600" />
+                                <span>Hapus Pendaftar</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
                     );
@@ -655,6 +726,95 @@ export const AdminDashboardPage: React.FC = () => {
           </>
         )}
       </div>
+      <Dialog
+        open={!!deletingItem}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) setDeletingItem(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md p-6 gap-5 bg-white border border-slate-200 shadow-2xl rounded-2xl">
+          <DialogHeader className="gap-2 sm:text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0 text-rose-600">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-base sm:text-lg font-bold text-slate-900">
+                  Hapus Data Pendaftar
+                </DialogTitle>
+                <DialogDescription className="text-xs text-slate-500 mt-0.5">
+                  Tindakan ini permanen dan tidak dapat dibatalkan.
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          {/* Registrant detail preview */}
+          {deletingItem && (
+            <div className="bg-slate-50/80 border border-slate-200/90 rounded-xl p-3.5 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">Calon Siswa:</span>
+                <span className="font-semibold text-slate-900">
+                  {deletingItem.child_name || "Tanpa Nama"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500 font-medium">No. Registrasi:</span>
+                <span className="font-mono font-medium text-slate-700 bg-white border border-slate-200 px-2 py-0.5 rounded">
+                  {deletingItem.registration_number}
+                </span>
+              </div>
+              {deletingItem.parent_name && (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500 font-medium">Wali / Orang Tua:</span>
+                  <span className="text-slate-700 font-medium">
+                    {deletingItem.parent_name}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Warning banner */}
+          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-800 text-xs leading-relaxed">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+            <span>
+              Semua berkas dokumen, bukti pembayaran, dan formulir pendaftaran milik siswa ini akan dihapus seluruhnya dari database.
+            </span>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2 pt-2 border-t border-slate-100">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeletingItem(null)}
+              disabled={isDeleting}
+              className="text-xs sm:text-sm h-9 px-4 font-medium"
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+              className="text-xs sm:text-sm h-9 px-4 font-medium"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Menghapus...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-4 h-4" />
+                  Ya, Hapus Pendaftar
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
