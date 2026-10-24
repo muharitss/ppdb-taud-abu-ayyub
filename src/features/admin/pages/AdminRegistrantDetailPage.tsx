@@ -343,9 +343,9 @@ export const AdminRegistrantDetailPage: React.FC = () => {
   const programRaw = String(child.program || "");
   const programLabel =
     programRaw === "1_tahun"
-      ? "1 Tahun (5-6 Tahun)"
+      ? "1 Tahun "
       : programRaw === "2_tahun"
-        ? "2 Tahun (4-5 Tahun)"
+        ? "2 Tahun "
         : programRaw || "-";
 
   const bloodRaw = String(health.blood_type || health.bloodType || "");
