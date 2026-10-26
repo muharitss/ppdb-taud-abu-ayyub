@@ -10,7 +10,7 @@ import AdminLoginPage from '@/features/admin/pages/AdminLoginPage';
 import AdminLayout from '@/features/admin/layouts/AdminLayout';
 import AdminDashboardPage from '@/features/admin/pages/AdminDashboardPage';
 import AdminRegistrantDetailPage from '@/features/admin/pages/AdminRegistrantDetailPage';
-import AdminConfigPage from '@/features/admin/pages/AdminConfigPage';
+// import AdminConfigPage from '@/features/admin/pages/AdminConfigPage';
 import NotFoundPage from './NotFoundPage';
 
 export const AppRouter: React.FC = () => {
@@ -29,7 +29,7 @@ export const AppRouter: React.FC = () => {
         <Route index element={<AdminDashboardPage />} />
         <Route path="pendaftar" element={<Navigate to="/admin" replace />} />
         <Route path="pendaftar/:id" element={<AdminRegistrantDetailPage />} />
-        <Route path="pengaturan" element={<AdminConfigPage />} />
+        {/* <Route path="pengaturan" element={<AdminConfigPage />} /> */}
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />

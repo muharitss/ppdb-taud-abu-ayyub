@@ -6,7 +6,7 @@ import {
   LogOut,
   ShieldAlert,
   Loader2,
-  Settings,
+  // Settings,
   Users,
   GraduationCap,
 } from 'lucide-react';
@@ -60,7 +60,7 @@ export const AdminLayout: React.FC = () => {
 
   const isRegistrantsActive =
     location.pathname === '/admin' || location.pathname.startsWith('/admin/pendaftar');
-  const isSettingsActive = location.pathname.startsWith('/admin/pengaturan');
+  // const isSettingsActive = location.pathname.startsWith('/admin/pengaturan');
 
   const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Admin';
 
@@ -103,7 +103,7 @@ export const AdminLayout: React.FC = () => {
                   Pendaftar
                 </Link>
 
-                <Link
+                {/* <Link
                   to="/admin/pengaturan"
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     isSettingsActive
@@ -113,7 +113,7 @@ export const AdminLayout: React.FC = () => {
                 >
                   <Settings className="w-3.5 h-3.5" />
                   Pengaturan
-                </Link>
+                </Link> */}
               </nav>
             </div>
 
@@ -129,7 +129,7 @@ export const AdminLayout: React.FC = () => {
               </div>
 
               {/* Mobile quick link to settings if not active */}
-              <Link
+              {/* <Link
                 to="/admin/pengaturan"
                 className={`sm:hidden p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 ${
                   isSettingsActive ? 'bg-slate-100 text-slate-900' : ''
@@ -137,7 +137,7 @@ export const AdminLayout: React.FC = () => {
                 title="Pengaturan"
               >
                 <Settings className="w-4 h-4" />
-              </Link>
+              </Link> */}
 
               <div className="h-4 w-px bg-slate-200 hidden sm:block" />
 

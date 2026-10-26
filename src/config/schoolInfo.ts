@@ -8,7 +8,7 @@ export interface SchoolBankInfo {
 export const SCHOOL_BANK_INFO: SchoolBankInfo = {
   bankName: "Bank Syariah Indonesia (BSI)",
   accountNumber: "7327913322",
-  accountHolder: "TAUD SaQu Abu Ayyub",
+  accountHolder: "TAUD Abu Ayyub",
   amount: 300000,
 };
 
