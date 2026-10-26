@@ -10,7 +10,7 @@ import {
   MessageCircle,
   Copy,
   Check,
-  LogOut,
+  // LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -103,14 +103,14 @@ export const FullFormPage: React.FC = () => {
     }
   };
 
-  const handleSwitchSession = () => {
-    clearSessionCredentials();
-    hasAutoLoadedRef.current = true;
-    setHasLoaded(false);
-    setFormDetails(null);
-    setRegistrationNumber("");
-    setAccessCode("");
-  };
+  // const handleSwitchSession = () => {
+  //   clearSessionCredentials();
+  //   hasAutoLoadedRef.current = true;
+  //   setHasLoaded(false);
+  //   setFormDetails(null);
+  //   setRegistrationNumber("");
+  //   setAccessCode("");
+  // };
 
   useEffect(() => {
     // If local session already indicates payment is pending or rejected, redirect immediately without waiting
@@ -206,7 +206,7 @@ export const FullFormPage: React.FC = () => {
                   </>
                 )}
               </Button>
-              <Button
+              {/* <Button
                 type="button"
                 variant="ghost"
                 size="sm"
@@ -216,7 +216,7 @@ export const FullFormPage: React.FC = () => {
               >
                 <LogOut className="w-3.5 h-3.5 mr-1" />
                 Ganti Sesi
-              </Button>
+              </Button> */}
             </div>
           </div>
         )}
