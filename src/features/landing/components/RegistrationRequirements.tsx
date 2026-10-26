@@ -10,6 +10,14 @@ const RegistrationRequirements: React.FC = () => {
     : "/daftar";
   const ctaText = sessionCreds ? "Lanjutkan Pendaftaran" : "Daftar Sekarang";
 
+  const investment = [
+    "Uang pendaftaran Rp.300.000,-",
+    "Seragam siswa 3 stell",
+    "1 set kitab tibyan/kitab aisar, buku panduan Aism, dan Modul pembelajaran siswa",
+    "Perlengkapan pembelajaran siswa selama 1 tahun",
+    "SPP Bulan Juli Rp.350.000/Bulan",
+  ];
+
   const administrative = [
     "Membayar biaya pendaftaran Rp300.000",
     "Mengisi formulir online / offline secara lengkap",
@@ -42,30 +50,68 @@ const RegistrationRequirements: React.FC = () => {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
-            Syarat Pendaftaran
+            Biaya & Syarat Pendaftaran
           </h2>
           <p className="mt-2 text-sm sm:text-base text-white/90">
-            Kriteria calon siswa dan berkas persyaratan Penerimaan Peserta Didik
-            Baru
+            Informasi investasi pendidikan, berkas administrasi, dan kriteria
+            kesiapan calon siswa
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 max-w-6xl mx-auto">
+          {/* Investasi Pendidikan */}
+          <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-5 sm:p-7 shadow-lg border border-white/25 relative z-10 flex flex-col">
+            <div className="text-center mb-5 pb-1">
+              <h3 className="text-lg sm:text-xl font-bold text-white">
+                Investasi Pendidikan
+              </h3>
+              <div className="mt-2 inline-block bg-white/20 text-amber-200 font-extrabold text-lg sm:text-xl px-4 py-1 rounded-xl border border-white/20">
+                Rp 3.300.000,-
+              </div>
+              <p className="text-xs text-white/80 mt-2 font-medium">
+                Biaya sudah termasuk (Include):
+              </p>
+            </div>
+            <div className="divide-y divide-white/15 flex-1">
+              {investment.map((item, index) => (
+                <div
+                  key={item}
+                  className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-3.5"
+                >
+                  <span className="shrink-0 font-mono text-xs font-bold text-white bg-white/20 px-2.5 py-1 rounded-lg tracking-wider select-none mt-0.5">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="font-medium text-white/95 text-xs sm:text-sm md:text-base leading-relaxed">
+                    {item}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Administrasi */}
-          <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-5 sm:p-7 shadow-lg border border-white/25 relative z-10">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-5 text-center flex items-center justify-center gap-2">
-              Persyaratan Administrasi
-            </h3>
-            <div className="divide-y divide-white/15">
+          <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-5 sm:p-7 shadow-lg border border-white/25 relative z-10 flex flex-col">
+            <div className="text-center mb-5 pb-1">
+              <h3 className="text-lg sm:text-xl font-bold text-white">
+                Persyaratan Administrasi
+              </h3>
+              <div className="mt-2 inline-block text-white/90 font-semibold text-xs sm:text-sm px-3 py-1.5 rounded-xl">
+                Kelengkapan Berkas
+              </div>
+              <p className="text-xs text-white/80 mt-1 font-medium">
+                Dokumen yang perlu disiapkan:
+              </p>
+            </div>
+            <div className="divide-y divide-white/15 flex-1">
               {administrative.map((item, index) => (
                 <div
                   key={item}
-                  className="py-3.5 first:pt-0 last:pb-0 flex items-center gap-3.5"
+                  className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-3.5"
                 >
-                  <span className="shrink-0 font-mono text-xs font-bold text-white bg-white/20 px-2.5 py-1 rounded-lg tracking-wider select-none">
+                  <span className="shrink-0 font-mono text-xs font-bold text-white bg-white/20 px-2.5 py-1 rounded-lg tracking-wider select-none mt-0.5">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <span className="font-medium text-white/95 text-xs sm:text-sm md:text-base">
+                  <span className="font-medium text-white/95 text-xs sm:text-sm md:text-base leading-relaxed">
                     {item}
                   </span>
                 </div>
@@ -74,20 +120,28 @@ const RegistrationRequirements: React.FC = () => {
           </div>
 
           {/* Non Administrasi */}
-          <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-5 sm:p-7 shadow-lg border border-white/25 relative z-10">
-            <h3 className="text-lg sm:text-xl font-bold text-white mb-5 text-center flex items-center justify-center gap-2">
-              Kriteria Kesiapan Siswa
-            </h3>
-            <div className="divide-y divide-white/15">
+          <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-5 sm:p-7 shadow-lg border border-white/25 relative z-10 flex flex-col">
+            <div className="text-center mb-5 pb-1">
+              <h3 className="text-lg sm:text-xl font-bold text-white">
+                Kriteria Kesiapan Siswa
+              </h3>
+              <div className="mt-2 inline-block text-white/90 font-semibold text-xs sm:text-sm px-3 py-1.5 rounded-xl">
+                Kesiapan Calon Siswa
+              </div>
+              <p className="text-xs text-white/80 mt-1 font-medium">
+                Kemandirian & perkembangan anak:
+              </p>
+            </div>
+            <div className="divide-y divide-white/15 flex-1">
               {nonAdministrative.map((item, index) => (
                 <div
                   key={item}
-                  className="py-3.5 first:pt-0 last:pb-0 flex items-center gap-3.5"
+                  className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-3.5"
                 >
-                  <span className="shrink-0 font-mono text-xs font-bold text-white bg-white/20 px-2.5 py-1 rounded-lg tracking-wider select-none">
+                  <span className="shrink-0 font-mono text-xs font-bold text-white bg-white/20 px-2.5 py-1 rounded-lg tracking-wider select-none mt-0.5">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <span className="font-medium text-white/95 text-xs sm:text-sm md:text-base">
+                  <span className="font-medium text-white/95 text-xs sm:text-sm md:text-base leading-relaxed">
                     {item}
                   </span>
                 </div>

@@ -8,7 +8,7 @@ const NAV_LINKS = [
   { label: 'Dokumentasi', href: '#dokumentasi' },
   { label: 'Standar Kelulusan', href: '#standar-kelulusan' },
   { label: 'Program', href: '#program' },
-  { label: 'Syarat', href: '#syarat' },
+  { label: 'Biaya & Syarat', href: '#syarat' },
   { label: 'Lokasi', href: '#lokasi' },
 ];
 
