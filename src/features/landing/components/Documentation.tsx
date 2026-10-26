@@ -1,88 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "@/components/ui/carousel";
 
-interface MediaItem {
-  id: number;
-  type: "foto" | "video";
-  title: string;
-  image: string;
-  video?: string;
-}
-
-const mediaItems: MediaItem[] = [
-  { id: 1, type: "foto", title: "", image: "/kegiatan-1.jpg" },
-  { id: 2, type: "foto", title: "", image: "/kegiatan-2.jpg" },
-  { id: 3, type: "foto", title: "", image: "/kegiatan-3.jpg" },
-  { id: 4, type: "foto", title: "", image: "/kegiatan-4.jpg" },
-  { id: 5, type: "foto", title: "", image: "/kegiatan-5.jpg" },
-  { id: 6, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-6.jpg" },
-  { id: 7, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-7.jpg" },
-  { id: 8, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-8.jpg" },
-  { id: 9, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-9.jpg" },
-  { id: 10, type: "foto", title: "Aktivitas Kelas", image: "/kegiatan-10.jpg" },
-  {
-    id: 11,
-    type: "foto",
-    title: "Ruangan Belajar Nyaman",
-    image: "/kelas.jpg",
-  },
-  {
-    id: 12,
-    type: "foto",
-    title: "Kitab Belajar Membaca",
-    image: "/kegiatan-11.jpg",
-  },
-  {
-    id: 13,
-    type: "foto",
-    title: "Kitab Metode Aisar",
-    image: "/kegiatan-12.jpg",
-  },
-  {
-    id: 14,
-    type: "foto",
-    title: "Kitab Ilmu Al-Qur'an",
-    image: "/kegiatan-13.jpg",
-  },
+const IMAGES: string[] = [
+  "/kegiatan-1.jpg",
+  "/kegiatan-2.jpg",
+  "/kegiatan-3.jpg",
+  "/kegiatan-4.jpg",
+  "/kegiatan-5.jpg",
+  "/kegiatan-6.jpg",
+  "/kegiatan-7.jpg",
+  "/kegiatan-8.jpg",
+  "/kegiatan-9.jpg",
+  "/kegiatan-10.jpg",
+  "/kelas.jpg",
+  "/kegiatan-11.jpg",
+  "/kegiatan-12.jpg",
+  "/kegiatan-13.jpg",
+  "/WhatsApp Image 2026-10-25 at 15.54.27.jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.56.09.jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.56.33.jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.57.22 (1).jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.57.22.jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.57.23 (1).jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.57.23.jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.57.24.jpeg",
+  "/WhatsApp Image 2026-10-25 at 15.58.03.jpeg",
+  "/WhatsApp Image 2026-10-25 at 16.03.20.jpeg",
+  "/WhatsApp Image 2026-10-25 at 16.03.21 (1).jpeg",
+  "/WhatsApp Image 2026-10-25 at 16.03.21.jpeg",
+  "/WhatsApp Image 2026-10-25 at 16.24.09.jpeg",
+  "/WhatsApp Image 2026-10-25 at 16.24.10.jpeg",
+  "/WhatsApp Image 2026-10-25 at 16.24.11.jpeg",
+  "/WhatsApp Image 2026-10-25 at 17.34.49.jpeg",
+  "/WhatsApp Image 2026-10-25 at 17.34.50 (1).jpeg",
+  "/WhatsApp Image 2026-10-25 at 17.34.50.jpeg",
 ];
 
+// Indeks foto yang dijadikan ukuran besar (2x2) agar membentuk Featured Image Grid yang rata tanpa celah kosong
+const FEATURED_INDICES = new Set([0, 11, 18, 29]);
+const INITIAL_COUNT = 9; // 1 foto (2x2) + 8 foto (1x1) = 12 sel (pas 3 baris di 4 kolom / 6 baris di 2 kolom)
+
 const Documentation: React.FC = () => {
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [showAll, setShowAll] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    if (!api) return;
+  const visibleImages = showAll ? IMAGES : IMAGES.slice(0, INITIAL_COUNT);
 
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap());
-
-    const onSelect = () => {
-      setCurrent(api.selectedScrollSnap());
-    };
-
-    api.on("select", onSelect);
-    api.on("reInit", onSelect);
-
-    return () => {
-      api.off("select", onSelect);
-      api.off("reInit", onSelect);
-    };
-  }, [api]);
-
-  const handleMediaClick = (item: MediaItem) => {
-    if (item.type === "video" && item.video) {
-      window.open(item.video, "_blank");
+  const handleToggleShowAll = () => {
+    if (showAll) {
+      setShowAll(false);
+      requestAnimationFrame(() => {
+        toggleButtonRef.current?.scrollIntoView({
+          // behavior: "smooth",
+          block: "center",
+        });
+      });
+    } else {
+      setShowAll(true);
     }
+  };
+
+  const showPrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLightboxIndex((prev) =>
+      prev !== null ? (prev - 1 + IMAGES.length) % IMAGES.length : null,
+    );
+  };
+
+  const showNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setLightboxIndex((prev) =>
+      prev !== null ? (prev + 1) % IMAGES.length : null,
+    );
   };
 
   return (
@@ -90,9 +81,9 @@ const Documentation: React.FC = () => {
       id="dokumentasi"
       className="bg-white py-14 sm:py-18 md:py-20 scroll-mt-20"
     >
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
             Dokumentasi Kegiatan & Fasilitas
           </h2>
@@ -102,81 +93,94 @@ const Documentation: React.FC = () => {
           </p>
         </div>
 
-        <div className="relative px-2 sm:px-12">
-          <Carousel
-            setApi={setApi}
-            opts={{
-              align: "start",
-            }}
-            className="w-full"
-          >
-            <CarouselContent>
-              {mediaItems.map((item, index) => (
-                <CarouselItem
-                  key={item.id || index}
-                  className="basis-1/2 md:basis-1/3 lg:basis-1/4"
-                >
-                  <div className="p-1 h-full">
-                    <Card
-                      className="group/card relative aspect-square sm:aspect-auto sm:h-64 w-full overflow-hidden rounded-2xl border border-gray-100 p-0 gap-0 shadow-sm hover:shadow-md transition-shadow"
-                      onClick={() => handleMediaClick(item)}
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.title.trim() || `Dokumentasi ${index + 1}`}
-                        className="absolute inset-0 size-full scale-100 object-cover transition-transform duration-500 ease-in-out group-hover/card:scale-105"
-                      />
+        {/* Seamless Featured Image Grid (Tanpa Gap & Tanpa Border Radius) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 grid-flow-dense gap-0">
+          {visibleImages.map((src, index) => {
+            const isFeatured = FEATURED_INDICES.has(index);
+            const isRightFeatured = index === 11 || index === 29;
 
-                      {/* Video Indicator */}
-                      {item.type === "video" && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 z-10">
-                          <div className="rounded-full bg-[var(--color-primary)] p-3 transition-transform duration-300 group-hover/card:scale-110">
-                            <span className="text-xl text-white">▶</span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Background fade effects */}
-                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
-
-                      {/* Content */}
-                      <div className="absolute inset-0 top-auto flex flex-col justify-end bg-black/20 p-3 sm:p-4">
-                        <h3 className="text-xs sm:text-base font-bold text-white truncate">
-                          {item.title.trim()}
-                        </h3>
-                        <p className="text-[10px] sm:text-xs text-white/80">
-                          {item.type === "foto"
-                            ? "Dokumentasi Kegiatan"
-                            : "Video Dokumentasi"}
-                        </p>
-                      </div>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden sm:inline-flex -left-6 lg:-left-12" />
-            <CarouselNext className="hidden sm:inline-flex -right-6 lg:-right-12" />
-
-            {/* Dots Navigation */}
-            <div className="flex flex-wrap justify-center gap-2 py-3 mt-4">
-              {Array.from({ length: count }).map((_, index) => (
-                <button
-                  key={index}
-                  className={cn(
-                    "h-2 cursor-pointer rounded-full transition-all duration-300 ease-in-out",
-                    index === current
-                      ? "bg-[var(--color-primary)] w-5 opacity-100"
-                      : "bg-gray-300 w-2 opacity-50 hover:opacity-80",
-                  )}
-                  onClick={() => api?.scrollTo(index)}
-                  aria-label={`Ke slide ${index + 1}`}
+            return (
+              <button
+                key={src}
+                type="button"
+                onClick={() => setLightboxIndex(index)}
+                aria-label={`Lihat dokumentasi ${index + 1}`}
+                className={cn(
+                  "relative aspect-square w-full overflow-hidden rounded-none bg-slate-100 p-0 border-0 focus:outline-none cursor-pointer",
+                  isFeatured && "col-span-2 row-span-2",
+                  isRightFeatured && "md:col-start-3",
+                )}
+              >
+                <img
+                  src={src}
+                  alt={`Dokumentasi TAUD SaQu Abu Ayyub ${index + 1}`}
+                  loading={index < INITIAL_COUNT ? "eager" : "lazy"}
+                  decoding="async"
+                  className="size-full object-cover"
                 />
-              ))}
-            </div>
-          </Carousel>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Toggle Show More / Less */}
+        <div className="mt-8 text-center">
+          <button
+            ref={toggleButtonRef}
+            type="button"
+            onClick={handleToggleShowAll}
+            className="inline-flex items-center justify-center border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 px-6 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
+          >
+            {showAll
+              ? "Tampilkan Lebih Sedikit"
+              : `Lihat Semua Foto (${IMAGES.length})`}
+          </button>
         </div>
       </div>
+
+      {/* Minimalist Lightbox Modal */}
+      {lightboxIndex !== null && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setLightboxIndex(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+        >
+          <button
+            type="button"
+            onClick={() => setLightboxIndex(null)}
+            aria-label="Tutup pratinjau"
+            className="absolute top-4 right-4 text-white/80 hover:text-white p-2 cursor-pointer"
+          >
+            <X className="w-7 h-7" />
+          </button>
+
+          <button
+            type="button"
+            onClick={showPrev}
+            aria-label="Foto sebelumnya"
+            className="absolute left-2 sm:left-6 text-white/80 hover:text-white p-2 bg-black/40 hover:bg-black/60 cursor-pointer"
+          >
+            <ChevronLeft className="w-7 h-7" />
+          </button>
+
+          <img
+            src={IMAGES[lightboxIndex]}
+            alt={`Dokumentasi ${lightboxIndex + 1}`}
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[88vh] max-w-[90vw] object-contain select-none"
+          />
+
+          <button
+            type="button"
+            onClick={showNext}
+            aria-label="Foto selanjutnya"
+            className="absolute right-2 sm:right-6 text-white/80 hover:text-white p-2 bg-black/40 hover:bg-black/60 cursor-pointer"
+          >
+            <ChevronRight className="w-7 h-7" />
+          </button>
+        </div>
+      )}
     </section>
   );
 };
