@@ -20,7 +20,11 @@ import { Label } from "@/components/ui/label";
 import { PaymentProofUpload } from "../components/PaymentProofUpload";
 import { submitPaymentProof, DEFAULT_BANK_INFO } from "../services/payment";
 import { ADMIN_CONTACTS } from "@/config/schoolInfo";
-import { saveSessionCredentials, getSessionCredentials } from "@/lib/sessionCredentials";
+import {
+  saveSessionCredentials,
+  getSessionCredentials,
+  clearSessionCredentials,
+} from "@/lib/sessionCredentials";
 
 export const PaymentPage: React.FC = () => {
   const { registrationNumber: paramRegNumber } = useParams<{ registrationNumber?: string }>();
@@ -153,6 +157,14 @@ export const PaymentPage: React.FC = () => {
           : "Terjadi kesalahan saat mengunggah bukti pembayaran. Silakan coba lagi.";
       setErrorMessage(msg);
       toast.error(msg);
+
+      if (
+        msg.toLowerCase().includes("tidak ditemukan") ||
+        msg.toLowerCase().includes("tidak sesuai") ||
+        msg.toLowerCase().includes("tidak valid")
+      ) {
+        clearSessionCredentials(cleanReg);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -237,9 +249,20 @@ export const PaymentPage: React.FC = () => {
             {/* 3. Form input & Upload bukti transfer */}
             <form onSubmit={handleSubmit} className="space-y-4">
               {errorMessage && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
-                  <div>{errorMessage}</div>
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 space-y-1.5">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <div>{errorMessage}</div>
+                  </div>
+                  <div className="pt-1 border-t border-red-200/60">
+                    <Link
+                      to="/daftar"
+                      onClick={() => clearSessionCredentials()}
+                      className="text-[11px] font-medium text-emerald-800 underline hover:text-emerald-950 block"
+                    >
+                      Pendaftaran telah dibatalkan / dihapus? Buat pendaftaran baru &rarr;
+                    </Link>
+                  </div>
                 </div>
               )}
 

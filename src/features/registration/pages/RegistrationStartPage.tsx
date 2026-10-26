@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +25,7 @@ import {
   getSessionCredentials,
   clearSessionCredentials,
 } from "@/lib/sessionCredentials";
+import { verifyRegistrationAccess } from "@/lib/api/status";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,8 +51,37 @@ export const RegistrationStartPage: React.FC = () => {
   const [activeSession, setActiveSession] = useState(() =>
     getSessionCredentials(),
   );
+  const [isValidatingSession, setIsValidatingSession] = useState(Boolean(activeSession));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Validate active session against server in case it was deleted by an admin
+  useEffect(() => {
+    if (!activeSession) return;
+    let isMounted = true;
+
+    verifyRegistrationAccess({
+      registrationNumber: activeSession.registrationNumber,
+      accessCode: activeSession.accessCode,
+    })
+      .then(() => {
+        if (isMounted) setIsValidatingSession(false);
+      })
+      .catch(() => {
+        if (isMounted) {
+          clearSessionCredentials(activeSession.registrationNumber);
+          setActiveSession(null);
+          setIsValidatingSession(false);
+          toast.info(
+            "Pendaftaran sebelumnya tidak ditemukan atau telah dihapus oleh pihak sekolah. Silakan lakukan pendaftaran baru.",
+          );
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const form = useForm<InitialRegistrationInput>({
     resolver: zodResolver(initialRegistrationSchema),
@@ -97,7 +127,7 @@ export const RegistrationStartPage: React.FC = () => {
   };
 
   const handleStartNewForAnotherChild = () => {
-    clearSessionCredentials();
+    clearSessionCredentials(activeSession?.registrationNumber);
     setActiveSession(null);
   };
 
@@ -115,7 +145,14 @@ export const RegistrationStartPage: React.FC = () => {
         </CardHeader>
 
         <CardContent>
-          {activeSession ? (
+          {isValidatingSession ? (
+            <div className="py-10 flex flex-col items-center justify-center text-center space-y-3">
+              <Loader2 className="w-6 h-6 animate-spin text-[var(--color-primary)]" />
+              <p className="text-xs text-slate-500">
+                Memeriksa status pendaftaran aktif di perangkat ini...
+              </p>
+            </div>
+          ) : activeSession ? (
             <div className="space-y-4">
               <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 space-y-2.5 text-sm">
                 <p className="font-semibold text-emerald-950">
@@ -183,7 +220,7 @@ export const RegistrationStartPage: React.FC = () => {
                     className="text-xs text-slate-500 hover:text-slate-800"
                   >
                     <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
-                    Daftar Calon Siswa Baru (Anak Lain)
+                    Daftar Calon Siswa Baru / Reset Sesi Ini
                   </Button>
                 </div>
               </div>

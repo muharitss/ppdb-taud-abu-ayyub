@@ -83,6 +83,8 @@ export const FullFormPage: React.FC = () => {
       const msg = err instanceof Error ? err.message : "Gagal memverifikasi akses formulir";
       setAuthError(msg);
       toast.error(msg);
+      // Purge invalid session and local drafts if registration was deleted or does not match
+      clearSessionCredentials(reg);
     } finally {
       setIsLoading(false);
     }
@@ -238,9 +240,28 @@ export const FullFormPage: React.FC = () => {
                   />
                 </div>
                 {authError && (
-                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 shrink-0" />
-                    <span>{authError}</span>
+                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0" />
+                      <span>{authError}</span>
+                    </div>
+                    <div className="pt-1 border-t border-destructive/20 flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center">
+                      <span className="text-[11px] text-muted-foreground">
+                        Pendaftaran telah dihapus atau dibatalkan?
+                      </span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          clearSessionCredentials();
+                          navigate("/daftar");
+                        }}
+                        className="text-xs h-7 px-2.5 border-destructive/30 text-destructive hover:bg-destructive/10"
+                      >
+                        Mulai Pendaftaran Baru
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>

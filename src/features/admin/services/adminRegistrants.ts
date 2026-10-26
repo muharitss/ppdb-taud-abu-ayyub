@@ -91,6 +91,19 @@ export async function getRegistrants({
 }
 
 export async function deleteRegistrant(id: string): Promise<void> {
+  // Fetch details before deletion so audit trail maintains human-readable context
+  let registrantInfo: { registration_number?: string; child_name?: string } | null = null;
+  try {
+    const { data } = await supabase
+      .from('registrations')
+      .select('registration_number, child_name')
+      .eq('id', id)
+      .maybeSingle();
+    registrantInfo = data;
+  } catch {
+    // Non-blocking metadata pre-fetch
+  }
+
   const { error } = await supabase.from('registrations').delete().eq('id', id);
 
   if (error) {
@@ -106,6 +119,12 @@ export async function deleteRegistrant(id: string): Promise<void> {
       action: 'registrant_deleted',
       entity_type: 'registration',
       entity_id: id,
+      metadata: registrantInfo
+        ? {
+            registration_number: registrantInfo.registration_number,
+            child_name: registrantInfo.child_name,
+          }
+        : null,
     });
   } catch {
     // Audit logging is non-blocking on frontend client

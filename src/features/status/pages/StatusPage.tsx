@@ -86,6 +86,15 @@ export const StatusPage: React.FC = () => {
       setErrorMessage(msg);
       toast.error(msg);
       setStatusData(null);
+
+      // If credentials failed and matched active session, clear the stale localStorage
+      const currentSession = getSessionCredentials();
+      if (
+        currentSession &&
+        currentSession.registrationNumber.toUpperCase() === cleanReg
+      ) {
+        clearSessionCredentials(cleanReg);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -215,9 +224,27 @@ export const StatusPage: React.FC = () => {
                 </div>
 
                 {errorMessage && (
-                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 shrink-0" />
-                    <span>{errorMessage}</span>
+                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0" />
+                      <span>{errorMessage}</span>
+                    </div>
+                    <div className="pt-1 border-t border-destructive/20 flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center">
+                      <span className="text-[11px] text-muted-foreground">
+                        Pendaftaran telah dihapus pihak sekolah?
+                      </span>
+                      <Button
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="text-xs h-7 px-2.5 border-destructive/30 text-destructive hover:bg-destructive/10"
+                        onClick={() => clearSessionCredentials()}
+                      >
+                        <Link to="/daftar">
+                          Mulai Pendaftaran Baru
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>

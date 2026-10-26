@@ -30,9 +30,9 @@ export async function fetchFormDetails(
     }
   );
 
-  const res = data as unknown as FormGetResult | null;
-  if (error || !res) {
-    throw new Error(error?.message || "Gagal mengambil data formulir");
+  const res = data as unknown as (FormGetResult & { success?: boolean; error?: string }) | null;
+  if (error || !res || res.success === false) {
+    throw new Error(res?.error || error?.message || "Nomor pendaftaran atau kode akses tidak valid");
   }
 
   return res;

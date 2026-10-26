@@ -72,11 +72,32 @@ export function getSessionCredentials(): SessionCredentials | null {
   return null;
 }
 
-export function clearSessionCredentials(): void {
+export function clearSessionCredentials(registrationNumber?: string): void {
   if (typeof window === "undefined") return;
   try {
+    const current = getSessionCredentials();
+    const cleanReg = (registrationNumber || current?.registrationNumber)?.trim().toUpperCase();
+
     window.localStorage?.removeItem(STORAGE_KEY);
     window.sessionStorage?.removeItem(STORAGE_KEY);
+
+    if (cleanReg) {
+      clearLocalFormDraft(cleanReg);
+    }
+
+    // Also remove draft keys matching the registration or all if no active registration
+    if (window.localStorage) {
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i);
+        if (key && key.startsWith(DRAFT_PREFIX)) {
+          if (!cleanReg || key === `${DRAFT_PREFIX}${cleanReg}`) {
+            keysToRemove.push(key);
+          }
+        }
+      }
+      keysToRemove.forEach((k) => window.localStorage.removeItem(k));
+    }
   } catch {
     // Ignore errors
   }
