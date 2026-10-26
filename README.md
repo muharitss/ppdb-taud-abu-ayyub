@@ -1,100 +1,85 @@
-# 🏫 Website PPDB TAUD SaQu Abu Ayyub
+# PPDB TAUD SaQu Abu Ayyub
 
-Website resmi Penerimaan Peserta Didik Baru (PPDB) TAUD SaQu Abu Ayyub Tahun Pelajaran 2027-2028. Dibangun dengan teknologi modern untuk memberikan pengalaman terbaik bagi calon orang tua siswa.
+Sistem Penerimaan Peserta Didik Baru (PPDB) online untuk TAUD SaQu Abu Ayyub. Mencakup landing page profil sekolah, alur pendaftaran santri baru bertahap, konfirmasi pembayaran, upload berkas, pelacakan status, dan dashboard admin untuk verifikasi.
 
-## ✨ Fitur Utama
+## Fitur Utama
 
-- ✅ **Landing Page Responsif** - Tampil optimal di semua device
-- ✅ **Formulir Pendaftaran Online** - Terintegrasi dengan Google Form
-- ✅ **Galeri Dokumentasi** - Foto & video kegiatan sekolah
-- ✅ **Informasi Lengkap** - Visi, misi, program, dan syarat pendaftaran
-- ✅ **Integrasi WhatsApp** - Langsung terhubung dengan admin
-- ✅ **Peta Lokasi** - Google Maps embed
-- ✅ **Design Islami** - Nuansa Islamic dengan ornamen geometris
+- **Landing Page**: Profil sekolah, standar kelulusan, program kegiatan, dan kontak.
+- **Pendaftaran Online**: Alur bertahap (input data awal, formulir santri & wali santri).
+- **Pembayaran & Berkas**: Upload bukti transfer serta dokumen pendaftaran (KK & Akta Kelahiran via Cloudinary).
+- **Cek Status Pendaftaran**: Fitur pelacakan status seleksi secara mandiri bagi wali santri.
+- **Admin Dashboard**: Manajemen pendaftar, verifikasi pembayaran, dan validasi dokumen.
 
-## 🛠️ Teknologi yang Digunakan
+## Tech Stack
 
-- **Frontend Framework:** React 18 + TypeScript
-- **Build Tool:** Vite
-- **Styling:** Tailwind CSS v4
-- **UI Components:** shadcn/ui
-- **Font:** Inter & Amiri (Arabic)
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, shadcn/ui, React Router
+- **Backend & Database**: Supabase (Auth/API), PostgreSQL, Prisma ORM
+- **Storage**: Cloudinary (dokumen & bukti bayar)
 
-## 🎨 Color Palette
+## Struktur Folder
 
-| Warna | Kode | Penggunaan |
-|-------|------|------------|
-| Primary Orange | `#EF7722` | Header, tombol utama, aksen |
-| Secondary Orange | `#FAA533` | Gradient, hover states |
-| Light Gray | `#EBEBEB` | Background, card |
-| Accent Blue | `#0BA6DF` | Tombol sekunder, links |
-
-## 📁 Struktur Project
-
-```
-ppdb-taud-saqu/
-├── public/
-│   ├── images/
-│   │   ├── kegiatan-1.jpg sampai kegiatan-10.jpg
-│   │   ├── anak-anak.png
-│   │   └── ornamen.png
-│   ├── videos/
-│   │   ├── video-1.mp4 sampai video-3.mp4
-│   └── logo.png
-├── src/
-│   ├── components/
-│   │   ├── Navbar.tsx
-│   │   ├── Hero.tsx
-│   │   ├── Documentation.tsx
-│   │   ├── GraduateStandards.tsx
-│   │   ├── About.tsx
-│   │   ├── VisionMission.tsx
-│   │   ├── Programs.tsx
-│   │   ├── RegistrationRequirements.tsx
-│   │   ├── ContactInfo.tsx
-│   │   ├── Location.tsx
-│   │   ├── Footer.tsx
-│   │   └── DeveloperCredit.tsx
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css
+```text
+├── prisma/             # Skema database & migrasi
+├── public/             # Aset statis (gambar, logo, media)
+└── src/
+    ├── app/            # Routing & app providers
+    ├── components/     # Komponen UI bersama (shadcn/ui)
+    ├── features/       # Modul fitur aplikasi
+    │   ├── admin/      # Dashboard manajemen & verifikasi
+    │   ├── landing/    # Halaman utama informasi sekolah
+    │   ├── registration/ # Alur & formulir pendaftaran
+    │   ├── payments/   # Konfirmasi & bukti pembayaran
+    │   ├── documents/  # Penanganan upload dokumen
+    │   └── status/     # Halaman pelacakan status
+    └── lib/            # Inisialisasi Supabase, Cloudinary, & utilitas
 ```
 
-## 🚀 Instalasi & Menjalankan
+## Setup & Menjalankan Proyek
 
-### Prerequisites
-- Node.js 18+ 
-- npm 
+### 1. Prasyarat
+- Node.js 18+
+- Database PostgreSQL (atau project Supabase)
+- Akun Cloudinary (untuk upload berkas)
 
-### Langkah-langkah
+### 2. Instalasi
 ```bash
-# Clone repository
 git clone https://github.com/muharitss/ppdb-taud-abu-ayyub.git
 cd ppdb-taud-abu-ayyub
-
-# Install dependencies
 npm install
-
-# Jalankan development server
-npm run dev
-
-# Build untuk production
-npm run build
-
-# Preview production build
-npm run preview
 ```
 
-## 📱 Sections Website
+### 3. Konfigurasi Environment
+Salin file `.env.example` menjadi `.env` lalu lengkapi nilainya:
+```bash
+cp .env.example .env
+```
 
-1. **Navbar** - Logo & CTA Daftar Sekarang
-2. **Hero Section** - Header utama dengan gradient & ornamen islami
-3. **Dokumentasi** - Galeri foto & video kegiatan
-4. **Standar Kelulusan** - Output yang diharapkan
-5. **Tentang Sekolah** - Profil singkat TAUD SaQu
-6. **Visi & Misi** - Tujuan dan nilai sekolah
-7. **Program Kegiatan** - Kurikulum dan aktivitas
-8. **Syarat Pendaftaran** - Requirements administrasi & non-administrasi
-9. **Kontak & Informasi** - WhatsApp admin & formulir online
-10. **Lokasi** - Google Maps embed
-11. **Footer** - Info lengkap & credit developer
+Variabel yang dibutuhkan:
+- Supabase: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+- Database: `DATABASE_URL` (koneksi PostgreSQL / pooler Supabase)
+- Cloudinary: `CLOUDINARY_URL`, `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_API_KEY`, `VITE_CLOUDINARY_API_SECRET`
+
+### 4. Database Setup
+```bash
+# Generate client Prisma
+npm run db:generate
+
+# Jalankan migrasi schema
+npm run db:migrate
+```
+
+### 5. Jalankan Development Server
+```bash
+npm run dev
+```
+Akses aplikasi melalui `http://localhost:5173`.
+
+## Script Penting
+
+| Script | Deskripsi |
+|---|---|
+| `npm run dev` | Menjalankan development server Vite |
+| `npm run build` | Generate Prisma client, cek TypeScript, & build production |
+| `npm run preview` | Menjalankan preview lokal dari hasil build |
+| `npm run db:studio` | Membuka GUI Prisma Studio di browser |
+| `npm run db:migrate` | Menjalankan migrasi database di lingkungan dev |
