@@ -75,7 +75,7 @@ export const StatusPage: React.FC = () => {
         registrationNumber: cleanReg,
         accessCode: cleanCode,
       });
-      saveSessionCredentials(cleanReg, cleanCode);
+      saveSessionCredentials(cleanReg, cleanCode, undefined, res.payment_status);
       setStatusData(res);
       toast.success("Status pendaftaran berhasil ditemukan!");
     } catch (err) {

@@ -1,13 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getSessionCredentials } from "@/lib/sessionCredentials";
+import { getSessionCredentials, getResumeUrl } from "@/lib/sessionCredentials";
 
 const RegistrationRequirements: React.FC = () => {
   const sessionCreds = getSessionCredentials();
 
-  const ctaLink = sessionCreds
-    ? `/daftar/formulir/${encodeURIComponent(sessionCreds.registrationNumber)}`
-    : "/daftar";
+  const ctaLink = sessionCreds ? getResumeUrl(sessionCreds) : "/daftar";
   const ctaText = sessionCreds ? "Lanjutkan Pendaftaran" : "Daftar Sekarang";
 
   const investment = [

@@ -63,7 +63,7 @@ export const FullFormPage: React.FC = () => {
       setIsLoading(true);
       setAuthError(null);
       const res = await fetchFormDetails(reg, code);
-      saveSessionCredentials(reg, code, res.form_data?.child?.full_name);
+      saveSessionCredentials(reg, code, res.form_data?.child?.full_name, res.payment_status);
 
       if (res.payment_status === "payment_pending" || res.payment_status === "payment_rejected") {
         navigate(`/bayar/${encodeURIComponent(res.registration_number)}`, {
@@ -113,11 +113,28 @@ export const FullFormPage: React.FC = () => {
   };
 
   useEffect(() => {
+    // If local session already indicates payment is pending or rejected, redirect immediately without waiting
+    if (
+      sessionCreds &&
+      (!initialRegNumber || sessionCreds.registrationNumber === initialRegNumber.toUpperCase()) &&
+      (sessionCreds.paymentStatus === "payment_pending" || sessionCreds.paymentStatus === "payment_rejected")
+    ) {
+      navigate(`/bayar/${encodeURIComponent(sessionCreds.registrationNumber)}`, {
+        replace: true,
+        state: {
+          registrationNumber: sessionCreds.registrationNumber,
+          accessCode: sessionCreds.accessCode,
+          childName: sessionCreds.childName,
+        },
+      });
+      return;
+    }
+
     if (!hasAutoLoadedRef.current && initialRegNumber && initialAccessCode) {
       hasAutoLoadedRef.current = true;
       loadData(initialRegNumber, initialAccessCode);
     }
-  }, [initialRegNumber, initialAccessCode, loadData]);
+  }, [initialRegNumber, initialAccessCode, loadData, sessionCreds, navigate]);
 
   const handleCredentialSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { getSessionCredentials } from '@/lib/sessionCredentials';
+import { getSessionCredentials, getResumeUrl } from '@/lib/sessionCredentials';
 
 const NAV_LINKS = [
   { label: 'Tentang', href: '#tentang' },
@@ -16,9 +16,7 @@ const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const sessionCreds = getSessionCredentials();
 
-  const ctaLink = sessionCreds
-    ? `/daftar/formulir/${encodeURIComponent(sessionCreds.registrationNumber)}`
-    : '/daftar';
+  const ctaLink = sessionCreds ? getResumeUrl(sessionCreds) : '/daftar';
 
   const ctaText = sessionCreds ? 'Lanjutkan Pendaftaran' : 'Daftar Sekarang';
 

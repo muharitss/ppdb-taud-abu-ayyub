@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import {
   Copy,
@@ -48,6 +48,18 @@ export const PaymentPage: React.FC = () => {
       : "");
 
   const hasAutoCredentials = Boolean(initialRegNumber && initialAccessCode);
+
+  useEffect(() => {
+    if (
+      sessionCreds &&
+      (!paramRegNumber || sessionCreds.registrationNumber === paramRegNumber.toUpperCase()) &&
+      (sessionCreds.paymentStatus === "payment_submitted" || sessionCreds.paymentStatus === "payment_verified")
+    ) {
+      navigate(`/daftar/formulir/${encodeURIComponent(sessionCreds.registrationNumber)}`, {
+        replace: true,
+      });
+    }
+  }, [paramRegNumber, sessionCreds, navigate]);
 
   const [registrationNumber, setRegistrationNumber] = useState(initialRegNumber);
   const [accessCode, setAccessCode] = useState(initialAccessCode);
@@ -139,10 +151,11 @@ export const PaymentPage: React.FC = () => {
       saveSessionCredentials(
         cleanReg,
         cleanCode,
-        locationState?.childName || sessionCreds?.childName
+        locationState?.childName || sessionCreds?.childName,
+        "payment_submitted"
       );
       toast.success("Bukti pembayaran berhasil diunggah! Silakan lengkapi formulir pendaftaran.");
-      navigate("/daftar/formulir", {
+      navigate(`/daftar/formulir/${encodeURIComponent(cleanReg)}`, {
         replace: true,
         state: {
           registrationNumber: cleanReg,

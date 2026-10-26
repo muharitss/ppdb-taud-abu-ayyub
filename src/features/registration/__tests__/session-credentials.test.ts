@@ -36,6 +36,7 @@ import {
   saveLocalFormDraft,
   getLocalFormDraft,
   clearLocalFormDraft,
+  getResumeUrl,
 } from "../../../lib/sessionCredentials.ts";
 
 console.log("Running sessionCredentials & localFormDraft tests...");
@@ -53,7 +54,17 @@ assert(creds.childName === "Fatih", "Child name should be preserved");
 saveSessionCredentials("PPDB-2027-0001", "ABCD1234");
 assert(getSessionCredentials()?.childName === "Fatih", "Child name should be retained on re-save");
 
-// 3. Local form draft is isolated per registrationNumber and survives tab close
+// 3. Payment status tracking and getResumeUrl resolution
+saveSessionCredentials("PPDB-2027-0001", "ABCD1234", "Fatih", "payment_pending");
+assert(getSessionCredentials()?.paymentStatus === "payment_pending", "Payment status should be payment_pending");
+assert(getResumeUrl(getSessionCredentials()) === "/bayar/PPDB-2027-0001", "Pending payment should resume to /bayar/:reg");
+assert(getResumeUrl(null) === "/daftar", "Null session should resume to /daftar");
+
+saveSessionCredentials("PPDB-2027-0001", "ABCD1234", "Fatih", "payment_submitted");
+assert(getSessionCredentials()?.paymentStatus === "payment_submitted", "Payment status should update to payment_submitted");
+assert(getResumeUrl(getSessionCredentials()) === "/daftar/formulir/PPDB-2027-0001", "Submitted payment should resume to /daftar/formulir/:reg");
+
+// 4. Local form draft is isolated per registrationNumber and survives tab close
 saveLocalFormDraft("PPDB-2027-0001", { child: { full_name: "Fatih", nickname: "Atih" } }, 2);
 saveLocalFormDraft("PPDB-2027-0002", { child: { full_name: "Aisyah" } }, 1);
 

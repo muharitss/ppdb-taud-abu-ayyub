@@ -11,6 +11,7 @@ export interface SessionCredentials {
   registrationNumber: string;
   accessCode: string;
   childName?: string;
+  paymentStatus?: string;
   timestamp: number;
 }
 
@@ -23,7 +24,8 @@ export interface LocalFormDraft<T = Record<string, unknown>> {
 export function saveSessionCredentials(
   registrationNumber: string,
   accessCode: string,
-  childName?: string
+  childName?: string,
+  paymentStatus?: string
 ): void {
   if (typeof window === "undefined") return;
   try {
@@ -32,14 +34,19 @@ export function saveSessionCredentials(
     if (!cleanReg || !cleanCode) return;
 
     const existing = getSessionCredentials();
+    const sameReg = existing?.registrationNumber === cleanReg;
     const resolvedChildName =
       childName?.trim() ||
-      (existing?.registrationNumber === cleanReg ? existing.childName : undefined);
+      (sameReg ? existing.childName : undefined);
+    const resolvedPaymentStatus =
+      paymentStatus ||
+      (sameReg ? existing.paymentStatus : undefined);
 
     const payload: SessionCredentials = {
       registrationNumber: cleanReg,
       accessCode: cleanCode,
       ...(resolvedChildName ? { childName: resolvedChildName } : {}),
+      ...(resolvedPaymentStatus ? { paymentStatus: resolvedPaymentStatus } : {}),
       timestamp: Date.now(),
     };
     const serialized = JSON.stringify(payload);
@@ -48,6 +55,14 @@ export function saveSessionCredentials(
   } catch {
     // Ignore storage quota or security errors
   }
+}
+
+export function getResumeUrl(creds: SessionCredentials | null): string {
+  if (!creds) return "/daftar";
+  if (creds.paymentStatus === "payment_submitted" || creds.paymentStatus === "payment_verified") {
+    return `/daftar/formulir/${encodeURIComponent(creds.registrationNumber)}`;
+  }
+  return `/bayar/${encodeURIComponent(creds.registrationNumber)}`;
 }
 
 export function getSessionCredentials(): SessionCredentials | null {

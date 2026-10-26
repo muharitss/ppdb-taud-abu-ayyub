@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getSessionCredentials } from "@/lib/sessionCredentials";
+import { getSessionCredentials, getResumeUrl } from "@/lib/sessionCredentials";
 
 const Hero: React.FC = () => {
   const sessionCreds = getSessionCredentials();
@@ -38,7 +38,7 @@ const Hero: React.FC = () => {
           {sessionCreds ? (
             <>
               <Link
-                to={`/daftar/formulir/${encodeURIComponent(sessionCreds.registrationNumber)}`}
+                to={getResumeUrl(sessionCreds)}
                 className="w-full sm:w-auto min-w-[200px] bg-white hover:bg-orange-50 text-[var(--color-primary)] px-6 py-3.5 rounded-full font-bold text-sm sm:text-base transition-all duration-300 text-center shadow-lg"
               >
                 Lanjutkan Pendaftaran

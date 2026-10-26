@@ -24,6 +24,7 @@ import {
   saveSessionCredentials,
   getSessionCredentials,
   clearSessionCredentials,
+  getResumeUrl,
 } from "@/lib/sessionCredentials";
 import { verifyRegistrationAccess } from "@/lib/api/status";
 
@@ -64,8 +65,17 @@ export const RegistrationStartPage: React.FC = () => {
       registrationNumber: activeSession.registrationNumber,
       accessCode: activeSession.accessCode,
     })
-      .then(() => {
-        if (isMounted) setIsValidatingSession(false);
+      .then((res) => {
+        if (isMounted) {
+          saveSessionCredentials(
+            activeSession.registrationNumber,
+            activeSession.accessCode,
+            activeSession.childName,
+            res.payment_status,
+          );
+          setActiveSession(getSessionCredentials());
+          setIsValidatingSession(false);
+        }
       })
       .catch(() => {
         if (isMounted) {
@@ -102,6 +112,7 @@ export const RegistrationStartPage: React.FC = () => {
         response.registration_number,
         response.access_code,
         values.child_name,
+        "payment_pending",
       );
       toast.success(
         "Pendaftaran awal berhasil! Silakan unggah bukti transfer.",
@@ -192,7 +203,7 @@ export const RegistrationStartPage: React.FC = () => {
                   className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/90 text-white font-semibold"
                 >
                   <Link
-                    to={`/daftar/formulir/${encodeURIComponent(activeSession.registrationNumber)}`}
+                    to={getResumeUrl(activeSession)}
                     state={{
                       registrationNumber: activeSession.registrationNumber,
                       accessCode: activeSession.accessCode,
