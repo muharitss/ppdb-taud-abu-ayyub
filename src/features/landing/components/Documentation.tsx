@@ -39,7 +39,7 @@ const IMAGES: string[] = [
 
 // Indeks foto yang dijadikan ukuran besar (2x2) agar membentuk Featured Image Grid yang rata tanpa celah kosong
 const FEATURED_INDICES = new Set([0, 11, 18, 29]);
-const INITIAL_COUNT = 9; // 1 foto (2x2) + 8 foto (1x1) = 12 sel (pas 3 baris di 4 kolom / 6 baris di 2 kolom)
+const INITIAL_COUNT = 5; // 1 foto (2x2) + 8 foto (1x1) = 12 sel (pas 3 baris di 4 kolom / 6 baris di 2 kolom)
 
 const Documentation: React.FC = () => {
   const [showAll, setShowAll] = useState(false);
@@ -88,7 +88,7 @@ const Documentation: React.FC = () => {
             Dokumentasi Kegiatan & Fasilitas
           </h2>
           <p className="mt-3 text-sm sm:text-base text-slate-600">
-            Potret aktivitas pembelajaran, sarana belajar, dan kebersamaan siswa
+            Potret aktivitas pembelajaran, sarana belajar, dan kebersamaan siswa-siswi
             di TAUD SaQu Abu Ayyub.
           </p>
         </div>
