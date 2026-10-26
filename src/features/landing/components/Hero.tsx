@@ -55,14 +55,14 @@ const Hero: React.FC = () => {
             <>
               <Link
                 to="/daftar"
-                className="w-full sm:w-auto min-w-[200px] bg-white hover:bg-orange-50 text-[var(--color-primary)] px-6 py-3.5 rounded-full font-bold text-sm sm:text-base transition-all duration-300 text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+                className="w-full sm:w-auto min-w-[200px] bg-white hover:bg-orange-50 text-[var(--color-primary)] px-6 py-3.5 rounded-full font-bold text-sm sm:text-base transition-all duration-300 text-center shadow-lg hover:shadow-xl"
               >
                 Daftar Sekarang
               </Link>
 
               <Link
                 to="/status"
-                className="w-full sm:w-auto min-w-[180px] bg-white/15 hover:bg-white/25 border border-white/40 text-white px-6 py-3.5 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 text-center shadow-sm hover:shadow-md backdrop-blur-xs hover:-translate-y-0.5 active:translate-y-0"
+                className="w-full sm:w-auto min-w-[180px] bg-white/15 hover:bg-white/25 border border-white/40 text-white px-6 py-3.5 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 text-center shadow-sm hover:shadow-md backdrop-blur-xs active:translate-y-0"
               >
                 Cek Status
               </Link>

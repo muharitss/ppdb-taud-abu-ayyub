@@ -129,7 +129,7 @@ const Documentation: React.FC = () => {
             ref={toggleButtonRef}
             type="button"
             onClick={handleToggleShowAll}
-            className="inline-flex items-center justify-center border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 px-6 py-2.5 text-sm font-semibold transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white px-7 py-3 rounded-full font-semibold text-sm transition-all duration-300 shadow-sm active:translate-y-0 cursor-pointer"
           >
             {showAll
               ? "Tampilkan Lebih Sedikit"
