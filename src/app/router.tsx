@@ -18,7 +18,7 @@ export const AppRouter: React.FC = () => {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/daftar" element={<RegistrationStartPage />} />
-      <Route path="/daftar/pembayaran" element={<PaymentPage />} />
+      <Route path="/daftar/pembayaran" element={<Navigate to="/daftar" replace />} />
       <Route path="/bayar/:registrationNumber" element={<PaymentPage />} />
       <Route path="/daftar/formulir" element={<FullFormPage />} />
       <Route path="/daftar/formulir/:registrationNumber" element={<FullFormPage />} />

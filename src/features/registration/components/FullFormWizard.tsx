@@ -134,7 +134,15 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
             whatsapp_number: "",
             address: "",
           },
-          initialData?.father,
+          initialData?.father
+            ? {
+                ...initialData.father,
+                full_name:
+                  initialData.father.full_name === "Wali Murid"
+                    ? ""
+                    : initialData.father.full_name,
+              }
+            : undefined,
           localData?.father,
         ),
         mother: mergeSection(

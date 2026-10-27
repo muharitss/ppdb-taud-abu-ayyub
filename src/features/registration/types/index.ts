@@ -1,7 +1,7 @@
 export interface CreateRegistrationRequest {
   child_name: string;
-  parent_name: string;
   whatsapp_number: string;
+  file: File;
 }
 
 export interface CreateRegistrationResponse {

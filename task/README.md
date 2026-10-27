@@ -114,6 +114,7 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **038** | [Bank Information & Contact Consistency](task-038-bank-info-and-contact-consistency.md)        | Phase 11 |    P0     |   **DONE**    | Task 016, 020      |
 | **039** | [Access Code Session Retention & Anti-Lockout](task-039-access-code-session-retention.md)      | Phase 11 |    P1     |   **DONE**    | Task 015, 016, 022 |
 | **040** | [Full Form Wizard Simplification & Component Refactor](task-040-form-wizard-simplification.md) | Phase 11 |    P2     |   **DONE**    | Task 021, 022      |
+| **041** | [Combined Registration & Payment Flow (1-Step)](task-041-combined-registration-and-payment.md) | Phase 11 |    P0     |   **DONE**    | Task 015, 016, 039 |
 
 ---
 
@@ -121,12 +122,12 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 
 ### A. Metrik Progres Proyek
 
-- **Total Task:** 40
-- **Selesai (`DONE`):** 34 (Task 001–030, Task 037–040)
+- **Total Task:** 41
+- **Selesai (`DONE`):** 35 (Task 001–030, Task 037–041)
 - **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 031, Task 032, Task 033
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 0
-- **Persentase Selesai Nyata:** **85.00%**
+- **Persentase Selesai Nyata:** **85.37%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
 
