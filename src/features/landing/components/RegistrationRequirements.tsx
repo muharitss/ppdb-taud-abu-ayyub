@@ -149,7 +149,7 @@ const RegistrationRequirements: React.FC = () => {
         </div>
 
         {/* CTA Button */}
-        <div className="text-center mt-10 sm:mt-12 relativhttp://localhost:45447/daftare z-10">
+        <div className="text-center mt-10 sm:mt-12 relative z-10">
           <Link
             to={ctaLink}
             className="inline-flex items-center justify-center bg-white hover:bg-orange-50 text-[var(--color-primary)] px-8 py-3.5 sm:py-4 rounded-full font-bold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl active:translate-y-0"

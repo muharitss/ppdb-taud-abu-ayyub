@@ -67,122 +67,62 @@ export const childSchema = z.object({
 export type ChildFormData = z.infer<typeof childSchema>;
 
 // Section 2 & 3 — Data Orang Tua (Ayah & Ibu)
-const parentBaseSchema = z.object({
-  full_name: z
-    .string()
-    .trim()
-    .min(2, "Nama lengkap minimal 2 karakter")
-    .max(100, "Nama lengkap maksimal 100 karakter"),
-  nik: z
-    .string()
-    .trim()
-    .regex(NIK_REGEX, "NIK harus terdiri dari 16 digit angka"),
-  birth_place: z
-    .string()
-    .trim()
-    .min(2, "Tempat lahir minimal 2 karakter")
-    .max(100, "Tempat lahir maksimal 100 karakter"),
-  birth_date: z
-    .string()
-    .trim()
-    .regex(ISO_DATE_REGEX, "Format tanggal lahir harus YYYY-MM-DD"),
-  last_education: z
-    .string()
-    .trim()
-    .min(1, "Pendidikan terakhir wajib diisi")
-    .max(50, "Pendidikan terakhir maksimal 50 karakter"),
-  occupation: z
-    .string()
-    .trim()
-    .min(1, "Pekerjaan wajib diisi")
-    .max(100, "Pekerjaan maksimal 100 karakter"),
-  monthly_income: z.preprocess(
-    (val) => (val === "" || val === null ? undefined : val),
-    z.string().trim().max(100, "Penghasilan maksimal 100 karakter").optional(),
-  ),
-  whatsapp_number: z
-    .string()
-    .trim()
-    .regex(
-      WHATSAPP_REGEX,
-      "Format nomor WhatsApp tidak valid (contoh: 08123456789 atau 628123456789)",
+function createParentSchema(roleLabel: "ayah" | "ibu") {
+  return z.object({
+    full_name: z
+      .string()
+      .trim()
+      .min(2, `Nama lengkap ${roleLabel} minimal 2 karakter`)
+      .max(100, `Nama lengkap ${roleLabel} maksimal 100 karakter`),
+    nik: z
+      .string()
+      .trim()
+      .regex(NIK_REGEX, `NIK ${roleLabel} harus terdiri dari 16 digit angka`),
+    birth_place: z
+      .string()
+      .trim()
+      .min(2, `Tempat lahir ${roleLabel} minimal 2 karakter`)
+      .max(100, `Tempat lahir ${roleLabel} maksimal 100 karakter`),
+    birth_date: z
+      .string()
+      .trim()
+      .regex(ISO_DATE_REGEX, `Format tanggal lahir ${roleLabel} harus YYYY-MM-DD`),
+    last_education: z
+      .string()
+      .trim()
+      .min(1, "Pendidikan terakhir wajib diisi")
+      .max(50, "Pendidikan terakhir maksimal 50 karakter"),
+    occupation: z
+      .string()
+      .trim()
+      .min(1, "Pekerjaan wajib diisi")
+      .max(100, "Pekerjaan maksimal 100 karakter"),
+    monthly_income: z.preprocess(
+      (val) => (val === "" || val === null ? undefined : val),
+      z.string().trim().max(100, "Penghasilan maksimal 100 karakter").optional(),
     ),
-  address: z
-    .string()
-    .trim()
-    .min(5, "Alamat domisili minimal 5 karakter")
-    .max(500, "Alamat domisili maksimal 500 karakter"),
-});
+    whatsapp_number: z
+      .string()
+      .trim()
+      .regex(
+        WHATSAPP_REGEX,
+        `Format nomor WhatsApp ${roleLabel} tidak valid (contoh: 08123456789)`,
+      ),
+    address: z
+      .string()
+      .trim()
+      .min(5, `Alamat ${roleLabel} minimal 5 karakter`)
+      .max(500, `Alamat ${roleLabel} maksimal 500 karakter`),
+  });
+}
 
-export const fatherSchema = parentBaseSchema.extend({
-  full_name: z
-    .string()
-    .trim()
-    .min(2, "Nama lengkap ayah minimal 2 karakter")
-    .max(100, "Nama lengkap ayah maksimal 100 karakter"),
-  nik: z
-    .string()
-    .trim()
-    .regex(NIK_REGEX, "NIK ayah harus terdiri dari 16 digit angka"),
-  birth_place: z
-    .string()
-    .trim()
-    .min(2, "Tempat lahir ayah minimal 2 karakter")
-    .max(100, "Tempat lahir ayah maksimal 100 karakter"),
-  birth_date: z
-    .string()
-    .trim()
-    .regex(ISO_DATE_REGEX, "Format tanggal lahir ayah harus YYYY-MM-DD"),
-  whatsapp_number: z
-    .string()
-    .trim()
-    .regex(
-      WHATSAPP_REGEX,
-      "Format nomor WhatsApp ayah tidak valid (contoh: 08123456789)",
-    ),
-  address: z
-    .string()
-    .trim()
-    .min(5, "Alamat ayah minimal 5 karakter")
-    .max(500, "Alamat ayah maksimal 500 karakter"),
-});
+export const fatherSchema = createParentSchema("ayah");
 export type FatherFormData = z.infer<typeof fatherSchema>;
 
-export const motherSchema = parentBaseSchema.extend({
-  full_name: z
-    .string()
-    .trim()
-    .min(2, "Nama lengkap ibu minimal 2 karakter")
-    .max(100, "Nama lengkap ibu maksimal 100 karakter"),
-  nik: z
-    .string()
-    .trim()
-    .regex(NIK_REGEX, "NIK ibu harus terdiri dari 16 digit angka"),
-  birth_place: z
-    .string()
-    .trim()
-    .min(2, "Tempat lahir ibu minimal 2 karakter")
-    .max(100, "Tempat lahir ibu maksimal 100 karakter"),
-  birth_date: z
-    .string()
-    .trim()
-    .regex(ISO_DATE_REGEX, "Format tanggal lahir ibu harus YYYY-MM-DD"),
-  whatsapp_number: z
-    .string()
-    .trim()
-    .regex(
-      WHATSAPP_REGEX,
-      "Format nomor WhatsApp ibu tidak valid (contoh: 08123456789)",
-    ),
-  address: z
-    .string()
-    .trim()
-    .min(5, "Alamat ibu minimal 5 karakter")
-    .max(500, "Alamat ibu maksimal 500 karakter"),
-});
+export const motherSchema = createParentSchema("ibu");
 export type MotherFormData = z.infer<typeof motherSchema>;
 
-export type ParentFormData = z.infer<typeof parentBaseSchema>;
+export type ParentFormData = FatherFormData;
 
 // Section 4 — Data Kesehatan Siswa
 export const healthSchema = z.object({

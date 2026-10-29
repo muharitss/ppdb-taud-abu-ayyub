@@ -1,7 +1,7 @@
 # Task 045 — Pembersihan Kode Mati (Dead Code), Dependensi Tidak Terpakai, & Perbaikan Bug Minor UI/Schema
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P1 (Kualitas Kode, Performa Build, & Bug Minor UI)

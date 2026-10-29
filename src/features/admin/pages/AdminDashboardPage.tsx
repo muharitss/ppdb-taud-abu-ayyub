@@ -196,20 +196,21 @@ export const AdminDashboardPage: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    loadStats();
+  }, [loadStats]);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const [registrantsRes] = await Promise.all([
-        getRegistrants({
-          status: statusFilter,
-          search: activeSearch,
-          page,
-          pageSize,
-        }),
-        loadStats(),
-      ]);
+      const registrantsRes = await getRegistrants({
+        status: statusFilter,
+        search: activeSearch,
+        page,
+        pageSize,
+      });
       setData(registrantsRes);
     } catch (err: unknown) {
       setError(
@@ -218,7 +219,7 @@ export const AdminDashboardPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, activeSearch, page, loadStats]);
+  }, [statusFilter, activeSearch, page]);
 
   useEffect(() => {
     fetchData();
@@ -247,6 +248,7 @@ export const AdminDashboardPage: React.FC = () => {
         `Pendaftar ${deletingItem.registration_number} berhasil dihapus`,
       );
       setDeletingItem(null);
+      loadStats();
       if (data && data.items.length === 1 && page > 1) {
         setPage((p) => p - 1);
       } else {

@@ -115,10 +115,10 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 | **039** | [Access Code Session Retention & Anti-Lockout](task-039-access-code-session-retention.md)      | Phase 11 |    P1     |   **DONE**    | Task 015, 016, 022 |
 | **040** | [Full Form Wizard Simplification & Component Refactor](task-040-form-wizard-simplification.md) | Phase 11 |    P2     |   **DONE**    | Task 021, 022      |
 | **041** | [Combined Registration & Payment Flow (1-Step)](task-041-combined-registration-and-payment.md) | Phase 11 |    P0     |   **DONE**    | Task 015, 016, 039 |
-| **042** | [Perbaikan Keamanan Cloudinary (Unsigned Upload Preset)](task-042-cloudinary-security-fix.md)  | Phase 12 |    P0     | `NOT_STARTED` | Task 041           |
-| **043** | [Pengamanan & Validasi Fungsi RPC Database PostgreSQL](task-043-rpc-security-and-validation-hardening.md) | Phase 12 |    P0     | `NOT_STARTED` | Task 010, 011, 041 |
-| **044** | [Perbaikan Fitur Admin (Tolak Bukti Bayar, Sanitasi Query, Statistik, & Seed SQL)](task-044-admin-payment-reject-and-query-fixes.md) | Phase 12 |    P0     | `NOT_STARTED` | Task 028, 043      |
-| **045** | [Pembersihan Dead Code, Dependensi, & Bug Minor UI/Schema](task-045-dead-code-cleanup-and-ui-fixes.md) | Phase 12 |    P1     | `NOT_STARTED` | Task 043, 044      |
+| **042** | [Perbaikan Keamanan Cloudinary (Unsigned Upload Preset)](task-042-cloudinary-security-fix.md)  | Phase 12 |    P0     | **DONE** | Task 041           |
+| **043** | [Pengamanan & Validasi Fungsi RPC Database PostgreSQL](task-043-rpc-security-and-validation-hardening.md) | Phase 12 |    P0     |   **DONE**    | Task 010, 011, 041 |
+| **044** | [Perbaikan Fitur Admin (Tolak Bukti Bayar, Sanitasi Query, Statistik, & Seed SQL)](task-044-admin-payment-reject-and-query-fixes.md) | Phase 12 |    P0     |   **DONE**    | Task 028, 043      |
+| **045** | [Pembersihan Dead Code, Dependensi, & Bug Minor UI/Schema](task-045-dead-code-cleanup-and-ui-fixes.md) | Phase 12 |    P1     |   **DONE**    | Task 043, 044      |
 
 ---
 
@@ -127,21 +127,20 @@ Seluruh keputusan arsitektur, keamanan, dan aturan bisnis terdokumentasi dalam d
 ### A. Metrik Progres Proyek
 
 - **Total Task:** 45
-- **Selesai (`DONE`):** 35 (Task 001–030, Task 037–041)
-- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 042, Task 043, Task 044, Task 045, Task 031, Task 032, Task 033
+- **Selesai (`DONE`):** 39 (Task 001–030, Task 037–045)
+- **Siap Dikerjakan (`NOT_STARTED` unblocked):** Task 031, Task 032, Task 033, Task 034, Task 035, Task 036
 - **Menunggu Persyaratan (`WAITING_FOR_REQUIREMENTS`):** 0
 - **Terblokir (`BLOCKED`):** 0
-- **Persentase Selesai Nyata:** **77.78%**
+- **Persentase Selesai Nyata:** **86.67%**
 
 ### B. Task yang Dapat Langsung Dieksekusi Berikutnya
 
-1. **Task 042:** Perbaikan Keamanan Cloudinary (Hapus API Secret dari Frontend & Gunakan Unsigned Upload Preset).
-2. **Task 043:** Pengamanan & Perbaikan Fungsi RPC Database PostgreSQL (Admin Guard, Rate Limit, Validasi Pembayaran & Form, Atomic Registration).
-3. **Task 044:** Perbaikan Fitur Admin & Keamanan Query (Tombol Tolak Bukti Bayar, Sanitasi Pencarian, Optimasi Statistik, & Parametrisasi Seed SQL).
-4. **Task 045:** Pembersihan Kode Mati (Dead Code), Dependensi Tidak Terpakai, & Perbaikan Bug Minor UI/Schema.
-5. **Task 031:** Unit Testing Setup & Logic Tests (Vitest untuk Form Schemas & Services).
-6. **Task 032:** RLS Security Policy Tests (verifikasi RLS database PostgreSQL).
-7. **Task 033:** End-to-End Flow Tests (pengujian alur pendaftaran s.d. dashboard admin).
+1. **Task 031:** Unit Testing Setup & Logic Tests (Vitest untuk Form Schemas & Services).
+2. **Task 032:** RLS Security Policy Tests (verifikasi RLS database PostgreSQL).
+3. **Task 033:** End-to-End Flow Tests (pengujian alur pendaftaran s.d. dashboard admin).
+4. **Task 034:** Production Supabase Setup.
+5. **Task 035:** Vercel Deployment & SPA Routing.
+6. **Task 036:** Go-Live Checklist & Verification.
 
 ### C. Task yang Terblokir & Penyebabnya
 

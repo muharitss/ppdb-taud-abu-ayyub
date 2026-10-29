@@ -61,10 +61,13 @@ export async function getRegistrants({
   }
 
   if (search && search.trim()) {
-    const term = `%${search.trim()}%`;
-    query = query.or(
-      `registration_number.ilike.${term},child_name.ilike.${term},parent_name.ilike.${term}`
-    );
+    const cleanSearch = search.trim().replace(/[,()"\\]/g, "");
+    if (cleanSearch) {
+      const term = `%${cleanSearch}%`;
+      query = query.or(
+        `registration_number.ilike.${term},child_name.ilike.${term},parent_name.ilike.${term}`
+      );
+    }
   }
 
   const from = (page - 1) * pageSize;

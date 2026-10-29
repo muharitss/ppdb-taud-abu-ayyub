@@ -645,9 +645,13 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   id="child_order"
                   type="number"
                   min={1}
-                  value={formData.child?.child_order || ""}
+                  value={formData.child?.child_order ?? ""}
                   onChange={(e) =>
-                    updateField("child", "child_order", Number(e.target.value))
+                    updateField(
+                      "child",
+                      "child_order",
+                      e.target.value === "" ? ("" as unknown as number) : Number(e.target.value),
+                    )
                   }
                   disabled={isReadOnly}
                 />
@@ -741,9 +745,13 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   step="0.1"
                   min={1}
                   placeholder="Contoh: 16.5"
-                  value={formData.health?.weight_kg || ""}
+                  value={formData.health?.weight_kg ?? ""}
                   onChange={(e) =>
-                    updateField("health", "weight_kg", Number(e.target.value))
+                    updateField(
+                      "health",
+                      "weight_kg",
+                      e.target.value === "" ? ("" as unknown as number) : Number(e.target.value),
+                    )
                   }
                   disabled={isReadOnly}
                 />
@@ -762,9 +770,13 @@ export const FullFormWizard: React.FC<FullFormWizardProps> = ({
                   step="0.5"
                   min={1}
                   placeholder="Contoh: 105"
-                  value={formData.health?.height_cm || ""}
+                  value={formData.health?.height_cm ?? ""}
                   onChange={(e) =>
-                    updateField("health", "height_cm", Number(e.target.value))
+                    updateField(
+                      "health",
+                      "height_cm",
+                      e.target.value === "" ? ("" as unknown as number) : Number(e.target.value),
+                    )
                   }
                   disabled={isReadOnly}
                 />

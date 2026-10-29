@@ -1,7 +1,7 @@
 # Task 042 — Perbaikan Keamanan Cloudinary (Hapus API Secret dari Frontend & Gunakan Unsigned Upload Preset)
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P0 (Kritis — Keamanan)

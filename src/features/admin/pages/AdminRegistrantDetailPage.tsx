@@ -9,6 +9,7 @@ import {
   type DocumentItem,
 } from "../services/adminDetail";
 import { reviewPayment } from "../services/adminPayment";
+import { RejectDialog } from "../components/RejectDialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -230,6 +231,34 @@ export const AdminRegistrantDetailPage: React.FC = () => {
   };
 
   const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [rejectPaymentDialogOpen, setRejectPaymentDialogOpen] = useState(false);
+  const [rejectingPayment, setRejectingPayment] = useState(false);
+
+  const handleRejectPayment = async (notes: string) => {
+    const latestPmt = data?.payments?.[0];
+    if (!latestPmt || !data) return;
+
+    setRejectingPayment(true);
+    try {
+      await reviewPayment({
+        payment_id: latestPmt.id,
+        approved: false,
+        review_notes: notes,
+      });
+
+      toast.success(
+        `Bukti pembayaran ${data.registration.registration_number} ditolak. Pendaftar dapat mengunggah ulang bukti baru.`
+      );
+      setRejectPaymentDialogOpen(false);
+      fetchDetail();
+    } catch (err: unknown) {
+      toast.error(
+        err instanceof Error ? err.message : "Gagal menolak bukti pembayaran"
+      );
+    } finally {
+      setRejectingPayment(false);
+    }
+  };
 
   const handleVerifyPayment = async () => {
     const latestPmt = data?.payments?.[0];
@@ -826,19 +855,38 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                     Buka PDF Pembayaran <ExternalLink className="w-3 h-3" />
                   </a>
                   {registration.payment_status !== "payment_verified" ? (
-                    <Button
-                      size="sm"
-                      onClick={handleVerifyPayment}
-                      disabled={verifyingPayment}
-                      className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 font-medium shadow-xs"
-                    >
-                      {verifyingPayment ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={handleVerifyPayment}
+                        disabled={verifyingPayment || rejectingPayment}
+                        className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 font-medium shadow-xs"
+                      >
+                        {verifyingPayment ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            Memverifikasi...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Verifikasi Pembayaran
+                          </>
+                        )}
+                      </Button>
+                      {latestPayment.status === "payment_submitted" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setRejectPaymentDialogOpen(true)}
+                          disabled={verifyingPayment || rejectingPayment}
+                          className="text-xs border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 gap-1.5 font-medium"
+                        >
+                          <XCircle className="w-3.5 h-3.5" />
+                          Tolak Bukti Bayar
+                        </Button>
                       )}
-                      Verifikasi Pembayaran
-                    </Button>
+                    </div>
                   ) : (
                     <div className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -880,24 +928,38 @@ export const AdminRegistrantDetailPage: React.FC = () => {
                   {/* Tombol / Status Verifikasi di samping gambar */}
                   <div className="flex-1 space-y-2 pt-0.5 w-full sm:w-auto">
                     {registration.payment_status !== "payment_verified" ? (
-                      <Button
-                        size="sm"
-                        onClick={handleVerifyPayment}
-                        disabled={verifyingPayment}
-                        className="w-full sm:w-auto text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 font-medium shadow-xs"
-                      >
-                        {verifyingPayment ? (
-                          <>
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            Memverifikasi...
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            Verifikasi Pembayaran
-                          </>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                          size="sm"
+                          onClick={handleVerifyPayment}
+                          disabled={verifyingPayment || rejectingPayment}
+                          className="w-full sm:w-auto text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 font-medium shadow-xs"
+                        >
+                          {verifyingPayment ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              Memverifikasi...
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              Verifikasi Pembayaran
+                            </>
+                          )}
+                        </Button>
+                        {latestPayment.status === "payment_submitted" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setRejectPaymentDialogOpen(true)}
+                            disabled={verifyingPayment || rejectingPayment}
+                            className="text-xs border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 gap-1.5 font-medium"
+                          >
+                            <XCircle className="w-3.5 h-3.5" />
+                            Tolak Bukti Bayar
+                          </Button>
                         )}
-                      </Button>
+                      </div>
                     ) : (
                       <div className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
@@ -1033,6 +1095,13 @@ export const AdminRegistrantDetailPage: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <RejectDialog
+        isOpen={rejectPaymentDialogOpen}
+        onClose={() => setRejectPaymentDialogOpen(false)}
+        onConfirm={handleRejectPayment}
+        isSubmitting={rejectingPayment}
+        registrationNumber={registration.registration_number}
+      />
     </div>
   );
 };

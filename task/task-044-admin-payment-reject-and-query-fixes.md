@@ -1,7 +1,7 @@
 # Task 044 — Perbaikan Fitur Admin & Keamanan Query (Tombol Tolak Bukti Bayar, Sanitasi Pencarian, Optimasi Statistik, & Parametrisasi Seed SQL)
 
 ## Status
-NOT_STARTED
+DONE
 
 ## Priority
 P0 (Penting — Fungsionalitas Admin, Keamanan Query, & Skalabilitas)
