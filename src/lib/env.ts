@@ -4,9 +4,10 @@ const supabaseAnonKey =
   (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string) ||
   '';
 
-const cloudinaryCloudName = (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string) || 'screenshottugas';
-const cloudinaryApiKey = (import.meta.env.VITE_CLOUDINARY_API_KEY as string) || '133461677346484';
-const cloudinaryApiSecret = (import.meta.env.VITE_CLOUDINARY_API_SECRET as string) || '8sBjvAP9Ql3d31T2TxoKtxjVFWk';
+const cloudinaryCloudName =
+  (import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string) || 'screenshottugas';
+const cloudinaryUploadPreset =
+  (import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string) || 'ppdb_taud_unsigned';
 
 if (import.meta.env.DEV && (!supabaseUrl || !supabaseAnonKey)) {
   console.warn(
@@ -20,8 +21,7 @@ export const env = {
   supabaseUrl,
   supabaseAnonKey,
   CLOUDINARY_CLOUD_NAME: cloudinaryCloudName,
-  CLOUDINARY_API_KEY: cloudinaryApiKey,
-  CLOUDINARY_API_SECRET: cloudinaryApiSecret,
+  CLOUDINARY_UPLOAD_PRESET: cloudinaryUploadPreset,
 } as const;
 
 export default env;

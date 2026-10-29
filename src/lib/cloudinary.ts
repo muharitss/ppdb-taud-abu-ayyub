@@ -6,8 +6,8 @@ const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "pdf"];
 const ALLOWED_MIME = ["image/jpeg", "image/png", "application/pdf"];
 
 /**
- * Validates file type and size before upload.
- * Falls back to extension check when mobile cameras return empty or generic mime types.
+ * Memvalidasi tipe dan ukuran berkas sebelum diunggah ke Cloudinary.
+ * Tetap mengecek ekstensi berkas apabila kamera ponsel mengirimkan MIME type kosong.
  */
 export function validateUploadFile(file: File): { valid: boolean; error?: string } {
   if (file.size > MAX_FILE_SIZE) {
@@ -29,25 +29,8 @@ export function validateUploadFile(file: File): { valid: boolean; error?: string
 }
 
 /**
- * Generates SHA-1 signature for Cloudinary signed upload using browser Web Crypto API.
- */
-async function generateSignature(params: Record<string, string>, apiSecret: string): Promise<string> {
-  const sortedStr =
-    Object.keys(params)
-      .sort()
-      .map((k) => `${k}=${params[k]}`)
-      .join("&") + apiSecret;
-
-  const buffer = new TextEncoder().encode(sortedStr);
-  const hash = await crypto.subtle.digest("SHA-1", buffer);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-/**
- * Uploads a file directly to Cloudinary using signed authentication.
- * Returns the permanent HTTPS secure_url.
+ * Mengunggah berkas ke Cloudinary menggunakan Unsigned Upload Preset.
+ * Mengembalikan URL HTTPS permanen (secure_url).
  */
 export async function uploadToCloudinary(
   file: File,
@@ -59,22 +42,16 @@ export async function uploadToCloudinary(
   }
 
   const cloudName = env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = env.CLOUDINARY_API_KEY;
-  const apiSecret = env.CLOUDINARY_API_SECRET;
+  const uploadPreset = env.CLOUDINARY_UPLOAD_PRESET;
 
-  if (!cloudName || !apiKey || !apiSecret) {
-    throw new Error("Konfigurasi Cloudinary tidak lengkap di server/klien");
+  if (!cloudName || !uploadPreset) {
+    throw new Error("Konfigurasi Cloudinary (Cloud Name / Upload Preset) belum lengkap");
   }
-
-  const timestamp = Math.floor(Date.now() / 1000).toString();
-  const signature = await generateSignature({ folder, timestamp }, apiSecret);
 
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("api_key", apiKey);
-  formData.append("timestamp", timestamp);
+  formData.append("upload_preset", uploadPreset);
   formData.append("folder", folder);
-  formData.append("signature", signature);
 
   const response = await fetch(
     `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
