@@ -10,6 +10,7 @@ import {
 } from "../services/adminDetail";
 import { reviewPayment } from "../services/adminPayment";
 import { RejectDialog } from "../components/RejectDialog";
+import { isPdfFile, getCloudinaryPreviewUrl } from "@/lib/cloudinary";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -393,25 +394,61 @@ export const AdminRegistrantDetailPage: React.FC = () => {
       );
     }
 
-    const isPdf = doc.file_path.toLowerCase().endsWith(".pdf");
+    const isPdf = isPdfFile(doc.file_path);
+    const isCloudinary = Boolean(doc.signed_url?.includes("cloudinary.com"));
+    const previewUrl = getCloudinaryPreviewUrl(doc.signed_url);
 
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs">
           <span className="font-semibold text-slate-800">{title}</span>
           {doc.signed_url && (
-            <a
-              href={doc.signed_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[var(--color-primary)] hover:underline inline-flex items-center gap-1 font-medium"
-            >
-              Buka Tab Baru <ExternalLink className="w-3 h-3" />
-            </a>
+            <div className="inline-flex items-center gap-2">
+              {isPdf && isCloudinary && previewUrl && (
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-500 hover:text-slate-700 hover:underline inline-flex items-center gap-1 font-medium"
+                >
+                  Tab Gambar <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+              <a
+                href={doc.signed_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--color-primary)] hover:underline inline-flex items-center gap-1 font-medium"
+              >
+                {isPdf ? "Buka PDF" : "Buka Tab Baru"}{" "}
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
           )}
         </div>
 
-        {isPdf ? (
+        {previewUrl && (!isPdf || isCloudinary) ? (
+          <div className="space-y-1.5">
+            <img
+              src={previewUrl}
+              alt={title}
+              onClick={() => setPreviewModal({ url: previewUrl, title })}
+              className="w-full h-auto cursor-pointer hover:opacity-95 transition-opacity rounded border border-slate-100 shadow-xs"
+            />
+            {isPdf && doc.signed_url && (
+              <a
+                href={doc.signed_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-emerald-700 font-medium hover:underline pt-1"
+              >
+                <FileText className="w-3.5 h-3.5 text-rose-500" />
+                Unduh / Buka Dokumen Asli PDF{" "}
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </div>
+        ) : isPdf && doc.signed_url ? (
           <a
             href={doc.signed_url}
             target="_blank"
@@ -421,13 +458,6 @@ export const AdminRegistrantDetailPage: React.FC = () => {
             <FileText className="w-4 h-4 text-rose-500" />
             Buka Dokumen PDF <ExternalLink className="w-3 h-3" />
           </a>
-        ) : doc.signed_url ? (
-          <img
-            src={doc.signed_url}
-            alt={title}
-            onClick={() => setPreviewModal({ url: doc.signed_url!, title })}
-            className="w-full h-auto cursor-pointer hover:opacity-95 transition-opacity"
-          />
         ) : (
           <p className="text-xs text-amber-600 py-2">
             Tautan berkas sementara kadaluarsa.
@@ -843,132 +873,114 @@ export const AdminRegistrantDetailPage: React.FC = () => {
             </div>
 
             {latestPayment?.signed_url ? (
-              latestPayment.proof_file_path.toLowerCase().endsWith(".pdf") ? (
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-                  <a
-                    href={latestPayment.signed_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-xs text-emerald-700 font-medium hover:underline py-1"
-                  >
-                    <FileText className="w-4 h-4 text-rose-500" />
-                    Buka PDF Pembayaran <ExternalLink className="w-3 h-3" />
-                  </a>
-                  {registration.payment_status !== "payment_verified" ? (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Button
-                        size="sm"
-                        onClick={handleVerifyPayment}
-                        disabled={verifyingPayment || rejectingPayment}
-                        className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 font-medium shadow-xs"
-                      >
-                        {verifyingPayment ? (
+              (() => {
+                const isPdf = isPdfFile(latestPayment.proof_file_path);
+                const isCloudinary = Boolean(
+                  latestPayment.signed_url?.includes("cloudinary.com")
+                );
+                const previewUrl = getCloudinaryPreviewUrl(
+                  latestPayment.signed_url
+                );
+
+                return (
+                  <div className="flex flex-col sm:flex-row items-start gap-4 pt-1">
+                    {/* Gambar / Pratinjau Bukti Pembayaran */}
+                    <div className="shrink-0 space-y-1.5">
+                      {previewUrl && (!isPdf || isCloudinary) ? (
+                        <img
+                          src={previewUrl}
+                          alt="Bukti Pembayaran"
+                          onClick={() =>
+                            setPreviewModal({
+                              url: previewUrl,
+                              title: "Bukti Pembayaran Pendaftaran",
+                            })
+                          }
+                          className="max-h-44 w-auto max-w-full cursor-pointer hover:opacity-95 transition-opacity rounded border border-slate-100 shadow-xs"
+                        />
+                      ) : (
+                        <div className="p-3 bg-slate-50 border rounded-lg flex items-center gap-2">
+                          <FileText className="w-6 h-6 text-rose-500" />
+                          <span className="text-xs font-medium text-slate-700">
+                            Dokumen PDF
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                        <span>
+                          Diunggah: {formatDate(latestPayment.uploaded_at)}
+                        </span>
+                        <span>&bull;</span>
+                        {isPdf && isCloudinary && previewUrl && (
                           <>
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            Memverifikasi...
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            Verifikasi Pembayaran
+                            <a
+                              href={previewUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-slate-500 hover:text-slate-700 hover:underline inline-flex items-center gap-1 font-medium"
+                            >
+                              Gambar <ExternalLink className="w-3 h-3" />
+                            </a>
+                            <span>&bull;</span>
                           </>
                         )}
-                      </Button>
-                      {latestPayment.status === "payment_submitted" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setRejectPaymentDialogOpen(true)}
-                          disabled={verifyingPayment || rejectingPayment}
-                          className="text-xs border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 gap-1.5 font-medium"
+                        <a
+                          href={latestPayment.signed_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[var(--color-primary)] hover:underline inline-flex items-center gap-1 font-medium"
                         >
-                          <XCircle className="w-3.5 h-3.5" />
-                          Tolak Bukti Bayar
-                        </Button>
-                      )}
+                          {isPdf ? "Buka PDF" : "Tab Baru"}{" "}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      Pembayaran Terverifikasi
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="flex flex-col sm:flex-row items-start gap-4 pt-1">
-                  {/* Gambar Bukti Pembayaran */}
-                  <div className="shrink-0 space-y-1.5">
-                    <img
-                      src={latestPayment.signed_url}
-                      alt="Bukti Pembayaran"
-                      onClick={() =>
-                        setPreviewModal({
-                          url: latestPayment.signed_url!,
-                          title: "Bukti Pembayaran Pendaftaran",
-                        })
-                      }
-                      className="max-h-44 w-auto max-w-full cursor-pointer hover:opacity-95 transition-opacity"
-                    />
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                      <span>
-                        Diunggah: {formatDate(latestPayment.uploaded_at)}
-                      </span>
-                      <span>&bull;</span>
-                      <a
-                        href={latestPayment.signed_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--color-primary)] hover:underline inline-flex items-center gap-1 font-medium"
-                      >
-                        Tab Baru <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
-                  </div>
 
-                  {/* Tombol / Status Verifikasi di samping gambar */}
-                  <div className="flex-1 space-y-2 pt-0.5 w-full sm:w-auto">
-                    {registration.payment_status !== "payment_verified" ? (
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Button
-                          size="sm"
-                          onClick={handleVerifyPayment}
-                          disabled={verifyingPayment || rejectingPayment}
-                          className="w-full sm:w-auto text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 font-medium shadow-xs"
-                        >
-                          {verifyingPayment ? (
-                            <>
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              Memverifikasi...
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              Verifikasi Pembayaran
-                            </>
-                          )}
-                        </Button>
-                        {latestPayment.status === "payment_submitted" && (
+                    {/* Tombol / Status Verifikasi di samping gambar */}
+                    <div className="flex-1 space-y-2 pt-0.5 w-full sm:w-auto">
+                      {registration.payment_status !== "payment_verified" ? (
+                        <div className="flex flex-wrap items-center gap-2">
                           <Button
                             size="sm"
-                            variant="outline"
-                            onClick={() => setRejectPaymentDialogOpen(true)}
+                            onClick={handleVerifyPayment}
                             disabled={verifyingPayment || rejectingPayment}
-                            className="text-xs border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 gap-1.5 font-medium"
+                            className="w-full sm:w-auto text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 font-medium shadow-xs"
                           >
-                            <XCircle className="w-3.5 h-3.5" />
-                            Tolak Bukti Bayar
+                            {verifyingPayment ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                Memverifikasi...
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                Verifikasi Pembayaran
+                              </>
+                            )}
                           </Button>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        Pembayaran Terverifikasi
-                      </div>
-                    )}
+                          {latestPayment.status === "payment_submitted" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setRejectPaymentDialogOpen(true)}
+                              disabled={verifyingPayment || rejectingPayment}
+                              className="text-xs border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 gap-1.5 font-medium"
+                            >
+                              <XCircle className="w-3.5 h-3.5" />
+                              Tolak Bukti Bayar
+                            </Button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          Pembayaran Terverifikasi
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )
+                );
+              })()
             ) : (
               <p className="text-xs text-slate-400 py-3 italic">
                 Belum ada bukti pembayaran yang diunggah.

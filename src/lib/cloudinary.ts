@@ -73,3 +73,19 @@ export async function uploadToCloudinary(
     format: data.format as string,
   };
 }
+
+export function isPdfFile(path?: string | null): boolean {
+  if (!path) return false;
+  return /\.pdf($|\?)/i.test(path);
+}
+
+/**
+ * shortcut: converts page 1 of Cloudinary PDF to jpg preview; multi-page navigation requires PDF viewer or Cloudinary page transformations
+ */
+export function getCloudinaryPreviewUrl(url?: string | null): string | undefined {
+  if (!url) return undefined;
+  if (isPdfFile(url) && url.includes("cloudinary.com")) {
+    return url.replace(/\.pdf($|\?)/i, ".jpg$1");
+  }
+  return url;
+}

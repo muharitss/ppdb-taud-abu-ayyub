@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node --import tsx --test src/features/registration/__tests__/form-schema.test.ts src/features/registration/__tests__/whatsapp.test.ts src/features/registration/__tests__/session-credentials.test.ts",
+    "test": "node --import tsx --test src/features/registration/__tests__/form-schema.test.ts src/features/registration/__tests__/whatsapp.test.ts src/features/registration/__tests__/session-credentials.test.ts src/lib/__tests__/cloudinary.test.ts",
     "db:seed": "tsx prisma/seed.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
