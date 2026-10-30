@@ -520,7 +520,7 @@ export const AdminDashboardPage: React.FC = () => {
                       Calon Siswa
                     </TableHead>
                     <TableHead className="py-3 px-4 font-semibold text-xs text-slate-700">
-                      Wali & Kontak
+                      Kontak
                     </TableHead>
                     <TableHead className="py-3 px-4 font-semibold text-xs text-slate-700">
                       Pembayaran
@@ -576,29 +576,25 @@ export const AdminDashboardPage: React.FC = () => {
                           </div>
                         </TableCell>
 
-                        {/* Wali & WhatsApp */}
+                        {/* Kontak WhatsApp */}
                         <TableCell className="py-3.5 px-4">
                           <div className="text-xs">
-                            <p className="font-medium text-slate-700">
-                              {item.parent_name || "-"}
-                            </p>
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="font-mono text-slate-400 text-[11px]">
+                            {waClean && item.whatsapp_number ? (
+                              <a
+                                href={`https://wa.me/${waClean}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                title="Chat WhatsApp"
+                                className="font-mono text-emerald-600 hover:text-emerald-700 underline underline-offset-2 transition-colors"
+                              >
                                 {item.whatsapp_number}
+                              </a>
+                            ) : (
+                              <span className="font-mono text-slate-400 text-[11px]">
+                                {item.whatsapp_number || "-"}
                               </span>
-                              {waClean && (
-                                <a
-                                  href={`https://wa.me/${waClean}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => e.stopPropagation()}
-                                  title="Chat WhatsApp Orang Tua"
-                                  className="text-emerald-600 hover:text-emerald-700 p-0.5 rounded hover:bg-emerald-50 transition-colors"
-                                >
-                                  <Phone className="w-3 h-3" />
-                                </a>
-                              )}
-                            </div>
+                            )}
                           </div>
                         </TableCell>
 
