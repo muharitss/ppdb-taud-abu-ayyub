@@ -31,7 +31,6 @@ import {
   X,
   Clock,
   CheckCircle2,
-  Phone,
   Filter,
   MoreHorizontal,
   Eye,
